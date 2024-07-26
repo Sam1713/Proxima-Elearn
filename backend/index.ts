@@ -24,10 +24,15 @@ app.listen(3000,()=>{
     console.log("server is running on port 3000!")
 })
 
-app.get('/',(req,res)=>{
-    res.json({
-        message:'API is working'
-    })
-})
+
 
 app.use('/backend/auth',authRoute)
+// app.use((err:any,req:Request,res:Response,next:any)=>{
+//     const statusCode:number=err.statusCode||500;
+//     const message:string=err.message||'Internal Server Error'
+//     return res.status(statusCode).json({
+//         success:false,
+//         message,
+//         statusCode,
+//     })
+// })
