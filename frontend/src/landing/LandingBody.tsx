@@ -1,12 +1,13 @@
 import React from 'react'
-import image from '../assets/images/OIP__29_-removebg-preview.png'; // Ensure correct path and file extension
+import image from '../assets/images/OIP__29_-removebg-preview.png'; 
 import { FaRegPlayCircle } from "react-icons/fa";
 import LandingDescription from './LandingDescription';
 
 function LandingBody() {
   return (
-    <div className='relative h-screen'>
-      <div className='bg-custom-blue h-1/2 rounded-lg sm:rounded-full md:rounded-3xl lg:rounded-b-3xl w-[90%] mx-auto my-5'>
+    <div className='bg-gradient-to-r from-gray-800 via-black to-gray-800 w-full mx-auto '>
+    <div className=' pt-20 relative h-screen bg-gradient-to-r from-gray-800 via-black to-gray-800'>
+      <div className='bg-indigo-400 bg-opacity-90 h-1/2 rounded-lg sm:rounded-full md:rounded-3xl lg:rounded-b-3xl w-[90%] mx-auto my-5'>
         <div className='relative flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-between px-4 py-8 lg:px-16 lg:py-12'>
           <div className='flex flex-col items-center lg:items-start text-center lg:text-left lg:w-1/2'>
             <h1 className='text-2xl font-bold mb-4 lg:text-3xl'>
@@ -38,7 +39,8 @@ function LandingBody() {
           />
         </div>
       </div>
-      <LandingDescription/>
+      <LandingDescription />
+    </div>
     </div>
   )
 }

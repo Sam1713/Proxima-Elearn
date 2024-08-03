@@ -1,15 +1,13 @@
-import React, { useState, CSSProperties } from "react";
+import React, { useState} from "react";
 import { FormDataType } from "../../types/Register";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClipLoader from "react-spinners/ClipLoader";
+import { override,color } from "../../utils/ClipLoader";
+import { useNavigate } from "react-router-dom";
+import { GoogleAuth } from "../../firebase/GoogleAuth";
 
-const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<FormDataType>({
@@ -19,8 +17,9 @@ const Register: React.FC = () => {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
-  const color = "00FFFF"; // Define color here
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate=useNavigate()
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -33,12 +32,13 @@ const Register: React.FC = () => {
       setLoading(true);
       const response = await axios.post('/backend/auth/signup', formData);
       toast.success(response.data.message);
+      setTimeout(() => {
+        navigate('/signin');
+      }, 1000);
       setErrors({}); 
-    } catch (error:any) {
-      if (error.response && error.response.data) {
-        const errorMessages = error.response.data as { [key: string]: string };
-        setErrors(errorMessages);
-        Object.values(errorMessages).forEach((message) => toast.error(message));
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "An error occurred");
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
@@ -49,9 +49,10 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-black flex items-center justify-center shadow-xl">
+    <div className="pt-20 min-h-screen  flex items-center justify-center shadow-xl bg-cover bg-center"
+    style={{ backgroundImage: "url('https://cdn.wallpapersafari.com/24/93/1d9UAi.jpg')" }}>
       <ToastContainer className={'mt-20'} />
-      <main className="w-full max-w-md bg-slate-500 p-8 rounded-lg shadow-md">
+      <main className="w-full max-w-md opacity-60 bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold mb-6">Register</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col">
@@ -116,12 +117,7 @@ const Register: React.FC = () => {
             )}
           </button>
         </form>
-        <button
-          type="button"
-          className="my-5 w-full bg-slate-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
-        >
-          Continue with Google
-        </button>
+        <GoogleAuth/>
       </main>
     </div>
   );

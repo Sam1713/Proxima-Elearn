@@ -7,7 +7,8 @@ import LandingFooter from './LandingFooter';
 function LandingFeed() {
   return (
     <>
-    <div className='w-11/12 md:w-3/4 lg:w-1/2 mt-20 mx-auto space-y-10'>
+    <div className='w-[95%] mx-auto bg-gradient-to-r from-gray-800 via-black to-gray-800'>
+    <div className='w-11/12md:w-3/4 lg:w-1/2 mt-20 mx-auto space-y-10 bg-gradient-to-r from-gray-800 via-black to-gray-800' >
       {/* Post 1 */}
       <div className='bg-white p-6 rounded-lg shadow-lg'>
         <div className='flex items-center mb-4'>
@@ -111,6 +112,8 @@ function LandingFeed() {
       </div>
      
     </div>
+     
+     </div>
      <LandingFooter/>
      </>
   );

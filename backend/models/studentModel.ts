@@ -4,7 +4,7 @@ interface IStudent extends Document {
   username: string;
   email: string;
   password: string;
-  profile?: string;
+  profilePic?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,7 +24,7 @@ const studentSchema: Schema<IStudent> = new Schema({
     type: String,
     required: true,
   },
-  profile: {
+  profilePic: {
     type: String,
   },
 }, {

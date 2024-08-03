@@ -4,9 +4,10 @@ import LandingBody from './LandingBody';
 
 function Landing() {
   return (
-    <div className='relative'>
-      <main className='pt-20'>
-        <LandingBody />
+    <div className=''>
+      <main className=''>
+      <LandingBody />
+
       </main>
     </div>
   );

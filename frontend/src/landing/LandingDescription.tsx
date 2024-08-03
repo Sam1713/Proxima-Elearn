@@ -4,7 +4,8 @@ import LandingFeed from './LandingFeed';
 function LandingDescription() {
   return (
     <>
-      <div className='my-10 flex justify-center'>
+    <div className='bg-gradient-to-r from-gray-800 via-black to-gray-800 w-full mx-auto'>
+      <div className='w-full my-10 flex justify-center bg-gradient-to-r from-gray-800 via-black to-gray-800'>
         <h1 className='w-full md:w-1/3 text-center text-4xl font-bold text-white shadow-lg p-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full'>
           Our Success
         </h1>
@@ -94,7 +95,7 @@ function LandingDescription() {
         </div>
       </div>
       <LandingFeed/>
-      
+      </div>
     </>
   );
 }
