@@ -18,7 +18,7 @@ const FeedSchema: Schema = new Schema({
         url: { type: String, required: true },
         fileType: { type: String, required: true }
     }
-]
+] 
 
 }, {
   timestamps: true // Add this to automatically handle createdAt and updatedAt fields

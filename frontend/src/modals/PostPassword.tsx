@@ -55,7 +55,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
   const handleOtpSubmit = async (values: { otp: string, newPassword: string, confirmPassword: string }) => {
     try {
       setLoading(true);
-      await axios.post('/backend/auth/verifyOtpAndResetPassword', { email, otp: values.otp, newPassword: values.newPassword });
+      await axios.post('/backend/auth/verifyOtpAndResetPassword', { otp: values.otp, newPassword: values.newPassword,confirmPassword:values.confirmPassword });
       setLoading(false);
       Swal.fire('Success!', 'Your password has been reset.', 'success');
       setOpenOtpModal(false);
@@ -180,7 +180,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
               <div className='w-1/2 mx-auto'>
                 <button
                   type='submit'
-                  className='bg-custom-gradient text-white p-2 rounded'
+                  className='bg-white bg-opacity-60 text-white p-2 mt-5 w-full rounded hover:bg-custom-gradient'
                   disabled={loading}
                 >
                   {loading ? (

@@ -31,5 +31,3 @@ export const validationSchema = Yup.object({
   files: Yup.array()
     .of(Yup.mixed().required('File is required'))
 });
-
-

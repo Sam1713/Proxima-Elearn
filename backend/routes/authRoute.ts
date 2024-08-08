@@ -14,8 +14,8 @@ router.post('/forgotPassword',authForgotPassword)
 router.post("/resetPassword/:token", authResetPassword);
 router.post("/google", authWithGoogle)
 router.get('/signout',authSignOut)
-router.put('/updateStudentDetails/:id',authMiddleware,updateStudents.single('profilePic'),updateDetails)
-router.put('/updatePassword/:id',authMiddleware,updatePasswordinStudentProfile)
+router.put('/updateStudentDetails/:id',authMiddleware('student'),updateStudents.single('profilePic'),updateDetails)
+router.put('/updatePassword/:id',authMiddleware('student'),updatePasswordinStudentProfile)
 router.post('/forgotPasswordInStudentProfile',forgotPasswordInStudentProfile)
 router.post('/verifyOtpAndResetPassword',verifyOtpAndResetPassword)
 

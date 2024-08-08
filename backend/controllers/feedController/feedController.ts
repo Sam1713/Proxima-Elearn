@@ -62,7 +62,7 @@ export const feedPost = async (
 
         if (files) {
             const fileUploads = files.map(async (file) => {
-                try {
+                try { 
                     const uploader = await cloudinary.uploader.upload(file.path, {
                         resource_type: 'auto' // Handle both images and videos
                     });

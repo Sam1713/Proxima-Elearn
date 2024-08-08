@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import profileImage from '../../assets/images/OIP (30).jpeg';
-import additionalImage1 from '../../assets/images/1d9UAi.jpg'; // Replace with actual image paths
-import additionalImage2 from '../../assets/images/OIP (30).jpeg'; // Replace with actual image paths
 import { FaRegPlayCircle } from "react-icons/fa";
 import { AiFillLike } from "react-icons/ai";
 import { FaComments } from "react-icons/fa";
@@ -72,7 +69,7 @@ function RecentFeed() {
     setSelectedMediaType(mediaType);
   };
 
-  const determineMediaType = (file:unknown) => {
+  const determineMediaType = (file:unknown)=> {
     // Determine the media type based on the file object
     return file.fileType === 'video' ? 'video' : 'image';
   };

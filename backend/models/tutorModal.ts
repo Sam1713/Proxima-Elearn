@@ -8,6 +8,7 @@ interface TutorTypes{
     password:string;
     bio:string;
     files:Array<string>
+    isApproved?:boolean
 }
 
 const TutorSchema:Schema=new Schema({
@@ -41,8 +42,12 @@ const TutorSchema:Schema=new Schema({
     files:{
         type:[String],
         unique:true
+    },
+    isApproved:{
+        type: Boolean,
+        default: false
     }
-})
+}) 
 const TutorModel = mongoose.model<TutorTypes>('Tutor', TutorSchema);
 
 export default TutorModel;

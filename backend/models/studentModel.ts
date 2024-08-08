@@ -5,6 +5,7 @@ interface IStudent extends Document {
   email: string;
   password: string;
   profilePic?: string;
+  otp?:string
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -27,10 +28,13 @@ const studentSchema: Schema<IStudent> = new Schema({
   profilePic: {
     type: String,
   },
+  otp:{
+   type:String
+  },
 }, {
   timestamps: true, 
 });
 
 const Student = mongoose.model<IStudent>('Student', studentSchema);
 
-export default Student;
+export default Student; 

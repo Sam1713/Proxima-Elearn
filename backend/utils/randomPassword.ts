@@ -10,4 +10,4 @@ export const OTP=(len:number):string=>{
   
     return otp;
   };
-
+ 

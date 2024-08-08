@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signinFailure, signinStart, signinSuccess } from '../../redux/tutor/tutorSlice';
 import { AppDispatch } from '../../redux/store';
 import { Link, useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+
 const initialValues: TutorSigninType = {
   email: '',
   password: '',
@@ -30,13 +32,21 @@ function TutorSignin() {
         console.log("form",formdata)
       console.log('Form submitted');
       console.log(values);
-      const response=await axios.post("/backend/tutor/tutorsignin",values)
+      const response=await axios.post("/backend/tutor/tutorsignin",values,{
+        withCredentials: true,
+        credentials:'include'
+      })
+      localStorage.setItem('tutor_access_token', response.data.token);
+      console.log('Token saved:', localStorage.getItem('access_token'));
       toast.success(response.data.message)
       dispatch(signinSuccess(response.data.rest))
       navigate('/tutorwait')
+      
+
+
       console.log('res',response)
     }catch(error){
-        toast.error("Invalid credential")
+        toast.error(error)
         signinFailure(error)
         console.log(error)
     }},

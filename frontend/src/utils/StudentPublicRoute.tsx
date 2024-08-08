@@ -5,6 +5,7 @@ import { RootState } from '../redux/store';
 
 const StudentPublicRoute: React.FC = () => {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
+
   const token = localStorage.getItem('access_token');
 
   if (currentStudent && token) {

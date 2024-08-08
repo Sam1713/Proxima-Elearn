@@ -14,3 +14,10 @@ export interface SigninType{
 export interface ForgotPasswordType{
     email:string
 }
+
+export interface AdminSignupType{
+  username:string
+  email:string
+  password:string
+  profilePic?:string
+}

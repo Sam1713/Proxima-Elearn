@@ -10,4 +10,4 @@ export interface tutorAuthTypes{
 export interface TutorSigninType{
     email:string;
     password:string
-}
+} 

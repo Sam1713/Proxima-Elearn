@@ -8,7 +8,7 @@ import authMiddleware from '../middleware/jwt';
 const feedFilesUpload = createMulterConfig('./backend/uploads/feedFiles');
 
 
-router.post('/feedPost',authMiddleware,feedFilesUpload.array('files'),feedPost)
-router.get('/getFeed',authMiddleware,getFeedPage)
+router.post('/feedPost',authMiddleware('student'),feedFilesUpload.array('files'),feedPost)
+router.get('/getFeed',authMiddleware('student'),getFeedPage)
 
-export default router
+export default router 

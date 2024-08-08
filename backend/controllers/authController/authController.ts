@@ -8,8 +8,8 @@ import {
   passwordValidator,
   validateConfirmPassword,
 } from "../../utils/validator";
-import {
-  SigninType,
+import { 
+  SigninType, 
   StudentDetails,
   ForgotPasswordType,
 } from "../../types/authTypes";
@@ -107,7 +107,7 @@ export const authSignin = async (
 ): Promise<unknown> => { 
   const { email, password } = req.body;
   try {
-    const user = await Student.findOne({ email }).lean();
+    const user = await Student.findOne({ email }).lean(); 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -180,9 +180,8 @@ export const authWithGoogle = async (
     const user = await Student.findOne({ email }).lean();
 
     if (user) {
-      // User exists, create a JWT token
       const token = jwt.sign(
-        { id: user._id }, // Assuming _id is the identifier in the Student model
+        { id: user._id }, 
         process.env.STUDENT_JWT_SECRET as string
       );
       console.log('toke',token)
@@ -190,11 +189,9 @@ export const authWithGoogle = async (
       const { password: hashedPassword, ...rest } = user;
       res.status(200).json({token,message: "Sign-in successful" });
     } else {
-      // User does not exist, create a new user
-      const genPass = Math.random().toString(36).substring(2); // Generate a random password
+      const genPass = Math.random().toString(36).substring(2); 
       const hashedPassword = bcryptjs.hashSync(genPass, 10);
 
-      // Validate that username is not empty
       if (!trimmedUsername) {
         return res.status(400).json({ message: 'Username is required' });
       }
@@ -206,10 +203,10 @@ export const authWithGoogle = async (
         profilePic,
       });
 
-      await newUser.save(); // Save the new user to the database
+      await newUser.save(); 
 
       const token = jwt.sign(
-        { id: newUser._id }, // Assuming _id is the identifier in the Student model
+        { id: newUser._id }, 
         process.env.STUDENT_JWT_SECRET as string
       );
 
@@ -233,7 +230,6 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
   try {
     const userId = req.params.id;
    console.log('user',userId)
-    // Validate input data
     const { username, email } = req.body;
     if (username && !userNameValidator(username)) {
       return res.status(400).json({ message: "Username is not valid" });
@@ -243,7 +239,6 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
     }
     console.log('sfds')
 
-    // Find the student by ID
     const student = await Student.findById(userId);
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
@@ -261,46 +256,41 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
       const result = await cloudinary.uploader.upload(req.file.path);
       student.profilePic = result.url; // Save the Cloudinary URL in the DB
     }
-    // Save the updated student
     await student.save();
 
     res.status(200).json({ message: 'Student details updated successfully', student });
   } catch (error) {
-    next(error);  // Pass errors to the error-handling middleware
+    next(error);  
   }
 };
 
-// Adjust the path to your model
 
 export const updatePasswordinStudentProfile = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
   try {
     console.log('Request body:', req.body);
     
-    // Extract user ID from request object
-    const userId = req.userId;  // This assumes userId is set by the auth middleware
+    const userId = req.userId; 
     console.log('User ID:', userId);
     
     const { currentPassword, newPassword } = req.body;
 
-    // Find the user by ID
     const user = await Student.findById(userId);
+    console.log('user',user)
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if the current password matches
     const isMatch = await bcryptjs.compare(currentPassword, user.password);
-    
+    console.log('match',isMatch)
     if (!isMatch) {
       return res.status(401).json({ message: 'Current password is incorrect' });
     }
+    console.log('user',user)
 
-    // Hash the new password
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(newPassword, salt);
 
-    // Update the password in the database
     user.password = hashedPassword;
     await user.save();
 
@@ -312,9 +302,20 @@ export const updatePasswordinStudentProfile = async (req: Request, res: Response
 };
 
 
-export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
   console.log('req.bod',req.body)
   const {email}=req.body
+
+  const user = await Student.findOne({ email });
+  
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+   user.otp=''
+
+    await user.save()
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -322,12 +323,15 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       pass: process.env.APP_PASSWORD,
     },
   });
-console.log(OTP(6))
+  const randomOtp=OTP(6)
+  user.otp=randomOtp
+  await user.save()
+  console.log('random',randomOtp)
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
     subject: "Password Reset Request",
-    text: `You requested for a password reset. Use this otp to reset your password: ${OTP(6)}. The token is valid for 10 minutes.`,
+    text: `You requested for a password reset. Use this otp to reset your password: ${randomOtp}. The token is valid for 10 minutes.`,
   };
 
   await transporter.sendMail(mailOptions);
@@ -339,10 +343,37 @@ console.log(OTP(6))
 }
 
 
-export const verifyOtpAndResetPassword=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
-  console.log(req.body)
-
-  const {otp,newPassword,confirmPassword}=req.body
-
+  export const verifyOtpAndResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+    console.log(req.body);
   
-}
+    const { otp,newPassword, confirmPassword } = req.body;
+    
+    try {
+      console.log('OTP:', otp);
+  
+      const user = await Student.findOne({ otp });
+      console.log('Found user:', user);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found or invalid OTP' });
+      }
+  
+      if (confirmPassword !== newPassword) {
+        return res.status(400).json({ error: 'Password mismatch' });
+      }
+  
+      const hashNewPass = bcryptjs.hashSync(newPassword, 10);
+      console.log('Hashed new password:', hashNewPass);
+  
+      user.password = hashNewPass;
+      user.otp = undefined; // or null
+  
+      const savedUser = await user.save();
+      console.log('Saved user:', savedUser);
+  
+      return res.status(200).json({ message: 'Password has been successfully reset.' });
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      return res.status(500).json({ error: 'An error occurred while resetting the password.' });
+    }
+  };
