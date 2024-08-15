@@ -17,6 +17,8 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import cloudinary from "../../utils/cloudinaryConfig";
 import { OTP } from "../../utils/randomPassword";
+import CourseModel from "../../models/courseModel";
+import mongoose from "mongoose";
 
 export const auth = async (
   req: Request<{}, {}, StudentDetails>,
@@ -261,6 +263,7 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
     res.status(200).json({ message: 'Student details updated successfully', student });
   } catch (error) {
     next(error);  
+    
   }
 };
 
@@ -366,7 +369,7 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       console.log('Hashed new password:', hashNewPass);
   
       user.password = hashNewPass;
-      user.otp = undefined; // or null
+      user.otp = undefined; 
   
       const savedUser = await user.save();
       console.log('Saved user:', savedUser);
@@ -377,3 +380,81 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       return res.status(500).json({ error: 'An error occurred while resetting the password.' });
     }
   };
+
+  export const GetAllCourses=async(req:Request,res:Response)=>{
+    console.log('reached...')
+    const courses = await CourseModel.aggregate([
+      {
+        $lookup: {
+          from: 'tutors', 
+          localField: 'tutorId',
+          foreignField: '_id',
+          as: 'tutorDetails'
+        }
+      },
+      {
+        $unwind: { 
+          path: '$tutorDetails',
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $project: { 
+          id:1,
+          title: 1,
+          category: 1,
+          coverImageUrl: 1,
+          price:1,
+          description:1,
+          'tutorDetails.tutorname': 1,
+          'tutorDetails.bio': 1
+        }
+      }
+    ]);
+
+    console.log('Courses with tutor details:', courses);
+    res.json({courses})
+  }
+
+  export const getSingleCourse=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+    try{
+    const courseId=req.params.id
+    console.log('reached..',courseId)
+    const [course]=await CourseModel.aggregate([{
+      $match: { _id: new mongoose.Types.ObjectId(courseId) } 
+      },
+      {
+        $lookup:{
+          from:'tutors',
+          localField:'tutorId',
+          foreignField:'_id',
+          as:'tutorDetails'
+        }
+      },
+      {
+        $unwind:{
+          path: '$tutorDetails', 
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
+        $project:{
+          id:1,
+          title:1,
+          price:1,
+          category:1,
+          AboutCourse:1,
+          lessons:1,
+          coverImageUrl:1,
+          description:1,
+          'tutorDetails.tutorname':1,
+          'tutorDetails.bio':1
+        }
+      }
+])
+console.log('courrrrr',course)
+    res.json({message:"Course details recieved",data:course})
+}catch(error){
+  res.json(error)
+}
+  }

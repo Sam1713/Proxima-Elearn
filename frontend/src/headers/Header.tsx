@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 import image from '../assets/images/OIP (28).jpeg'; // Adjusted path
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { signout } from '../redux/student/studentSlice';
-import { AppDispatch } from '../redux/store';
+import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
 
-function Header() {
+function StudentHeader() {
   const [isOpen, setToggle] = useState(false);
-  const currentStudent = useSelector((state:unknown) => state.student.currentStudent); // Adjust according to your state structure
-  const dispatch=useDispatch<AppDispatch>()
+  const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
+  const dispatch = useDispatch<AppDispatch>();
+
   const toggleMenu = () => {
     setToggle(!isOpen);
   };
-  const handleSignout=async()=>{
-    try{
+
+  const handleSignout = async () => {
+    try {
       localStorage.removeItem('access_token');
-
-    await axios.get("/backend/auth/signout")
-
-    dispatch(signout())
-    dispatch(clearFeed())
-
-    }catch(error){
-      console.log(error)
+      await axios.get("/backend/auth/signout");
+      dispatch(signout());
+      dispatch(clearFeed());
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
+
   return (
-    <header className="fixed left-0 z-10 h-auto  w-full flex flex-col sm:flex-row justify-between items-center shadow-md p-4 bg-transparent shadow-lg">
+    <header className="fixed left-0 z-10 h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center">
           <img className="w-10 h-10 mx-4 rounded-full" src={image} alt="Landing" />
@@ -44,17 +44,17 @@ function Header() {
       <nav className={`w-full ${isOpen ? 'block' : 'hidden'} sm:flex mt-4 sm:mt-0`}>
         <ul className="flex flex-col sm:flex-row justify-end w-full text-white">
           <li className="mx-5">
-          <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home
-            </Link>          </li>
+            <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
+          </li>
           <li className="mx-5">
-          <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Courses
-          </Link>           </li>
+            <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">My Courses</Link>
+          </li>
           <li className="mx-5">
-          <Link to='/tutorsignup' className="hover:text-blue-300 transition-colors duration-300">Tutor Signup
-          </Link>           </li>
+            <Link to='/courseDetail' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
+          </li>
           <li className="mx-5">
-            <Link onClick={handleSignout}to='/signup' className="hover:text-blue-300 transition-colors duration-300">
-              {currentStudent ? "Signout" : "Student Signup"}
+            <Link onClick={handleSignout} to='/signup' className="hover:text-blue-300 transition-colors duration-300">
+              Signout
             </Link>
           </li>
         </ul>
@@ -63,4 +63,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default StudentHeader;

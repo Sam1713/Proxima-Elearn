@@ -4,4 +4,4 @@ import { formatDistanceToNow } from 'date-fns';
 export const formatTimestamp = (timestamp: Date): string => {
   return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
 };
-   
+     

@@ -6,9 +6,11 @@ import StudentProfile from '../components/studentAuth/StudentProfile'; // Import
 const Layout: React.FC = () => {
   return (
     <div className='md:flex w-[100%] bg-custom-gradient min-h-screen '>
+      <div className='md:w-[20%]'>
       <StudentProfile /> {/* Sidebar */}
+      </div>
       
-      <main className="mx-2 bg-custom-gradient rounded-xl md:mt-20 md:w-[80%] "> {/* Main content area */}
+      <main className="bg-custom-gradient rounded-xl md:mt-20 md:w-[75%] ml-[4%] "> {/* Main content area */}
         <Outlet /> {/* Renders the matched child route */}
       </main>
       </div>

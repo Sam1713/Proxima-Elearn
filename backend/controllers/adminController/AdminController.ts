@@ -96,7 +96,6 @@ export const GetTutorDetail=async(req:Request,res:Response,next:NextFunction):Pr
   try{
    const tutor=await TutorModel.findById(tutorId).lean()
    console.log('tutor',tutor)
-
     const { password, countrycode, ...rest } = tutor as { password?: string; countrycode?: string; [key: string]: any };
    console.log('rest',rest)
    return res.json(rest)

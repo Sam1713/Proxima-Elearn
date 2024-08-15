@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdManageAccounts, MdMenu, MdClose } from "react-icons/md";
 import { BiSolidVideos } from "react-icons/bi";
 import { PiBooks } from "react-icons/pi";
@@ -7,6 +7,7 @@ import { IoIosWallet } from "react-icons/io";
 import { GiTeacher } from "react-icons/gi";
 import StudentProfileDetails from './StudentProfileDetails';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const StudentProfile: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State for sidebar visibility
@@ -18,10 +19,11 @@ const StudentProfile: React.FC = () => {
     setActiveItem(item); // Set the clicked item as active
     // Navigate to the corresponding page if needed
   };
+  
 
   return (
     <>
-    <div className='font-poppins  md:w-[25%]  md:py-24 md:px-8 max-w-full  md:min-h-screen  transition-opacity duration-50'>
+    <div className='fixed z-10 font-poppins  md:w-[25%]  md:py-24 mt-5 md:px-8 max-w-full  md:min-h-screen  transition-opacity duration-50'>
       <div className='flex  flex-col md:flex-row gap-4'>
         {/* Toggle button for mobile view */}
         <button
@@ -32,7 +34,7 @@ const StudentProfile: React.FC = () => {
         </button>
 
         <div
-          className={`w-full md:w-full flex  md:flex-col md:overflow-auto overflow-scroll gap-3 md:gap-4 p-4 bg-opacity-30 rounded-lg bg-white transition-transform duration-300 md:transform-none ${
+          className={`w-full md:w-full flex  md:flex-col md:overflow-auto overflow-scroll gap-3 md:gap-4 p-4 md:bg-opacity-30 rounded-lg bg-black md:bg-white transition-transform duration-300 md:transform-none ${
             isSidebarOpen ? 'transform translate-x-0' : 'transform -translate-x-full'
           }`}
         >

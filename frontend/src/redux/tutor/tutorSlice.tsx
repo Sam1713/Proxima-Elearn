@@ -3,7 +3,8 @@ import { TutorSigninType } from "../../types/TutorTypes";
 export interface TutorState {
     currentTutor: Tutor | null;
     tutorApproval:boolean;
-    updateBasicTutor:updateBasic|null
+    updateBasicTutor:updateBasic|null,
+    newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
 }
@@ -14,7 +15,9 @@ export interface Tutor {
     email?:string;
     phonenumber?:string;
     bio?:string,
-    isApproved?:boolean
+    isApproved?:boolean,
+    license?:false
+    files?:[]
     // Add other properties of Student as needed
 }
 export interface updateBasic{
@@ -23,10 +26,14 @@ export interface updateBasic{
    email?:string;
    phonenumber?:string
 }
+export interface UpdatedBio{
+    bio?:string
+}
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
     updateBasicTutor:null,
+    newBio:null,
     loading:false,
     error:""
 }
@@ -54,12 +61,21 @@ const tutorSlice=createSlice({
             state.currentTutor=action.payload;
             state.loading=false
             state.error=null
+        },
+        updateBio:(state,action:PayloadAction<Tutor>)=>{
+            state.currentTutor=action.payload
+        },
+        updateFiles:(state,action:PayloadAction<Tutor>)=>{
+            state.currentTutor=action.payload
+        },
+        licenseAgreement:(state,action:PayloadAction<Tutor>)=>{
+            state.currentTutor=action.payload
         }
 
         
     }
 })
 
-export const { signinStart, signinSuccess, signinFailure,isTutorApproved,updateSuccessTutor } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

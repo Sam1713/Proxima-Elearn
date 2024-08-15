@@ -1,9 +1,8 @@
 // TutorLayout.tsx
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from '../headers/Header'; // Adjust the path as necessary
 import TutorSidebar from './TutorSidebar';
-
+import TutorHeader from '../headers/TutorHeader'
 const TutorLayout: React.FC = () => {
   const location = useLocation();
   
@@ -14,7 +13,7 @@ const TutorLayout: React.FC = () => {
 
   return (
     <div className='bg-custom-gradient '>
-      <Header />
+      <TutorHeader />
       <div className='md:flex'>
         {showSidebar && <TutorSidebar />} {/* Conditionally render the sidebar */}
         <div className={`w-[100%] ${showSidebar ? 'md:pt-16' : ''}`}> {/* Adjust margin if sidebar is present */}

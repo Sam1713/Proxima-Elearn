@@ -16,7 +16,7 @@ export const sendEmail = (to: string, subject: string, text: string) => {
     try {
       const mailOptions = {
         from: process.env.EMAIL,
-        to,
+        to, 
         subject,
         text,
       };

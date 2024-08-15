@@ -1,5 +1,5 @@
 import express from 'express';
-import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword } from '../controllers/authController/authController';
+import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword,GetAllCourses,getSingleCourse } from '../controllers/authController/authController';
 import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 
@@ -8,7 +8,7 @@ const updateStudents= createMulterConfig('./backend/uploads/updateStudents');
 
 const router = express.Router();
 
-router.post('/signup',auth);
+router.post('/signup',auth); 
 router.post('/signin',authSignin)
 router.post('/forgotPassword',authForgotPassword)
 router.post("/resetPassword/:token", authResetPassword);
@@ -18,6 +18,7 @@ router.put('/updateStudentDetails/:id',authMiddleware('student'),updateStudents.
 router.put('/updatePassword/:id',authMiddleware('student'),updatePasswordinStudentProfile)
 router.post('/forgotPasswordInStudentProfile',forgotPasswordInStudentProfile)
 router.post('/verifyOtpAndResetPassword',verifyOtpAndResetPassword)
-
+router.get('/getAllCourses',GetAllCourses)
+router.get('/singleCourseDetail/:id',getSingleCourse)
   
 export default router;

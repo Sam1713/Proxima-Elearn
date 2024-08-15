@@ -9,6 +9,7 @@ interface TutorTypes{
     bio:string;
     files:Array<string>
     isApproved?:boolean
+    license?:boolean
 }
 
 const TutorSchema:Schema=new Schema({
@@ -46,6 +47,10 @@ const TutorSchema:Schema=new Schema({
     isApproved:{
         type: Boolean,
         default: false
+    },
+    license:{
+        type:Boolean,
+        default:false
     }
 }) 
 const TutorModel = mongoose.model<TutorTypes>('Tutor', TutorSchema);

@@ -149,7 +149,7 @@ const approveTutor = async () => {
       </div>
 
       <BioModal isOpen={open} onClose={closeBio} />
-      <FileModal isOpenFile={openfile} onCloseFile={closeFile}/>
+      <FileModal isOpen={openfile} onCloseFile={closeFile}/>
       
     </div>
     

@@ -4,6 +4,7 @@ import studentReducer from './student/studentSlice';
 import tutorReducer from './tutor/tutorSlice'
 import feedReducer from './feed/feedSlice'
 import adminReducer from './admin/adminSlice'
+import courseReducer from './courses/courseSlice'
 import {persistReducer} from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
 import persistStore from 'redux-persist/es/persistStore';
@@ -12,7 +13,8 @@ const rootReducer=combineReducers({
     student:studentReducer,
     tutor:tutorReducer,
     feed:feedReducer,
-    admin:adminReducer
+    admin:adminReducer,
+    course:courseReducer
 })
 
 const persistConfig={

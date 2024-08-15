@@ -14,5 +14,5 @@ export default function TutorPrivateRoute() {
   }
 
   return <Outlet />;
-}
+} 
 

@@ -9,6 +9,8 @@ import authRoute from './routes/authRoute'
 import tutorauthRoute from './routes/tutorauthRoute'
 import feedStudentRoute from './routes/feedStudentRoute'
 import adminRoute from './routes/adminRoute'
+import courseRoute from './routes/courseRoute'
+import enrollementRoute from './routes/enrollementRoute'
 dotenv.config();
 
 const mongoUri = process.env.MONGO as string;
@@ -50,6 +52,8 @@ app.use('/backend/auth',authRoute)
 app.use('/backend/tutor',tutorauthRoute)
 app.use('/backend/feed',feedStudentRoute)
 app.use('/backend/admin',adminRoute)
+app.use('/backend/course',courseRoute)
+app.use('/backend/enroll',enrollementRoute)
 // app.use((err:any,req:Request,res:Response,next:any)=>{
 //     const statusCode:number=err.statusCode||500;
 //     const message:string=err.message||'Internal Server Error'

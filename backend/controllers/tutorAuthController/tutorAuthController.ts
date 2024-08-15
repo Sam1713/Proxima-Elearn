@@ -188,3 +188,100 @@ export const updateTutor=async(req:Request<{},{},UpdateDetailsTutor>,res:Respons
     }
   } 
   
+interface BioType{
+  bio:string
+}
+export const updateBio = async (req: Request<{}, {}, BioType>, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('req.body:', req.body);
+    const { bio } = req.body;
+    const tutorId = req.userId; // Ensure req.userId is set properly (e.g., via authentication middleware)
+
+    if (!bio || !tutorId) {
+      res.status(400).json({ error: 'Bio and tutor ID are required' });
+      return;
+    }
+
+    // Update the tutor's bio
+    const updateTutor = await Tutor.findByIdAndUpdate(
+      tutorId,
+      { $set: { bio } },
+      { new: true } // Return the updated document
+    ).lean();
+
+    if (!updateTutor) {
+      res.status(404).json({ error: 'Tutor not found' });
+      return;
+    }
+
+    // Omit sensitive fields if needed
+    const { password, ...rest } = updateTutor;
+    console.log('ip',rest)
+    
+    res.status(200).json(rest); // Send the updated tutor data back to the client
+
+  } catch (error) {
+    console.error('Error updating bio:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+interface fileType{
+  files:string[]|null
+}
+export const updateFiles=async(req:Request<{},{},fileType>,res:Response,next:NextFunction):Promise<any>=>{
+  try{
+    const tutorId=req.userId
+    const files = req.files as Express.Multer.File[] | undefined;
+    if(!files || files.length==0 || files.length>10){
+      return res.json('Please check your files')
+    }
+    let fileUrls: string[] = [];
+
+    if (files) { 
+      const fileUploads = files.map(async (file) => {
+        const result = await cloudinary.uploader.upload(file.path);
+        return result.url; 
+      });
+
+      fileUrls = await Promise.all(fileUploads);
+    }
+
+  const tutor=await TutorModel.findByIdAndUpdate(
+    tutorId,
+      { $push: { files: { $each: fileUrls } } },
+      { new: true } // Option to return the updated document
+    ).lean();
+   console.log('updat',tutor)
+    if (!tutor) {
+      return res.status(404).json({ message: 'Tutor not found.' });
+    }
+    const {password,...rest}=tutor;
+    res.json({message:'Successfully added files',rest})
+
+}catch(error){
+  console.log(error)
+}
+
+}
+
+export const acceptLicense=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
+  console.log('req')
+  const tutorId=req.userId
+  if (!tutorId) {
+    res.status(400).json({ message: 'Tutor ID is missing from request' });
+    return;
+}
+  const tutor=await TutorModel.findByIdAndUpdate(
+    tutorId,
+    {license:true},
+    {new:true}
+  ).lean()
+  console.log('tut',tutor)
+  if (!tutor) {
+    res.status(404).json({ message: 'Tutor not found' });
+    return;
+}
+const {password,...rest}=tutor
+res.json({message:"Aggrement accepted successfully",rest})
+} 
