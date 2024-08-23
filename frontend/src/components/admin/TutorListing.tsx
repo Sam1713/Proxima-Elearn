@@ -73,7 +73,9 @@ const TutorListing = () => {
     console.log(error)
   }
   }
-
+ const handleCoursesClick=(id:string)=>{
+  navigate(`/admin/tutorCourses/${id}`)
+ }
   const columns = useMemo(
     () => [
       {
@@ -98,13 +100,25 @@ const TutorListing = () => {
         Filter: () => null, // Optional: Disable column filtering if needed
       },
       {
-        Header: 'Actions',
+        Header: 'Validate',
         Cell: ({ row }: { row: { original: { _id: string } } }) => (
           <button
             onClick={() => handleValidateClick(row.original._id)}
             className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
           >
             Validate
+          </button>
+        ),
+        disableFilters: true, // Disable filtering for this column
+      },
+      {
+        Header: 'Courses',
+        Cell: ({ row }: { row: { original: { _id: string } } }) => (
+          <button
+            onClick={() => handleCoursesClick(row.original._id)}
+            className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
+          >
+            Courses
           </button>
         ),
         disableFilters: true, // Disable filtering for this column

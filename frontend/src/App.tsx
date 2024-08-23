@@ -27,6 +27,14 @@ import Courses from './components/studentCourse/Courses';
 import SingleCourseDetail from './components/studentCourse/SingleCourseDetail';
 import Checkout from './components/studentCourse/Checkout';
 import OrderedCourse from './components/studentCourse/OrderedCourse';
+import AdminCategory from './components/admin/AdminCategory';
+import PaymentInfo from './components/studentCourse/PaymentInfo';
+import GetTutorCourses from './components/courses/GetTutorCourses';
+import GetTutorCourseDetail from './components/courses/GetTutorCourseDetail';
+import PurchasedStudent from './components/courses/PurchasedStudent';
+import AllCourses from './components/studentCourse/AllCourses';
+import TutorCourses from './components/admin/TutorCourses';
+import TutorCourseDetails from './components/admin/TutorCourseDetails';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -51,12 +59,14 @@ function App() {
                 <Route path="/studentProfile" element={<StudentProfileDetails />} />
                 <Route path="/myStudent" element={<Mystudent />} />
                 <Route path='/orderedCourses'element={<OrderedCourse/>}/>
+                <Route path='/getPaymentDetails'element={<PaymentInfo/>}/>
                 </Route>
                 <Route path="/feedHome" element={<FeedHome />} />
                 <Route path='/courseDetail/:id'element={<CourseDetails/>}/>
                 <Route path='/courses'element={<Courses/>}/>
                 <Route path='/singleCourseDetail/:id'element={<SingleCourseDetail/>}/>
                 <Route path='/checkout'element={<Checkout/>}/>
+                <Route path='/allCourses'element={<AllCourses/>}/>
             </Route>
             <Route element={<StudentPublicRoute />}>
             <Route path="/" element={<Landing />} />
@@ -76,6 +86,9 @@ function App() {
              <Route path='/tutorhome'element={<TutorHome/>}/>
              <Route path='/tutorprofile'element={<TutorProfile/>}/>
              <Route path='/coursepage'element={<CoursePage/>}/>
+             <Route path='/getTutorCourses'element={<GetTutorCourses/>}/>
+             <Route path='/getTutorCourseDetail/:id'element={<GetTutorCourseDetail/>}/>
+             <Route path='/purchasedStudents'element={<PurchasedStudent/>}/>
              </Route>   
 
              </Route>  
@@ -89,6 +102,9 @@ function App() {
               <Route path='/admin/tutorlist' element={<TutorListing />} />
               <Route path='/admin/tutorDetails/:id' element={<TutorDetails />} />
               <Route path='/admin/userlisting'element={<UserListing/>}/>
+              <Route path='/admin/category'element={<AdminCategory/>}/>
+              <Route path='/admin/tutorCourses/:id'element={<TutorCourses/>}/>
+              <Route path='/admin/tutorCourseDetail/:id'element={<TutorCourseDetails/>}/>
 
             </Route>
           </Route>

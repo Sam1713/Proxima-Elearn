@@ -8,12 +8,14 @@ export interface Feed {
 
 interface FeedDetails {
   feeds:Feed[]
+  feed:Feed|null
   loading: boolean;
   error: string | null;
 }
 
 const initialState: FeedDetails = {
   feeds:[],
+  feed:null,
   loading: false,
   error: null,
 };
@@ -42,9 +44,12 @@ const feedSlice = createSlice({
       state.feeds= [];
       state.error = null;
     },
+    setCurrentFeed(state,action:PayloadAction<Feed>){
+      state.feed=action.payload
+    }
   },
 });
 
-export const { setFeeds, setLoading, setError,clearFeed } = feedSlice.actions;
+export const { setFeeds, setLoading, setError,clearFeed,setCurrentFeed } = feedSlice.actions;
 
 export default feedSlice.reducer;

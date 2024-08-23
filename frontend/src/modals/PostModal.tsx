@@ -7,13 +7,15 @@ import { validationSchema } from '../utils/feedValidation/FeedValidation';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-
+import { setCurrentFeed } from '../redux/feed/feedSlice';
+import api from '../components/API/Api'
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
+  fetchFeeds:()=>void
 }
 
-const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
+const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose,fetchFeeds }) => {
   const dispatch=useDispatch()
   if (!isOpen) return null;
 
@@ -45,9 +47,14 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
           }
           values.files.forEach(file => formData.append('files', file));
            try{
-                 const response=await axios.post('/backend/feed/feedPost',formData)
+                 const response=await api.post('/backend/feed/feedPost',formData,{
+                  headers:{
+                    'X-Token-Type':'student'
+                  }
+                 })
                  dispatch(setCurrentFeed(response.data.data))
                  console.log(response)
+                 fetchFeeds()
            }catch(error){
             console.log(error)
            } 

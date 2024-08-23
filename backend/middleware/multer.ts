@@ -48,17 +48,15 @@ const createMulterConfig = (destination: string) => {
     },
   });
 
-  // File filter function to limit file types
   const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/mov'];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type') as any, false); // Casting to any to bypass TypeScript type issue
+      cb(new Error('Invalid file type') as any, false); 
     }
   };
 
-  // Set file size limit (e.g., 10MB)
   const limits = {
     fileSize: 10 * 1024 * 1024, // 10MB
   };

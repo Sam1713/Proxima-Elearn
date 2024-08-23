@@ -1,11 +1,13 @@
-import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useGlobalFilter, useFilters, usePagination, useSortBy } from 'react-table';
 import { FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { adminUsersFetch } from '../../redux/admin/adminSlice';
 import { RootState } from '../../redux/store';
-import userIcon from '../../assets/images/OIP (32).jpeg'
+import userIcon from '../../assets/images/OIP (32).jpeg';
+import api from '../API/Api';
+import { signInSuccess } from '../../redux/student/studentSlice';
+import Swal from 'sweetalert2';
 
 const GlobalFilterComponent = ({ globalFilter, setGlobalFilter }) => (
   <span className='relative'>
@@ -19,88 +21,132 @@ const GlobalFilterComponent = ({ globalFilter, setGlobalFilter }) => (
   </span>
 );
 
-function UserListing() {
-  const [users, setUsers] = useState([]);
+function UserListing() { 
+  const dispatch = useDispatch();
+  const adminUsers = useSelector((state: RootState) => state.admin.adminUsers);
+  const currentUser = useSelector((state: RootState) => state.student.currentStudent);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const dispatch=useDispatch()
-  const adminUsers=useSelector((state:RootState)=>state.admin.adminUsers)
-
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem('admin_access_token');
-      console.log('tokenTutor', token);
-
       try {
-        const response = await axios.get('/backend/admin/userlisting', {
+        const response = await api.get('/backend/admin/userlisting', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'X-Token-Type': 'admin',
           },
-          withCredentials: true,
         });
-        dispatch(adminUsersFetch(response.data))
-        console.log(response.data);
+        dispatch(adminUsersFetch(response.data));
       } catch (error) {
         setError(error);
-        console.log(error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, []); 
+  }, [dispatch]);
 
-  const handleValidateClick = (id) => {
-    // Handle the block action
-    console.log(`Blocking user with ID: ${id}`);
+  const handleValidateClick = async (id: string, isBlocked: boolean) =>
+     {
+      const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'Do you want to approve this tutor?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, approve it!',
+    cancelButtonText: 'Cancel'
+  });
+
+  // Check user's response
+  if (result.isConfirmed) {
+    try {
+      // Optimistically update the local state
+    
+      const updatedUsers = adminUsers.map(user => 
+        user._id === id ? { ...user, isBlocked: !isBlocked } : user
+      );
+      dispatch(adminUsersFetch(updatedUsers));
+
+      // Make the API call
+      const response = await api.put(`/backend/admin/blockOrUnblock/${id}`, {}, {
+        headers: {
+          'X-Token-Type': 'admin',
+        },
+      });
+
+      dispatch(signInSuccess(response.data.user));
+      Swal.fire({
+        title: 'Approved!',
+        text: 'The tutor has been approved.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+    } 
+  
+    // Optionally, dispatch any required actions here
+  catch (error) {
+    console.error('Error approving tutor:', error);
+    Swal.fire({
+      title: 'Error!',
+      text: 'Failed to approve the tutor. Please try again.',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  }
+}
   };
+  console.log('curr',currentUser)
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'Index',
-        id: 'index',
-        disableFilters: true,
-        Cell: ({ row }) => row.index + 1,
-      },
-      {
-        Header: 'UserName',
-        accessor: 'username',
-        Filter: () => null,
-      },
-      {
-        Header: 'Email',
-        accessor: 'email',
-        Filter: () => null,
-      },
-      {
-        Header: 'Profile Pic',
-        accessor: 'profilePic',
-        Filter: () => null,
-        Cell: ({ value }) => <img
-        src={value || userIcon}
-        alt="Profile"
-        className='rounded-full'
-        style={{ width: 50, height: 50 }}
-      />,
-      },
-      {
-        Header: 'Actions',
-        Cell: ({ row }) => (
+  const columns = useMemo(() => [
+    {
+      Header: 'Index',
+      id: 'index',
+      disableFilters: true,
+      Cell: ({ row }) => row.index + 1,
+    },
+    {
+      Header: 'UserName',
+      accessor: 'username',
+      Filter: () => null,
+    },
+    {
+      Header: 'Email',
+      accessor: 'email',
+      Filter: () => null,
+    },
+    {
+      Header: 'Profile Pic',
+      accessor: 'profilePic',
+      Filter: () => null,
+      Cell: ({ value }) => (
+        <img
+          src={value || userIcon}
+          alt="Profile"
+          className='rounded-full'
+          style={{ width: 50, height: 50 }}
+        />
+      ),
+    },
+    {
+      Header: 'Actions',
+      Cell: ({ row }) => {
+        const user = row.original;
+        return (
           <button
-            onClick={() => handleValidateClick(row.original._id)}
+            onClick={() => handleValidateClick(user._id, user.isBlocked)}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
-            Block
+            {user.isBlocked ? 'Unblock' : 'Block'}
           </button>
-        ),
-        disableFilters: true,
+        );
       },
-    ],
-    []
-  );
+      disableFilters: true,
+    },
+  ], [adminUsers]);
 
   const data = useMemo(() => adminUsers, [adminUsers]);
 
@@ -110,20 +156,18 @@ function UserListing() {
     headerGroups,
     page,
     prepareRow,
-    state: { pageIndex, pageSize, globalFilter: tableGlobalFilter },
+    state: { pageIndex, globalFilter: tableGlobalFilter },
     setGlobalFilter: setTableGlobalFilter,
     canPreviousPage,
     canNextPage,
     pageOptions,
-    gotoPage,
-    pageCount,
     nextPage,
     previousPage,
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 4 }, 
+      initialState: { pageIndex: 0, pageSize: 4 },
     },
     useGlobalFilter,
     useFilters,

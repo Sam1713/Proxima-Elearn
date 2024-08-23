@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import oipImage from "../../assets/images/1175458.jpg";
 import { SigninType } from "../../types/Register";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,32 +6,37 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { override, color } from "../../utils/ClipLoader";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../../redux/student/studentSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
+import api from '../API/Api';
 
 const Signin: React.FC = () => {
   const [form, setForm] = useState<SigninType>({ email: "", password: "" });
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: any) => state.student);
   const dispatch = useDispatch<AppDispatch>();
-
+  const location = useLocation(); // Get the location object
+ const currentStudent=useSelector((state:RootState)=>state.student.currentStudent)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
-
+console.log('currentStudent?.isBlocked',currentStudent)
+ useEffect(()=>{
+ if(currentStudent?.isBlocked){
+      toast.error( "Your account has beenn.");
+ }
+   
+ },[currentStudent?.isBlocked])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       dispatch(signInStart());
-      const response = await axios.post("/backend/auth/signin", form, {
-        withCredentials: true,
-        credentials:'include'
-      });
+      const response = await api.post("/backend/auth/signin", form);
       localStorage.setItem('access_token', response.data.token);
       console.log('Token saved:', localStorage.getItem('access_token'));
-
       
       dispatch(signInSuccess(response.data.rest));
       toast.success(response.data.message);
@@ -40,7 +45,17 @@ const Signin: React.FC = () => {
       console.error('Error caught:', error);
       dispatch(signInFailure(error));
       if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.message || "An error occurred");
+        const { status, data } = error.response;
+
+        // Check if the error is due to the user being blocked
+        if (status === 403 && data.error === 'UserBlocked') {
+          toast.error("Your accounas been blocked. Please sign in again.");
+          // Optionally clear the token and redirect
+          localStorage.removeItem('access_token');
+          navigate('/signin');
+        } else {
+          toast.error(  "An error occurred");
+        }
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }

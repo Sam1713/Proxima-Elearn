@@ -7,6 +7,9 @@ import jwt from 'jsonwebtoken'
 import TutorModel from "../../models/tutorModal";
 import nodemailer from "nodemailer";
 import Student from "../../models/studentModel";
+import CategoryeModel from "../../models/categoryModel";
+import CourseModel from "../../models/courseModel";
+import mongoose from "mongoose";
 
 export const AdminSignup = async (req: Request<{},{},AdminSignupType>, res: Response): Promise<unknown> => {
   console.log('Request Body:', req.body);
@@ -204,3 +207,148 @@ export const AdminUserListing=async(req:Request,res:Response,next:NextFunction):
     console.log(error)
   }
 }
+
+export const AdminBlockOrUnblock=async(req:Request,res:Response):Promise<void>=>{
+  const userId=req.params.id
+  console.log('urder',userId)
+
+  const user=await Student.findById(userId)
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+  console.log('blocked',user)
+  user.isBlocked=!user?.isBlocked
+  await user.save()
+  console.log('user',user)
+  if(user.isBlocked){
+    res.json({message:"Sorry your Account has been blocked",user})
+  }else{
+    res.json({message:"Congrats,Your Block status changed",user})
+
+  }
+}
+
+export const addCategory=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  try{
+  console.log('cate',req.body)
+  const {categoryName,catDescription}=req.body
+  if (!categoryName || !catDescription) {
+    res.status(400).json({ message: 'Category Name and Description are required.' });
+    return;
+  }
+
+  const newCategory = new CategoryeModel({
+    categoryName,
+    catDescription,
+  });
+
+  await newCategory.save()
+    res.status(201).json({ message: 'Category added successfully', category: newCategory });
+  } catch (error) {
+    console.error('Error adding category:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+    next(error);
+  }
+  
+
+
+}
+
+
+export const getAllCategories=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('hello')
+try{
+  const getAllCategory=await CategoryeModel.find()
+  if(!getAllCategory){
+    res.status(404).json('Categories not found')
+  }
+  res.json(getAllCategory)
+}catch(error){
+  res.json(error)
+}
+}
+
+
+// export const deleteCategory=async(req:Request,res:Response):Promise<void>=>{
+//   const id=req.params.id
+//   console.log('id',id)
+// }
+
+export const updateCategory=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  try{
+  const id=req.params.id
+  console.log('id',id)
+  console.log('req',req.body)
+  const { categoryName, catDescription } = req.body;
+
+  // Validate that both categoryName and catDescription are provided
+  if (!categoryName || !catDescription) {
+    res.status(400).json({ message: 'Both categoryName and catDescription are required' });
+    return;
+  }
+  const updatedCategory = await CategoryeModel.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        categoryName,
+        catDescription
+      }
+    },
+    { new: true } 
+  );
+  if (!updatedCategory) {
+    res.status(404).json({ message: 'Category not found' });
+    return;
+  }
+  res.status(200).json({ message: 'Category updated successfully', category: updatedCategory });
+
+  }catch(error){
+    console.error('Error updating category:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+
+export const getTutorCourses=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('sdfsdf')
+  try{
+    console.log('s')
+    const TutorId=req.params.id
+    const tutorId=new mongoose.Types.ObjectId(TutorId)
+    console.log('tt',TutorId)
+  const tutorCourses=await CourseModel.find({tutorId})
+  console.log('tut',tutorCourses)
+  if(!tutorCourses){
+    res.json('No Course Found')
+  }
+  res.json(tutorCourses)
+  }catch(error){ 
+    console.log('err',error)
+  }
+}
+
+export const getTutorCourseDetails = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+  try {
+    console.log('id',req.params.id)
+    let CourseId = req.params.id
+
+    console.log('cor',CourseId);
+    // const courseId=new mongoose.Types.ObjectId(CourseId)
+
+    // if (!mongoose.Types.ObjectId.isValid(courseId)) {
+    //   return res.status(400).json({ message: 'Invalid Course ID' });
+    // }
+    const course = await CourseModel.findById(CourseId); 
+    console.log('course', course);
+
+    if (!course) {
+      return res.status(404).json('Course details not found');
+    }
+
+    res.json(course);
+  } catch (error) {
+    console.error('Error fetching course details:', error);
+    next(error); 
+  }
+};

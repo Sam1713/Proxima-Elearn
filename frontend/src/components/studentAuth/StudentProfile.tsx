@@ -7,7 +7,6 @@ import { IoIosWallet } from "react-icons/io";
 import { GiTeacher } from "react-icons/gi";
 import StudentProfileDetails from './StudentProfileDetails';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
 const StudentProfile: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State for sidebar visibility
@@ -54,7 +53,9 @@ const StudentProfile: React.FC = () => {
           >
             <div className='flex items-center gap-2'>
               <BiSolidVideos size={30} />
+              <Link to='/orderedCourses'>
               <h1 className='text-md font-semibold'>My Courses</h1>
+              </Link>
             </div>
           </div>
           <div

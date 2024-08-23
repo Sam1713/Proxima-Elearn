@@ -8,7 +8,8 @@ import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
 import License from '../modals/tutorModal/License';
-
+import Api from '../components/API/Api'
+import { tutorsignout } from '../redux/tutor/tutorSlice';
 function TutorHeader() {
   const [isOpen, setToggle] = useState(false);
   const myTutor = useSelector((state: RootState) => state.tutor.currentTutor);
@@ -22,10 +23,9 @@ console.log('va',val)
 
   const handleSignout = async () => {
     try {
-      localStorage.removeItem('access_token');
-      await axios.get("/backend/auth/signout");
-      dispatch(signout());
-      dispatch(clearFeed());
+      localStorage.removeItem('tutor_access_token');
+      await Api.get("/backend/tutor/tutorSignout");
+      dispatch(tutorsignout());
     } catch (error) {
       console.log(error);
     }
@@ -41,7 +41,7 @@ console.log('va',val)
   };
 
   return (
-    <header className="fixed left-0 z-10 h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
+    <header className="fixed left-0 z-30 bg-custom-gradient h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center">
           <img className="w-10 h-10 mx-4 rounded-full" src={image} alt="Landing" />
@@ -51,15 +51,15 @@ console.log('va',val)
           <button onClick={toggleMenu}>
             {isOpen ? <XMarkIcon className="w-6 h-6 text-white" /> : <Bars3Icon className="w-6 h-6 text-white" />}
           </button>
-        </div>
+        </div>    
       </div>
       <nav className={`w-full ${isOpen ? 'block' : 'hidden'} sm:flex mt-4 sm:mt-0`}>
         <ul className="flex flex-col sm:flex-row justify-end w-full text-white">
           <li className="mx-5">
-            <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
+            <Link to='/tutorhome' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
           </li>
-          <li className="mx-5">
-            <Link to='/tutor-dashboard' className="hover:text-blue-300 transition-colors duration-300">Tutor Dashboard</Link>
+          <li className="mx-5"> 
+            <Link to='/tutorprofile' className="hover:text-blue-300 transition-colors duration-300">Tutor Profile</Link>
           </li>
           <li className="mx-5">
           <Link 
@@ -72,8 +72,8 @@ console.log('va',val)
 
           </li>
           <li className="mx-5">
-            <Link onClick={handleSignout} to='/signup' className="hover:text-blue-300 transition-colors duration-300">
-              Signout
+            <Link onClick={handleSignout} to='/tutorsignin' className="hover:text-blue-300 transition-colors duration-300">
+              {!myTutor?'Signin':'Signout'}
             </Link>
           </li>
           

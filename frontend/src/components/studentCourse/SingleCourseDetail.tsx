@@ -4,11 +4,13 @@ import { FaUniversalAccess, FaArrowCircleRight, FaArrowCircleLeft } from "react-
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { setSingleCourse } from '../../redux/courses/courseSlice';
 import useScrollRestoration from '../customHooks/useScrollRestoration';
 import EnrollModal from '../../modals/courseModal/EnrollModal';
-
+import { clearFeed, setLoading } from '../../redux/feed/feedSlice';
+import api from '../API/Api'
+import { signout } from '../../redux/student/studentSlice';
 function SingleCourseDetail() {
     useScrollRestoration()
     const {id}=useParams()
@@ -22,21 +24,48 @@ function SingleCourseDetail() {
   const[openAbout,setOpenAbout]=useState<boolean>(false)
   const[clicked,setClicked]=useState<string>('')
   const [openModal,setOpenModal]=useState<boolean>(false)
+  const [loading,setLoading]=useState(false)
+  const navigate=useNavigate()
  console.log('id',id)
  console.log('sing',singleCourse)
-  useEffect(() => {
+ 
+ useEffect(() => {
 
-      const fetchCourseDetails=async()=>{
-        try{
-         const response=await axios.get(`/backend/auth/singleCourseDetail/${id}`)
-         console.log('res',response)
-         dispatch(setSingleCourse(response.data.data))
+  const fetchCourseDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/backend/auth/singleCourseDetail/${id}`, {
+        headers: {
+          'X-Token-Type': 'student',
+        },
+      });
+      console.log('res',response)
+      dispatch(setSingleCourse(response.data.data));
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+ 
+        // Check if the error is due to the user being blocked
+        if (status === 403 && data.error === 'UserBlocked') {
+          console.log('sdfsd')
+          dispatch(signout());
+          dispatch(clearFeed());
+          localStorage.removeItem('access_token'); // Clear access token from local storage
+        } else {
+          // Handle other errors
+          console.error('An error occurred:', error);
+        }
+      } else {
+        console.error('An error occurred:', error);
       }
-    catch(error){
-        console.log('errp',error)
-    }}
-    fetchCourseDetails()
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCourseDetails();
+}, [id, dispatch, navigate]);
+
 
   const handleOpen=()=>{
       setOpen(true)
@@ -100,6 +129,9 @@ function SingleCourseDetail() {
    const handleEnrollClose=()=>{
     setOpenModal(false)
    }
+   if (loading) {
+    return <div>Loading...</div>; // or any loading spinner or placeholder
+  }
   return (
     <div className='bg-custom-gradient py-16 '>
 

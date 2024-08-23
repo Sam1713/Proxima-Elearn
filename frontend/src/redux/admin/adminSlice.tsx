@@ -21,9 +21,13 @@ interface EachTutor extends TutorDetails{
 interface AdminDetails{
     currentAdmin:Admin|null
     tutorDetails:TutorDetails[]
-    singleTutor:EachTutor|null
+    singleTutor:EachTutor|null,
+    singleCourseDetail:CourseDocument|null;
     isApproved:boolean,
-    adminUsers:AdminUserListing[]
+    adminUsers:AdminUserListing[],
+    getTutorCourses:TutorCourses[],
+    viewAllCategory:Category[],
+    eachCategory:Category|null
     loading:boolean;
     error:string|null
 }
@@ -33,10 +37,46 @@ interface AdminUserListing{
     profilePic?:string
 }
 
+interface Category {
+    _id: string;
+    categoryName: string;
+    catDescription: string;
+  }
+  
+  interface TutorCourses{
+    _id:string;
+    title:string;
+    price:string;
+    category:string;
+    coverImageUrl:string
+  }
+  
+interface Video {
+    fileUrl: string;
+    description: string;
+  }
+  interface CourseDocument {
+    _id: string;
+    title: string;
+    category: string;
+    description: string;
+    coverImageUrl: string;
+    coverVideoUrl:string;
+    lessons?: string;
+    AboutCourse?: string;
+    tutorDetails: TutorDetails;
+    price: number;
+    videos: Video[];
+  }
+  
 const initialState:AdminDetails={
      currentAdmin:null,
      tutorDetails:[],
      adminUsers:[],
+     viewAllCategory:[],
+     getTutorCourses:[],
+     singleCourseDetail:null,
+     eachCategory:null,
      singleTutor:null,
      isApproved:false,
      loading:false,
@@ -69,10 +109,22 @@ const AdminSlice=createSlice({
         },
         adminUsersFetch:(state,action:PayloadAction<AdminUserListing[]>)=>{
             state.adminUsers=action.payload
-        }
+        },
+        setAllCategory: (state, action: PayloadAction<Category[]>) => {
+            state.viewAllCategory = action.payload;
+          },
+          setEachCategory:(state,action:PayloadAction<Category>)=>{
+            state.eachCategory=action.payload
+          },
+          setTutorCourses:(state,action:PayloadAction<TutorCourses[]>)=>{
+            state.getTutorCourses=action.payload
+          },
+          setCourseDetails:(state,action:PayloadAction<CourseDocument>)=>{
+            state.singleCourseDetail=action.payload
+          }
 
       }
 })
 
-export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch}=AdminSlice.actions
+export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch,setAllCategory,setEachCategory,setTutorCourses,setCourseDetails}=AdminSlice.actions
 export default AdminSlice.reducer

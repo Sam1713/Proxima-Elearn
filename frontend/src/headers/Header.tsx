@@ -29,7 +29,7 @@ function StudentHeader() {
   };
 
   return (
-    <header className="fixed left-0 z-10 h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
+    <header className="fixed bg-custom-gradient left-0 z-10 h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center">
           <img className="w-10 h-10 mx-4 rounded-full" src={image} alt="Landing" />

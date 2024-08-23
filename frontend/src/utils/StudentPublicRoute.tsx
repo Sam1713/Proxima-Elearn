@@ -8,7 +8,7 @@ const StudentPublicRoute: React.FC = () => {
 
   const token = localStorage.getItem('access_token');
 
-  if (currentStudent && token) {
+  if (currentStudent && token && !currentStudent?.isBlocked) {
     return <Navigate to="/feedHome" />;
   }
 

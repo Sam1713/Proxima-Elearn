@@ -5,7 +5,8 @@ interface IStudent extends Document {
   email: string;
   password: string;
   profilePic?: string;
-  otp?:string
+  otp?:string;
+  isBlocked?:boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -31,6 +32,10 @@ const studentSchema: Schema<IStudent> = new Schema({
   otp:{
    type:String
   },
+  isBlocked:{
+    type:Boolean,
+    default:false
+  }
 }, {
   timestamps: true, 
 });

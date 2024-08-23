@@ -3,42 +3,60 @@ import { FaRegPlayCircle } from "react-icons/fa";
 import { AiFillLike } from "react-icons/ai";
 import { FaComments } from "react-icons/fa";
 import axios from 'axios';
-import { setFeeds } from '../../redux/feed/feedSlice';
+import { clearFeed, setFeeds } from '../../redux/feed/feedSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import api from '../API/Api'
+import { signout } from '../../redux/student/studentSlice';
+import { useNavigate } from 'react-router-dom';
 
 
-
-function RecentFeed() {
+function RecentFeed({fetchFeeds}) {
   const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchFeeds = async () => {
-      const token = localStorage.getItem('access_token');
-      console.log('Fetched token:', token);
+  const navigate=useNavigate()
+  // useEffect(() => {
+  //   const fetchFeeds = async () => {
+      
     
-      if (!token) {
-        throw new Error('No token found');
-      }
-    
-      try {
-        const response = await axios.get('/backend/feed/getFeed', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        dispatch(setFeeds(response.data))
+  //     try {
+  //       const response = await api.get('/backend/feed/getFeed',{
+  //         headers: {
+  //           'X-Token-Type': 'student',
+  //         },
+  //       });
+  //       dispatch(setFeeds(response.data))
         
-        console.log('Feeds response:', response.data);
-        // Handle response
-      } catch (error) {
-        console.error('Error fetching feeds:', error);
-        // Optionally handle specific error cases (e.g., redirect to login)
-      }
-    };
+  //       console.log('Feeds response:', response.data);
+  //       // Handle response
+  //     } catch (error) {
+  //         if (error.response) {
+  //           const { status, data } = error.response;
+     
+  //           // Check if the error is due to the user being blocked
+  //           if (status === 403 && data.error === 'UserBlocked') {
+  //             dispatch(signout());
+  //             dispatch(clearFeed());
+  //             // Handle blocked user scenario
+  //             alert(data.message); // Display message to user
+  //             localStorage.removeItem('access_token'); // Clear access token from local storage
+  //             navigate('/signin'); // Redirect to sign-in page
+  //           } else {
+  //             // Handle other errors
+  //             console.error('An error occurred:', error);
+  //           }
+  //         } else {
+  //           console.error('An error occurred:', error);
+  //         }
+        
+  //     }
+  //   }    
     
     
+  //   fetchFeeds();
+  // }, [dispatch]);
+  useEffect(() => {
     fetchFeeds();
-  }, [dispatch]);
+  }, [fetchFeeds]);
 
   const { feeds } = useSelector((state:RootState) => state.feed);
   const [modalOpen, setModalOpen] = useState(false);
@@ -85,7 +103,7 @@ function RecentFeed() {
       {feeds.map((feed, feedIndex) => {
         const mediaCount = feed.files.length;
         const mediaClass = mediaCount === 1 
-          ? 'w-full h-96 object-cover'
+          ? 'w-full h-96 object-contain'
           : mediaCount === 2 
           ? 'w-1/3 h'
           : mediaCount === 3 
@@ -159,7 +177,7 @@ function RecentFeed() {
               </button>
             </div>
             {selectedMediaType === 'image' ? (
-              <img className='w-full h-96 mobject-cover rounded-lg' src={feeds[selectedFeedIndex].files[selectedMediaIndex].url} alt={`Media ${selectedMediaIndex + 1}`} />
+              <img className='w-full h-96 object-cover rounded-lg' src={feeds[selectedFeedIndex].files[selectedMediaIndex].url} alt={`Media ${selectedMediaIndex + 1}`} />
             ) : (
               <video className='w-full h-96 object-cover rounded-lg' controls>
                 <source src={feeds[selectedFeedIndex].files[selectedMediaIndex].url} />
@@ -171,8 +189,12 @@ function RecentFeed() {
               <p>{feeds[selectedFeedIndex].content}</p>
             </div>
           </div>
+          <RecentFeed fetchFeeds={fetchFeeds}/>
+
         </div>
+        
       )}
+
     </div>
   );
 }

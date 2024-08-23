@@ -44,15 +44,16 @@ function TutorSidebar() {
   };
 
   return (
-    <div className='md:w-[23%]  pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
+    <div className='md:w-[20%] fixed  pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'
       >
-        {showSidebar ? <AiOutlineClose className='text-blac' /> : <AiOutlineMenu className='text-black font-bold' />}
+        {showSidebar ? <AiOutlineClose className='text-black' /> : <AiOutlineMenu className='text-black font-bold' />}
       </button>
       <div className={`md:flex ${showSidebar ? 'flex ' : 'hidden'} p-4 mt-6  md:w-[100%] w-full bg-gradient-to-r from-black via-gray-1000 to-white md:h-[80vh] overflow-scroll md:overflow-hidden  bg-opacity-60 rounded-xl`}>
       <div className='md:m-auto  flex md:flex-col md:gap-0 gap-4 flex-row md:w-full w-auto'>
+        <Link to='/tutorprofile'>
           <SidebarItem
             icon={MdDashboard}
             text='My Account'
@@ -60,7 +61,8 @@ function TutorSidebar() {
             isActive={activeItem === 'dashboard'}
             arrow={false}
           />
-          <Link to='/tutor/tutorstudents'>
+          </Link>
+          <Link to='/purchasedStudents'>
            <SidebarItem
             icon={FaUsers}
             text='My Students'
@@ -69,7 +71,7 @@ function TutorSidebar() {
             arrow={false}
           />
           </Link>
-          <Link to='/admin/tutorlist'>
+          <Link to='/tutorlist'>
           <SidebarItem
             icon={GiTeacher}
             text='My Wallet'
@@ -85,8 +87,12 @@ function TutorSidebar() {
             isActive={activeItem === 'courses'}
             arrow={true}
           />
+         
+
           {isCoursesOpen && (
             <div className='pl-8 mt-2'>
+                        <Link to="/getTutorCourses">
+
               <SidebarItem
                 icon={() => <span className='text-xl' />} // Placeholder for Course Details icon
                 text='Course Details'
@@ -94,6 +100,7 @@ function TutorSidebar() {
                 isActive={false}
                 arrow={false}
               />
+               </Link>
               <SidebarItem
                 icon={() => <span className='text-xl' />} // Placeholder for Course Edit icon
                 text='Course Edit'

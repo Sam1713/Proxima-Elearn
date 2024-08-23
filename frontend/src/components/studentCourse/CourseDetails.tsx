@@ -8,7 +8,7 @@ import tutorImage from '../../assets/images/OIP (30).jpeg'
 import AnimatedText from '../../animation/AnimatedText';
 import { animated, useSpring } from '@react-spring/web';
 import useScrollRestoration from '../customHooks/useScrollRestoration';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { setOrderedCourseDetails } from '../../redux/courses/courseSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,13 +18,18 @@ import VideoPlayer from '../../utils/VideoPlayer';
 
 function CourseDetails() {
   const {id}=useParams()
-  useScrollRestoration()
+  // useScrollRestoration()
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
+  
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [isOverviewTwoOpen, setIsOverviewTwoOpen] = useState(false);
   const [currentIndex,setCurrentIndex]=useState('0')
-
+  const [courseOpen,setCourseOpen]=useState<boolean>(false)
+  const navigate=useNavigate()
+  const handleOpen=()=>{
+    setCourseOpen(!courseOpen)
+  }
   const toggleOverview = () => setIsOverviewOpen(!isOverviewOpen);
   const toggleOverviewTwo = () => setIsOverviewTwoOpen(!isOverviewTwoOpen);
   const imageAnimation = useSpring({
@@ -37,8 +42,9 @@ function CourseDetails() {
     },
     config: { duration: 3000 },
   });
-  const videoLength=orderedCourseDetail?.Courses?.videos?.length
+  const videoLength=orderedCourseDetail?.courseDetail?.videos?.length
   useEffect(()=>{
+
     const token=localStorage.getItem('access_token')
      const getOrderedCourseDetail=async()=>{
         const response=await axios.get(`/backend/enroll/getOrderedCourseDetail/${id}`,{
@@ -48,21 +54,31 @@ function CourseDetails() {
           withCredentials: true,
         })
         console.log('res',response)
-        dispatch(setOrderedCourseDetails(response.data))
-     }
+        const { courseDetail, otherCourses } = response.data;
+const courseDetailData = courseDetail.Courses; // Extract Courses from courseDetail
+const otherDetailData = otherCourses // Extract Courses from courseDetail
+
+dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses :otherDetailData}));
+
+      
+      }
      getOrderedCourseDetail()
      
-  },[])
+  },[dispatch,id])
   const sections=['overview','content','middlr','start','end','finish']
-  console.log('cover',orderedCourseDetail?.Courses?.coverImageUrl)
-  console.log('single',orderedCourseDetail)
-
+  console.log('cover',orderedCourseDetail?.courseDetail?.coverImageUrl)
+  console.log('single',orderedCourseDetail?.courseDetail?.category
+  )
+  console.log('otherCourses',orderedCourseDetail?.otherCourses[0]?.title)
   const [openSection, setOpenSection] = useState(null);
 
   // Function to toggle the open section
   const toggleSection = (index) => {
     setOpenSection(openSection === index ? null : index);
   };
+  const handleNavigate=(id:string)=>{
+    navigate(`/singleCourseDetail/${id}`)
+  }
   return (
     <div className='min-h-screen md:w-full py-16 bg-custom-gradient'>
       <div className='md:relative md:w-[95%] mx-auto p-[10%] bg-black bg-opacity-35 md:flex md:justify-between md:items-center rounded-2xl'>
@@ -71,8 +87,8 @@ function CourseDetails() {
           <AnimatedText text="Most Subscribed" />
           </p>
           <h1 className='text-white text-3xl md:mt-0 mt-5 w-[100%]'>
-          {orderedCourseDetail?.Courses?.title && (
-  <AnimatedText text={orderedCourseDetail.Courses.title} />
+          {orderedCourseDetail?.courseDetail?.title && (
+            <AnimatedText text={orderedCourseDetail?.courseDetail?.title} />
 )}
           </h1>
           <p className='text-white mt-3'>
@@ -83,15 +99,15 @@ function CourseDetails() {
 
             <span className='text-white mx-5'><AnimatedText text="4.5 (2,540 Reviews)"/></span>
             <span className='text-white font-serif'>
-              {orderedCourseDetail?.Courses?.tutorDetails?.tutorname&&(
-               <AnimatedText text={orderedCourseDetail?.Courses?.tutorDetails?.tutorname}/>
+              {orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname&&(
+               <AnimatedText text={orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname}/>
   )}</span>
           </div>
         </div>
         <div>
          <animated.img
-            className='md:absolute w-[40%] md:top-1/4 md:my-[-5%] object-cover my-[10%]  md:mx-[5%] left-1/2 md:h-[55vh] h-[50vh] mx-auto'
-            src={orderedCourseDetail?.Courses?.coverImageUrl}
+            className='md:absolute w-[40%] md:top-1/4 md:my-[-5%] object-contain my-[10%]  md:mx-[5%] left-1/2 md:h-[55vh] h-[50vh] mx-auto'
+            src={orderedCourseDetail?.courseDetail?.coverImageUrl}
             alt="Course"
             style={{
                 ...imageAnimation,
@@ -139,7 +155,7 @@ function CourseDetails() {
             </p>
             <h1 className='font-bold mt-10'>Details:</h1>
             <p className='text-sm h-[40vh] overflow-y-scroll leading-7'>
-{orderedCourseDetail?.Courses?.AboutCourse}            </p>
+{orderedCourseDetail?.courseDetail?.AboutCourse}            </p>
           
           </div>
           <div className='flex flex-col justify-between items-center py-4 space-y-8 p-4 bg-custom-gradient rounded-3xl mt-10 md:mt-0 md:mx-[-3%]'>
@@ -220,12 +236,12 @@ function CourseDetails() {
             {openSection === index && (
               <div className='px-10 py-4'>
                 <div className='flex flex-col space-y-4'>
-                  {orderedCourseDetail?.Courses?.videos[index] ? (
+                  {orderedCourseDetail?.courseDetail?.videos[index] ? (
                     <div className='bg-black p-4 rounded-lg shadow-md'>
                       <VideoPlayer
-                        videoUrl={orderedCourseDetail.Courses.videos[index]?.fileUrl}
+                        videoUrl={orderedCourseDetail.courseDetail.videos[index]?.fileUrl}
                         
-                        description={orderedCourseDetail.Courses.videos[index]?.description}
+                        description={orderedCourseDetail.courseDetail.videos[index]?.description}
                       />
                     </div>
                   ) : (
@@ -257,14 +273,32 @@ function CourseDetails() {
 
           </div>
           <div className='md:mt-0 mt-5'>
-            <h1 className='text-2xl font-extralight'>{orderedCourseDetail?.Courses?.tutorDetails?.tutorname}</h1>
+            <h1 className='text-2xl font-extralight'>{orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname}</h1>
             <p>29 Years Old</p>
-            <p>{orderedCourseDetail?.Courses?.tutorDetails?.phonenumber}</p>
+            <p>{orderedCourseDetail?.courseDetail?.tutorDetails?.phonenumber}</p>
             <h1 className='mt-5 font-bold text-2xl'>About</h1>
-            <p className='w-[100%]'>{orderedCourseDetail?.Courses?.tutorDetails?.bio}</p>
+            <p className='w-[100%]'>{orderedCourseDetail?.courseDetail?.tutorDetails?.bio}</p>
           </div>
         </div>
       </div>
+      <div className=' mt-10 mx-5'>
+          <p className='text-2xl font-extralight'>Do you wanna see {orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname} other courses?</p>
+          <h1 onClick={handleOpen} className='mt-2 underline text-blue-400 cursor-pointer'>{courseOpen?'See less':'See More'}</h1>
+
+          </div>
+          {courseOpen &&(
+          <div className='grid gap-4 md:grid-cols-2 mt-3 lg:grid-cols-3 bg-white bg-opacity-30 p-4 rounded-2xl'>
+          {orderedCourseDetail?.otherCourses.map((otherCourse) => (
+            <div key={otherCourse._id} onClick={()=>handleNavigate(otherCourse._id)} className='cursor-pointer bg-custom-gradient p-4 rounded-lg shadow-md'>
+              <img src={otherCourse.coverImageUrl} alt={otherCourse.title} className='w-full h-40 object-cover rounded-lg' />
+              <h3 className='text-xl text-white font-semibold mt-2'>{otherCourse?.title}</h3>
+              <hr />
+              <p className='text-white text-xl font-bold mt-1'>{otherCourse?.price.toFixed(2)}</p>
+              <p className='h-[10vh] overflow-y-scroll mt-2'>{otherCourse?.description}</p>
+            </div>
+          ))}
+        </div> 
+        )}          
     </div>
 
       </div>
@@ -272,5 +306,6 @@ function CourseDetails() {
       
   );
 }
+
 
 export default CourseDetails;

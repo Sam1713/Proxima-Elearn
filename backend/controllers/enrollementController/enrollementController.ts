@@ -5,6 +5,7 @@ import Enrollment from '../../models/enrollementModel';
 import { createRazorpayOrder, IRazorder, verifyRazorpayPayment } from '../../utils/razorpay';
 import Payment from '../../models/paymentModel';
 import mongoose, { Mongoose } from 'mongoose';
+import TutorModel from '../../models/tutorModal';
 
 export const createCheckout = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
     try {
@@ -55,7 +56,7 @@ export const createCheckout = async (req: Request, res: Response, next: NextFunc
             },
             {
                 new: true,
-                upsert: true,
+                upsert: true, 
             }
         );
 
@@ -75,7 +76,9 @@ export const createCheckout = async (req: Request, res: Response, next: NextFunc
             const timestamp = (Razorder as IRazorder).created_at;
             const date = new Date(timestamp * 1000);
             const formattedDate = date.toISOString();
-        
+
+            
+            
             await Payment.findOneAndUpdate(
               {
                 enrollmentId: enrollment._id,
@@ -239,6 +242,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
             {
               $addFields: {
                   'Courses.tutorDetails': {
+                      tutorId:'$Tutors._id',
                       tutorname: '$Tutors.tutorname',
                       email: '$Tutors.email',
                       phonenumber: '$Tutors.phonenumber',
@@ -246,7 +250,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
                   }
               }
           },
-            {
+            {      
               $project:{
                 'Courses.title':1,
                 'Courses.description':1,
@@ -257,12 +261,95 @@ export const verifyPayment=async(req:Request,res:Response)=>{
                 'Courses.videos': 1,
                 'Courses.tutorDetails': 1
               }
-            },
+            },  
             { $limit: 1 }
-          ])
+          ]) 
           const courseDetail = enrolledCourseDetail.length > 0 ? enrolledCourseDetail[0] : {};
 
           console.log('enrolled',courseDetail)
+          const TutorId= courseDetail?.Courses?.tutorDetails?.tutorId
+         console.log('isfds',TutorId)
+          const otherCourses=await CourseModel.find({
+            tutorId:TutorId,
+             _id:{$ne:courseId },
 
-          res.json(courseDetail)
+          })
+
+          console.log('Other courses by the tutor:', otherCourses);
+
+          res.json({
+        courseDetail,
+        otherCourses
+          });        }
+
+export const getPaymentDetails=async(req:Request,res:Response)=>{
+  const StudentId=req.userId
+  const studentId=new mongoose.Types.ObjectId(StudentId)
+  console.log('srug',studentId)
+
+  const paymentDetails=await Enrollment.aggregate([
+    {
+      $match:
+      {studentId:studentId,payment_status:'completed'}
+    },
+  {
+        $lookup:{
+            from:'payments',
+            localField:'_id',
+            foreignField:'enrollmentId',
+            as:'PaymentDetails'
+    }
+  },
+  {
+    $unwind: '$PaymentDetails' // Unwind to have each payment detail as a separate document
+  },
+  {
+    $lookup: {
+      from: 'courses', // Assuming your courses collection is named 'courses'
+      localField: 'courseId', // courseId from Enrollment collection
+      foreignField: '_id', // _id from Courses collection
+      as: 'PurchasedCourses'
+    }
+  },
+  {
+    $unwind: '$PurchasedCourses' // Unwind to treat each PurchasedCourse as a separate document
+
+  },
+  {
+    $addFields:{
+      'PaymentDetails':{
+        title:'$PurchasedCourses.title',
+        description:'$PurchasedCourses.description',
+        coverImage:'$PurchasedCourses.coverImageUrl'
+      }
+    }
+  },
+
+  
+ 
+  {
+    $project: {
+      _id: 0, 
+      studentId: 1,
+      'PaymentDetails._id': 1, // Include Payment _id
+          'PaymentDetails.title': 1, // Include the course title
+          'PaymentDetails.description': 1, // Include course description
+          'PaymentDetails.coverImage': 1, // Include course cover image
+          'PaymentDetails.amount': 1, // Include the payment amount
+          'PaymentDetails.currency': 1, // Include the payment currency
+          'PaymentDetails.status': 1, // Include the payment status
+          'PaymentDetails.paymentId': 1, // Include the paymentId
+          'PaymentDetails.created_at': 1
+    }
+  },
+   {
+        $sort: {
+          'PaymentDetails.created_at': -1 // Sort by the created_at field in descending order
         }
+      },
+]);
+
+console.log('Payment Details:', paymentDetails);
+  res.json({data:paymentDetails})
+
+}

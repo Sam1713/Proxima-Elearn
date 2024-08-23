@@ -4,6 +4,10 @@ export interface TutorState {
     currentTutor: Tutor | null;
     tutorApproval:boolean;
     updateBasicTutor:updateBasic|null,
+    tutorUploadedCourses:TutorCourse[],
+    tutorUploadedCourseDetail:TutorCourseDetail|null,
+    categoryDetails:Category[],
+    purchased:PurchasedStudentDetails[]
     newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
@@ -29,10 +33,51 @@ export interface updateBasic{
 export interface UpdatedBio{
     bio?:string
 }
+
+export interface TutorCourse{
+    courseId:string
+    title:string;
+    description:string;
+    coverImageUrl:string;
+    category:string;
+}
+interface Video {
+    fileUrl: string;
+    description: string;
+    videoId:string;
+  }
+export interface TutorCourseDetail extends TutorCourse{
+    price:string;
+    coverVideoUrl:string;
+    lessons:string;
+    AboutCourse:string;
+    videos:Video[]
+
+}
+
+export interface Category{
+    id:string,
+    categoryName:string,
+    catDescription:string
+}
+
+
+interface PurchasedStudentDetails{
+    username:string;
+    email:string;
+    title:string;
+    category:string;
+    profilePic:string
+}
+
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
     updateBasicTutor:null,
+    tutorUploadedCourses:[],
+    tutorUploadedCourseDetail:null,
+    categoryDetails:[],
+    purchased:[],
     newBio:null,
     loading:false,
     error:""
@@ -54,6 +99,10 @@ const tutorSlice=createSlice({
             state.loading=false
             state.error=action.payload
         },
+        tutorsignout(state){
+            state.loading=false,
+            state.currentTutor=null
+        },
         isTutorApproved(state,action){
             state.tutorApproval=action.payload
         },
@@ -70,12 +119,24 @@ const tutorSlice=createSlice({
         },
         licenseAgreement:(state,action:PayloadAction<Tutor>)=>{
             state.currentTutor=action.payload
+        },
+        setUploadedCourses:(state,action:PayloadAction<TutorCourse[]>)=>{
+            state.tutorUploadedCourses=action.payload
+        },
+        setUploadedCoursesDetails:(state,action:PayloadAction<TutorCourseDetail>)=>{
+            state.tutorUploadedCourseDetail=action.payload
+        },
+        setPurchasedStudents:(state,action:PayloadAction<PurchasedStudentDetails[]>)=>{
+            state.purchased=action.payload
+        },
+        setCategoryDetails:(state,action:PayloadAction<Category[]>)=>{
+            state.categoryDetails=action.payload
         }
 
         
     }
 })
 
-export const { signinStart, signinSuccess, signinFailure,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

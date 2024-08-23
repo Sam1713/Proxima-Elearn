@@ -2,11 +2,11 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 // Define the Video interface
 interface Video {
+  _id: mongoose.Types.ObjectId; // Change from string to ObjectId
   fileUrl: string;
   description: string;
 }
 
-// Define the CourseDocument interface
 export interface CourseDocument extends Document {
   title: string;
   category: string;
@@ -17,10 +17,10 @@ export interface CourseDocument extends Document {
   coverImageUrl: string;
   coverVideoUrl: string;
   videos: Video[];
-  tutorId: mongoose.Types.ObjectId; // Reference to Tutor
+  tutorId: mongoose.Types.ObjectId; 
+  isDelete?:boolean;
 }
 
-// Define the Course schema
 const courseSchema = new Schema<CourseDocument>({
   title: { type: String, required: true },
   category: { type: String, required: true },
@@ -34,12 +34,16 @@ const courseSchema = new Schema<CourseDocument>({
     {
       fileUrl: { type: String, required: true },
       description: { type: String, required: true },
+      _id:{type: Schema.Types.ObjectId}
     },
   ],
-  tutorId: { type: Schema.Types.ObjectId, ref: 'Tutor', required: true }, // Reference to Tutor schema
+  tutorId: { type: Schema.Types.ObjectId, ref: 'Tutor', required: true }, 
+  isDelete:{
+    type:Boolean,
+    default:false
+  }
 });
 
-// Create the Course model
 const CourseModel = mongoose.model<CourseDocument>('Course', courseSchema);
 
 export default CourseModel;

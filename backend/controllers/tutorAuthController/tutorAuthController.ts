@@ -8,6 +8,8 @@ import TutorModel from '../../models/tutorModal';
 import nodemailer from "nodemailer";
 import { OTP } from "../../utils/randomPassword";
 import { emailValidator } from '../../utils/validator';
+import CourseModel from '../../models/courseModel';
+import mongoose, { Types } from 'mongoose';
 
 
 
@@ -265,6 +267,12 @@ export const updateFiles=async(req:Request<{},{},fileType>,res:Response,next:Nex
 
 }
 
+export const tutorSignout=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('dada')
+    res.clearCookie('access_token').status(200).json({message:"Signout successful"})
+}
+
+
 export const acceptLicense=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
   console.log('req')
   const tutorId=req.userId
@@ -285,3 +293,5 @@ export const acceptLicense=async(req:Request,res:Response,next:NextFunction):Pro
 const {password,...rest}=tutor
 res.json({message:"Aggrement accepted successfully",rest})
 } 
+
+

@@ -31,7 +31,7 @@ export const createRazorpayOrder=( id: string, amount: number )=>{
         if(err){
             reject(err)
         } 
-        resolve(order)
+        resolve(order) 
     })
 
     })}

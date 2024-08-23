@@ -382,8 +382,9 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
   };
 
   export const GetAllCourses=async(req:Request,res:Response)=>{
-    console.log('reached...')
+    console.log('reached...') 
     const courses = await CourseModel.aggregate([
+      {$match:{isDelete:false}},
       {
         $lookup: {
           from: 'tutors', 
@@ -416,45 +417,82 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
     res.json({courses})
   }
 
-  export const getSingleCourse=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
-    try{
-    const courseId=req.params.id
-    console.log('reached..',courseId)
-    const [course]=await CourseModel.aggregate([{
-      $match: { _id: new mongoose.Types.ObjectId(courseId) } 
-      },
-      {
-        $lookup:{
-          from:'tutors',
-          localField:'tutorId',
-          foreignField:'_id',
-          as:'tutorDetails'
-        }
-      },
-      {
-        $unwind:{
-          path: '$tutorDetails', 
-          preserveNullAndEmptyArrays: true 
-        }
-      },
-      {
-        $project:{
-          id:1,
-          title:1,
-          price:1,
-          category:1,
-          AboutCourse:1,
-          lessons:1,
-          coverImageUrl:1,
-          description:1,
-          'tutorDetails.tutorname':1,
-          'tutorDetails.bio':1
-        }
+  export const getSingleCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const courseId = req.params.id;
+      console.log('Fetching course details for ID:', courseId);
+      
+      // Fetch the single course along with tutor details
+      const [course] = await CourseModel.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(courseId) },
+        },
+        {
+          $lookup: {
+            from: 'tutors',
+            localField: 'tutorId',
+            foreignField: '_id',
+            as: 'tutorDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$tutorDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            id: 1,
+            title: 1,
+            price: 1,
+            category: 1,
+            AboutCourse: 1,
+            lessons: 1,
+            coverImageUrl: 1,
+            description: 1,
+            'tutorDetails.tutorname': 1,
+            'tutorDetails.bio': 1,
+          },
+        },
+      ]);
+  
+      if (!course) {
+        res.status(404).json({ message: 'Course not found' });
+        return;
       }
-])
-console.log('courrrrr',course)
-    res.json({message:"Course details recieved",data:course})
-}catch(error){
-  res.json(error)
-}
-  }
+  
+      const otherCourses = await CourseModel.find({
+        _id: { $ne: courseId },
+      });
+  
+      console.log('Course details:', course);
+      console.log('Other courses by the tutor:', otherCourses);
+  
+      res.json({
+        message: 'Course details received',
+        data:
+          course,
+          data1:
+          otherCourses,
+        
+      });
+    } catch (error) {
+      console.error('Error fetching course:', error);
+      res.status(500).json({ message: 'Error fetching course', error });
+    }
+  };
+
+  // export const getAllCoursesSinglePage=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  //   console.log('sfdsdfs')
+  //   try{
+  //   const courses=await CourseModel.find()
+  //   if(!courses){
+  //     res.json('No courses Found')
+  //     return
+  //   }
+  //   res.json(courses)
+  // }catch(error){
+  //   console.log('err',error)
+  // }
+  // }

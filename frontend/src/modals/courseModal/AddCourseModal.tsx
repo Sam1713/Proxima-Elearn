@@ -6,6 +6,8 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { response } from 'express';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 // Define the type for SubVideo
 interface SubVideo {
@@ -40,6 +42,8 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
     transform: isOpen ? 'translateY(0)' : 'translateY(0px)',
     config: { duration: 300 },
   });
+  const category=useSelector((state:RootState)=>state.admin.viewAllCategory)
+  console.log('cat',category)
 
   const formik = useFormik({
     initialValues: {
@@ -245,19 +249,25 @@ console.log({...subVideos})
               ) : null}
             </div>
             <div className='flex justify-between items-center md:w-1/2'>
-              <input 
-                type="text" 
-                placeholder='Category' 
-                className='w-full md:p-3 p-2 border text-black border-gray-300 rounded-md'
-                name="category"
-                value={formik.values.category}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.category && formik.errors.category ? (
-                <div className='text-red-500'>{formik.errors.category}</div>
-              ) : null}
-            </div>
+  <select
+    name="category"
+    className='w-full md:p-3 p-2 border text-black border-gray-300 rounded-md'
+    value={formik.values.category}
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+  >
+    <option value="">Select Category</option>
+    {category.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+        {cat.categoryName}
+      </option>
+    ))}
+  </select>
+  {formik.touched.category && formik.errors.category ? (
+    <div className='text-red-500'>{formik.errors.category}</div>
+  ) : null}
+</div>
+
           </div>
           <input
   type="number" // Ensure the input type is number

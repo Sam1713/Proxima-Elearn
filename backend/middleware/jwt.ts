@@ -148,6 +148,7 @@ const authMiddleware = (userType: 'student' | 'admin' | 'tutor') => (req: Reques
     }
 
     const decoded:any = jwt.verify(token, secret);
+    
     console.log('decode',decoded)
     req.userId = (decoded as any).id; // Attach user ID to request
     next();

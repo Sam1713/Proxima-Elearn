@@ -3,14 +3,14 @@ import mongoose, { Document, Schema } from 'mongoose';
 interface IFeed extends Document {
   title: string;
   content: string;
-  files: string[]; // Array of file URLs as strings
-  student: mongoose.Schema.Types.ObjectId; // Reference to the user
+  files: string[];
+  student: mongoose.Schema.Types.ObjectId; 
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 const FeedSchema: Schema = new Schema({
-    student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true }, // Add user reference
+    student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true }, 
   title: { type: String, required: true },
   content: { type: String, required: true },
   files: [
@@ -21,7 +21,7 @@ const FeedSchema: Schema = new Schema({
 ] 
 
 }, {
-  timestamps: true // Add this to automatically handle createdAt and updatedAt fields
+  timestamps: true 
 });
 
 const Feed = mongoose.model<IFeed>('Feed', FeedSchema);

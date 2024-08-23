@@ -3,19 +3,62 @@ import bgImage from '../../assets/images/1d9UAi.jpg'; // Local high-resolution i
 import newImage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
 import Modal from '../../modals/PostModal'; // Import your modal component
 import RecentFeed from './RecentFeed';
-
+import { useDispatch } from 'react-redux';
+import { clearFeed, setFeeds } from '../../redux/feed/feedSlice';
+import { signout } from '../../redux/student/studentSlice';
+import { useNavigate } from 'react-router-dom';
+import api from '../API/Api'
 function FeedHome() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
   useEffect(() => {
     const img = new Image();
     img.src = bgImage;
     img.onload = () => {
       setImageLoaded(true);
     };
+    
   }, []);
 
+    const fetchFeeds = async () => {
+      
+    
+      try {
+        const response = await api.get('/backend/feed/getFeed',{
+          headers: {
+            'X-Token-Type': 'student',
+          },
+        });
+        dispatch(setFeeds(response.data))
+        
+        console.log('Feeds response:', response.data);
+        // Handle response
+      } catch (error) {
+          if (error.response) {
+            const { status, data } = error.response;
+     
+            // Check if the error is due to the user being blocked
+            if (status === 403 && data.error === 'UserBlocked') {
+              dispatch(signout());
+              dispatch(clearFeed());
+              // Handle blocked user scenario
+              alert(data.message); // Display message to user
+              localStorage.removeItem('access_token'); // Clear access token from local storage
+              navigate('/signin'); // Redirect to sign-in page
+            } else {
+              // Handle other errors
+              console.error('An error occurred:', error);
+            }
+          } else {
+            console.error('An error occurred:', error);
+          }
+        
+      }
+    }    
+    
+    
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -60,7 +103,7 @@ function FeedHome() {
         {/* Uncomment when RecentFeed is ready */}
         
       </div>
-      <RecentFeed/>
+      <RecentFeed fetchFeeds={fetchFeeds} />
 
       <div className='fixed bottom-4 right-4'>
         <button 
@@ -72,7 +115,7 @@ function FeedHome() {
           +
         </button>
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} />
+      <Modal isOpen={isModalOpen} onClose={closeModal} fetchFeeds={fetchFeeds} />
     </div>
      </>
   );

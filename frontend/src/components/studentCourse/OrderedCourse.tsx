@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { orderedCourse } from '../../redux/courses/courseSlice';
 import { useNavigate } from 'react-router-dom';
-
+import { signout } from '../../redux/student/studentSlice';
+import { clearFeed } from '../../redux/feed/feedSlice';
+import api from '../API/Api'
 function OrderedCourse() {
     const orderedCourses=useSelector((state:RootState)=>state.course.orderedCourses)
     const dispatch=useDispatch()
@@ -14,15 +16,36 @@ function OrderedCourse() {
         const token=localStorage.getItem('access_token')
 
         const getOrderedCourses=async()=>{
-         const response=await axios.get('/backend/enroll/getOrderedCourses',{
-            withCredentials: true,
-            headers: { Authorization: `Bearer ${token}` }
+          try{
+         const response=await api.get('/backend/enroll/getOrderedCourses',{
+          headers: {
+            'X-Token-Type': 'student',
+          },
          })
          console.log('res',response.data.enrolledCourses)
          if (Array.isArray(response.data.enrolledCourses)) {
           dispatch(orderedCourse(response.data.enrolledCourses));
          }
-        
+          }catch (error) {
+            if (error.response) {
+              const { status, data } = error.response;
+       
+              // Check if the error is due to the user being blocked
+              if (status === 403 && data.error === 'UserBlocked') {
+                dispatch(signout());
+                dispatch(clearFeed());
+                // Handle blocked user scenario
+                alert(data.message); // Display message to user
+                localStorage.removeItem('access_token'); // Clear access token from local storage
+                navigate('/signin'); // Redirect to sign-in page
+              } else {
+                // Handle other errors
+                console.error('An error occurred:', error);
+              }
+            } else {
+              console.error('An error occurred:', error);
+            }
+          }
         }
         getOrderedCourses()
     },[])

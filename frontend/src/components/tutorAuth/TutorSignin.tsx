@@ -11,7 +11,7 @@ import { signinFailure, signinStart, signinSuccess } from '../../redux/tutor/tut
 import { AppDispatch } from '../../redux/store';
 import { Link, useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-
+import api from '../API/Api'
 const initialValues: TutorSigninType = {
   email: '',
   password: '',
@@ -32,12 +32,11 @@ function TutorSignin() {
         console.log("form",formdata)
       console.log('Form submitted');
       console.log(values);
-      const response=await axios.post("/backend/tutor/tutorsignin",values,{
-        withCredentials: true,
-        credentials:'include'
+      const response=await api.post("/backend/tutor/tutorsignin",values,{
+       
       })
       localStorage.setItem('tutor_access_token', response.data.token);
-      console.log('Token saved:', localStorage.getItem('access_token'));
+      console.log('Token saved:', localStorage.getItem('tutor_access_token'));
       toast.success(response.data.message)
       dispatch(signinSuccess(response.data.rest))
       navigate('/tutorwait')
