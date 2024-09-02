@@ -144,7 +144,7 @@ const PurchasedStudent: React.FC = () => {
 
     return (
         <div className="container h-[90vh] p-4">
-            <h1 className="text-2xl font-semibold text-gray-100 mb-6">Purchased Students</h1>
+            <h1 className="text-2xl font-semibold text-gray-100 mb-6 underline">Purchased Students</h1>
             <div className="bg-white w-full shadow-md rounded-lg p-4">
                 <TableContainer columns={columns} data={data} />
             </div>

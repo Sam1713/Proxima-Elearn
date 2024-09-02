@@ -7,6 +7,8 @@ import { IoIosWallet } from "react-icons/io";
 import { GiTeacher } from "react-icons/gi";
 import StudentProfileDetails from './StudentProfileDetails';
 import { Link } from 'react-router-dom';
+import { RiSecurePaymentFill } from "react-icons/ri";
+
 
 const StudentProfile: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State for sidebar visibility
@@ -48,7 +50,7 @@ const StudentProfile: React.FC = () => {
             </div>
           </div>
           <div
-            className={`bg-black ${activeItem === 'courses' ? 'bg-red-500' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
+            className={`bg-black ${activeItem === 'courses' ? 'bg-white bg-opacity-40' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
             onClick={() => handleItemClick('courses')}
           >
             <div className='flex items-center gap-2'>
@@ -59,16 +61,18 @@ const StudentProfile: React.FC = () => {
             </div>
           </div>
           <div
-            className={`bg-black ${activeItem === 'books' ? 'bg-black' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
+            className={`bg-black ${activeItem === 'books' ? 'bg-white bg-opacity-40' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
             onClick={() => handleItemClick('books')}
           >
+            <Link to='/getPaymentDetails'>
             <div className='flex items-center gap-2'>
-              <PiBooks size={30} />
-              <h1 className='text-md font-semibold'>My Books</h1>
+              <RiSecurePaymentFill size={30} />
+              <h1 className='text-md font-semibold'>Payment History</h1>
             </div>
+            </Link>
           </div>
           <div
-            className={`bg-black ${activeItem === 'cart' ? 'bg-red-500' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
+            className={`bg-black ${activeItem === 'cart' ? 'bg-white bg-opacity-40' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
             onClick={() => handleItemClick('cart')}
           >
             <div className='flex items-center gap-2'>
@@ -77,7 +81,7 @@ const StudentProfile: React.FC = () => {
             </div>
           </div>
           <div
-            className={`bg-black ${activeItem === 'wallet' ? 'bg-red-500' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
+            className={`bg-black ${activeItem === 'wallet' ? 'bg-white bg-opacity-40' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
             onClick={() => handleItemClick('wallet')}
           >
             <div className='flex items-center gap-2'>
@@ -86,7 +90,7 @@ const StudentProfile: React.FC = () => {
             </div>
           </div>
           <div
-            className={`bg-black ${activeItem === 'tutors' ? 'bg-red-500' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
+            className={`bg-black ${activeItem === 'tutors' ? 'bg-white bg-opacity-40' : 'bg-opacity-80'} text-white p-4 rounded-lg shadow-lg flex items-center cursor-pointer hover:bg-custom-gradient transition-colors duration-300`}
             onClick={() => handleItemClick('tutors')}
           >
             <div className='flex items-center gap-2'>

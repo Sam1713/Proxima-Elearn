@@ -62,7 +62,6 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
         if (result.isConfirmed) {
           try {
             const formData = new FormData();
-            // Append all values to FormData
             for (const key in values) {
               const value = values[key as keyof typeof values];
               if (value instanceof File) {

@@ -177,9 +177,9 @@ export const updateTutor=async(req:Request<{},{},UpdateDetailsTutor>,res:Respons
             return;
         }
         const updatedTutor = await TutorModel.findOneAndUpdate(
-          { _id: tutorId },  // Match the document by ID
-          { $set: updateData },  // Set the fields to update
-          { new: true }  // Return the updated document
+          { _id: tutorId },  
+          { $set: updateData },  
+          { new: true }  
       ).select('-password');
       
     console.log('up',updatedTutor)
@@ -197,18 +197,17 @@ export const updateBio = async (req: Request<{}, {}, BioType>, res: Response, ne
   try {
     console.log('req.body:', req.body);
     const { bio } = req.body;
-    const tutorId = req.userId; // Ensure req.userId is set properly (e.g., via authentication middleware)
+    const tutorId = req.userId; 
 
     if (!bio || !tutorId) {
       res.status(400).json({ error: 'Bio and tutor ID are required' });
       return;
     }
 
-    // Update the tutor's bio
     const updateTutor = await Tutor.findByIdAndUpdate(
       tutorId,
       { $set: { bio } },
-      { new: true } // Return the updated document
+      { new: true } 
     ).lean();
 
     if (!updateTutor) {
@@ -216,11 +215,10 @@ export const updateBio = async (req: Request<{}, {}, BioType>, res: Response, ne
       return;
     }
 
-    // Omit sensitive fields if needed
     const { password, ...rest } = updateTutor;
     console.log('ip',rest)
     
-    res.status(200).json(rest); // Send the updated tutor data back to the client
+    res.status(200).json(rest); 
 
   } catch (error) {
     console.error('Error updating bio:', error);
@@ -252,7 +250,7 @@ export const updateFiles=async(req:Request<{},{},fileType>,res:Response,next:Nex
   const tutor=await TutorModel.findByIdAndUpdate(
     tutorId,
       { $push: { files: { $each: fileUrls } } },
-      { new: true } // Option to return the updated document
+      { new: true } 
     ).lean();
    console.log('updat',tutor)
     if (!tutor) {

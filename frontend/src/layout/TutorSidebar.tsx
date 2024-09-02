@@ -61,7 +61,7 @@ function TutorSidebar() {
             isActive={activeItem === 'dashboard'}
             arrow={false}
           />
-          </Link>
+          </Link>  
           <Link to='/purchasedStudents'>
            <SidebarItem
             icon={FaUsers}

@@ -22,5 +22,5 @@ router.post('/verifyOtpAndResetPassword',verifyOtpAndResetPassword)
 router.get('/getAllCourses',authMiddleware('student'),VerifyUser,GetAllCourses)
 router.get('/singleCourseDetail/:id',authMiddleware('student'),VerifyUser,getSingleCourse)
 // router.get('/getAllCourseSinglePage',authMiddleware('student'),getAllCoursesSinglePage)
-  
+   
 export default router;

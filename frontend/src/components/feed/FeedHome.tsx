@@ -100,7 +100,6 @@ function FeedHome() {
       </div>
       <div className='text-center my-10'>
         <h1 className='text-white font-bold text-2xl opacity-90 underline'>Your Recent Feeds</h1>
-        {/* Uncomment when RecentFeed is ready */}
         
       </div>
       <RecentFeed fetchFeeds={fetchFeeds} />
@@ -111,7 +110,7 @@ function FeedHome() {
     title="Post feed"
           className='w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl'
           onClick={openModal}
-        >
+        > 
           +
         </button>
       </div>

@@ -9,7 +9,7 @@ function AdminLoginLayout() {
       <div className=''>
         <Outlet />
       </div>
-    </div>
+    </div> 
   );
 }
 

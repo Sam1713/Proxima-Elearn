@@ -105,7 +105,9 @@ function GetTutorCourseDetail() {
 
   return (
     <div className="bg-custom-gradient min-h-screen py-20 px-4 font-serif">
-      
+      <div>
+        <button className='bg-red-500 p-4 rounded-xl'>Call Request</button>
+      </div>
       
       {/* Cover Image */}
       <div className="relative max-w-7xl mx-auto bg-white bg-opacity-30 shadow-xl rounded-lg overflow-hidden mb-8 p-4">

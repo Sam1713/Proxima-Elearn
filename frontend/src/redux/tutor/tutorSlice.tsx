@@ -8,6 +8,9 @@ export interface TutorState {
     tutorUploadedCourseDetail:TutorCourseDetail|null,
     categoryDetails:Category[],
     purchased:PurchasedStudentDetails[]
+    CallRequestDetails:CallRequestType[],
+    CallRequestAccept:CallRequestType|null,
+    bookingDetails:callRequestType|null
     newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
@@ -69,13 +72,33 @@ interface PurchasedStudentDetails{
     category:string;
     profilePic:string
 }
-
+interface CallRequestType{
+    _id:string;
+    name:string;
+    email:string;
+    purpose:string;
+    description?:string;
+    status:string,
+    courseId:string;
+    tutorId:string;
+    studentId:string;
+    profilePic:string
+    tutorResponse?:{
+        responseDate?:string;
+        startingTime?:string;
+        endingTime?:string;
+        notes?:string;
+    }
+}
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
     updateBasicTutor:null,
     tutorUploadedCourses:[],
     tutorUploadedCourseDetail:null,
+    CallRequestDetails:[],
+    CallRequestAccept:null,
+    bookingDetails:null,
     categoryDetails:[],
     purchased:[],
     newBio:null,
@@ -131,12 +154,22 @@ const tutorSlice=createSlice({
         },
         setCategoryDetails:(state,action:PayloadAction<Category[]>)=>{
             state.categoryDetails=action.payload
+        },
+        setCallRequests:(state,action:PayloadAction<CallRequestType[]>)=>{
+            state.CallRequestDetails=action.payload
+        },
+        setCallRequestAccept:(state,action:PayloadAction<CallRequestType>)=>{
+            state.CallRequestAccept=action.payload
+        },
+        setBookingDetails:(state,action:PayloadAction<CallRequestType>)=>{
+            state.bookingDetails=action.payload
         }
+
 
         
     }
 })
 
-export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

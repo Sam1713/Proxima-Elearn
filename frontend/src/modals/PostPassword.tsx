@@ -8,7 +8,10 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { MoonLoader } from 'react-spinners';
 import { css } from '@emotion/react';
-
+import { toast } from 'react-toastify';
+import {  ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import api from '../components/API/Api'
 interface PostPasswordProps {
   onClose: () => void;
 }
@@ -55,7 +58,11 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
   const handleOtpSubmit = async (values: { otp: string, newPassword: string, confirmPassword: string }) => {
     try {
       setLoading(true);
-      await axios.post('/backend/auth/verifyOtpAndResetPassword', { otp: values.otp, newPassword: values.newPassword,confirmPassword:values.confirmPassword });
+      await api.post('/backend/auth/verifyOtpAndResetPassword', { otp: values.otp, newPassword: values.newPassword,confirmPassword:values.confirmPassword },{
+        headers:{
+          'X-Token-Type':'student'
+        }
+      });
       setLoading(false);
       Swal.fire('Success!', 'Your password has been reset.', 'success');
       setOpenOtpModal(false);
@@ -98,10 +105,9 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
               newPassword: values.newPassword
             };
 
-            await axios.put(`/backend/auth/updatePassword/${id}`, formData, {
-              withCredentials: true,
+            await api.put(`/backend/auth/updatePassword/${id}`, formData, {
               headers: {
-                Authorization: `Bearer ${token}`
+                'X-Token-Type':'student'
               }
             });
             setLoading(false);
@@ -109,7 +115,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
             onClose();
           } catch (error) {
             setLoading(false);
-            Swal.fire('Error!', 'An error occurred while updating your password.', 'error');
+            toast.error(error)
           }
         }
       });
@@ -130,6 +136,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     <>
       {!openForgotPass && !openOtpModal && (
         <div className='inset-0 fixed flex justify-center items-center bg-black bg-opacity-50 z-40'>
+          <ToastContainer/>
           <div className='relative md:w-[30%] m-auto items-center md:h-[50%] bg-black p-6 rounded-lg shadow-lg w-[90%]'>
             <button
               className='absolute top-2 right-2 text-white text-2xl'

@@ -10,3 +10,4 @@ export interface feedPostTypes{
 export interface AuthenticatedRequest extends Request {
   userId?: string; // or any other properties you need
 }
+  

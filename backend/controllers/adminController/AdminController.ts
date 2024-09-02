@@ -162,7 +162,6 @@ export const AdminRejectTutor = async (req: Request, res: Response, next: NextFu
     
     const tutor = await TutorModel.findById(tutorId);
 
-    // Check if tutor exists
     if (!tutor) {
       res.status(404).json({ message: 'Tutor not found' });
       return;
@@ -259,7 +258,8 @@ export const addCategory=async(req:Request,res:Response,next:NextFunction):Promi
 export const getAllCategories=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
   console.log('hello')
 try{
-  const getAllCategory=await CategoryeModel.find()
+  const getAllCategory=await CategoryeModel.find({isDelete:false})
+  console.log('adad',getAllCategory)
   if(!getAllCategory){
     res.status(404).json('Categories not found')
   }
@@ -270,10 +270,23 @@ try{
 }
 
 
-// export const deleteCategory=async(req:Request,res:Response):Promise<void>=>{
-//   const id=req.params.id
-//   console.log('id',id)
-// }
+export const deleteCategory=async(req:Request,res:Response):Promise<void>=>{
+  const id=req.params.id
+  console.log('id',id) 
+  const catId=new mongoose.Types.ObjectId(id)
+  console.log('ca',catId)
+  const category = await CategoryeModel.findByIdAndUpdate(
+    catId,
+    { $set: { isDelete: true } },
+    { new: true } 
+  );
+  if(!category){
+    res.json("Category nor found")
+  }
+  
+  console.log('ca',category)
+  res.json('category deleted succcesfully')
+}
 
 export const updateCategory=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
   try{
@@ -282,7 +295,6 @@ export const updateCategory=async(req:Request,res:Response,next:NextFunction):Pr
   console.log('req',req.body)
   const { categoryName, catDescription } = req.body;
 
-  // Validate that both categoryName and catDescription are provided
   if (!categoryName || !catDescription) {
     res.status(400).json({ message: 'Both categoryName and catDescription are required' });
     return;
@@ -352,3 +364,7 @@ export const getTutorCourseDetails = async (req: Request, res: Response, next: N
     next(error); 
   }
 };
+
+export const adminSignout=async(req:Request,res:Response)=>{
+  res.clearCookie('access_token').status(200).json({message:"Signout successful"})
+}

@@ -1,9 +1,11 @@
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-export default {
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+module.exports = withMT({
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@material-tailwind/react/**/*.{js,ts,jsx,tsx}"
+
   ],
   theme: {
     extend: {
@@ -44,9 +46,6 @@ export default {
     },
   },
   plugins: [
-    require('tailwind-scrollbar')({
-      // You can configure the scrollbar styles here if needed
-      nocompatible: true,
-    }),
+    // Add any additional plugins you need here
   ],
-}
+});

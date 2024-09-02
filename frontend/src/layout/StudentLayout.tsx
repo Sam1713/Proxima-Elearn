@@ -12,4 +12,4 @@ const StudentLayout: React.FC = () => {
   );
 };
 
-export default StudentLayout;
+export default StudentLayout;  

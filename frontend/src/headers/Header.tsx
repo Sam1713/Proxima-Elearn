@@ -47,10 +47,10 @@ function StudentHeader() {
             <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
           </li>
           <li className="mx-5">
-            <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">My Courses</Link>
+            <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
           </li>
           <li className="mx-5">
-            <Link to='/courseDetail' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
+            <Link to='/studentProfile' className="hover:text-blue-300 transition-colors duration-300">Profile</Link>
           </li>
           <li className="mx-5">
             <Link onClick={handleSignout} to='/signup' className="hover:text-blue-300 transition-colors duration-300">

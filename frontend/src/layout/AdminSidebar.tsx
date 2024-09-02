@@ -104,13 +104,15 @@ function AdminSidebar() {
               />
             </div>
           )}
+          <Link to='/admin/category'>
           <SidebarItem
             icon={MdFeed}
-            text='Feeds'
+            text='Category'
             onClick={() => handleClick('feeds')}
             isActive={activeItem === 'feeds'}
             arrow={false}
           />
+          </Link>
           <SidebarItem
             icon={BiSolidPurchaseTagAlt}
             text='Orders'

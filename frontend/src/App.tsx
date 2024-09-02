@@ -1,5 +1,5 @@
 // App.js
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route,ScrollRestoration } from 'react-router-dom';
 import LoadingSpinner from './utils/LoadingSpinner';
 import Layout from './layout/Layout';
@@ -35,6 +35,13 @@ import PurchasedStudent from './components/courses/PurchasedStudent';
 import AllCourses from './components/studentCourse/AllCourses';
 import TutorCourses from './components/admin/TutorCourses';
 import TutorCourseDetails from './components/admin/TutorCourseDetails';
+import BookingCall from './components/studentCourse/BookingCall';
+import GetCallRequest from './components/courses/GetCallRequest';
+import FullCallDetails from './components/courses/FullCallDetails';
+import socketIO from 'socket.io-client'
+import Room from './components/room/Room';
+import { ContextProvider, SocketContext } from './components/context/RoomContext';
+import OpenRoom from './components/room/OpenRoom';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -47,7 +54,12 @@ const TutorSignin = React.lazy(() => import('./components/tutorAuth/TutorSignin'
 const TutorWaiting = React.lazy(() => import('./components/tutorAuth/TutorWaiting'));
 const StudentProfileDetails = React.lazy(() => import('./components/studentAuth/StudentProfileDetails'));
 
+
 function App() {
+  const student = localStorage.getItem('access_token');
+  const tutor = localStorage.getItem('tutor_access_token');
+
+  const isAuthorized = student || tutor;
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingSpinner />}>
@@ -67,7 +79,15 @@ function App() {
                 <Route path='/singleCourseDetail/:id'element={<SingleCourseDetail/>}/>
                 <Route path='/checkout'element={<Checkout/>}/>
                 <Route path='/allCourses'element={<AllCourses/>}/>
+                <Route path='/booking/:id'element={<BookingCall/>}/>
+                {/* <Route path="/room/:id" element={
+                <Room/>
+                  
+                  }/>  */}
+                
             </Route>
+                         {/* <Route path='/openRoom'element={<OpenRoom/>}/> */}
+
             <Route element={<StudentPublicRoute />}>
             <Route path="/" element={<Landing />} />
               <Route path="/signup" element={<Register />} />
@@ -89,8 +109,19 @@ function App() {
              <Route path='/getTutorCourses'element={<GetTutorCourses/>}/>
              <Route path='/getTutorCourseDetail/:id'element={<GetTutorCourseDetail/>}/>
              <Route path='/purchasedStudents'element={<PurchasedStudent/>}/>
-             </Route>   
+             <Route path='/getFullCallDetails/:id'element={<FullCallDetails/>}/>
 
+             <Route path='/getCallList'element={<GetCallRequest/>}/>
+             {/* <Route path="/room/:id" element={
+            
+              <Room/>
+              
+              }/> */}
+             </Route>   
+             {/* <Route path='/openRoom'element={<OpenRoom/>}/> */}
+             {isAuthorized && (
+            <Route path="/room/:id" element={<Room />} />
+          )}
              </Route>  
           <Route element={<AdminLoginLayout />}>
           <Route element={<AdminPublicRoute/>}>
@@ -109,7 +140,8 @@ function App() {
             </Route>
           </Route>
         </Routes>
-      </Suspense>
+        
+      </Suspense> 
     </BrowserRouter>
   );
 }

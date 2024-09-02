@@ -8,7 +8,7 @@ const courseFilesUpload = createMulterConfig('./backend/uploads/courseFiles');
 router.post('/uploadCourse',authMiddleware('tutor'),courseFilesUpload.fields([
     { name: 'coverImage', maxCount: 1 },
     { name: 'coverVideo', maxCount: 1 },
-    { name: 'videos', maxCount: 5},  // Handle an array of video files, with a limit of 10
+    { name: 'videos', maxCount: 5},  
   ]),uploadCourse)
   router.get('/getTutorCourses',authMiddleware('tutor'),getTutorCourses)
   router.get('/getTutorCourseDetail/:id',authMiddleware('tutor'),getTutorCourseDetail)
@@ -17,4 +17,5 @@ router.post('/uploadCourse',authMiddleware('tutor'),courseFilesUpload.fields([
   router.patch('/updateSubVideo/:id',authMiddleware('tutor'),courseFilesUpload.single('subVideo'),updateSubVideo)
   router.get('/getPurchasedStudents',authMiddleware('tutor'),getAllPurchasedStudents)
   router.delete('/deleteCourse/:id',authMiddleware('tutor'),deleteCourse)
+  
   export default router  

@@ -43,7 +43,6 @@ export const createCheckout = async (req: Request, res: Response, next: NextFunc
 
         console.log('stude', student);
 
-        // Create or update the enrollment record
         const enrollment = await Enrollment.findOneAndUpdate(
             {
                 courseId: courseId,
@@ -301,18 +300,18 @@ export const getPaymentDetails=async(req:Request,res:Response)=>{
     }
   },
   {
-    $unwind: '$PaymentDetails' // Unwind to have each payment detail as a separate document
+    $unwind: '$PaymentDetails' 
   },
   {
     $lookup: {
-      from: 'courses', // Assuming your courses collection is named 'courses'
-      localField: 'courseId', // courseId from Enrollment collection
-      foreignField: '_id', // _id from Courses collection
+      from: 'courses', 
+      localField: 'courseId', 
+      foreignField: '_id', 
       as: 'PurchasedCourses'
     }
   },
   {
-    $unwind: '$PurchasedCourses' // Unwind to treat each PurchasedCourse as a separate document
+    $unwind: '$PurchasedCourses' 
 
   },
   {

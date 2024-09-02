@@ -120,11 +120,10 @@ export const authSignin = async (
     }
 
     const token = jwt.sign(
-      { id: user._id }, // Adjust as necessary
+      { id: user._id }, 
       process.env.STUDENT_JWT_SECRET as string,
-      // Optional: set token expiration
     );
-    console.log('Generated token:', token); // Log token
+    console.log('Generated token:', token); 
 
     const { password: hashedPassword, ...rest } = user;
 
@@ -256,7 +255,7 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
     // }
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path);
-      student.profilePic = result.url; // Save the Cloudinary URL in the DB
+      student.profilePic = result.url; 
     }
     await student.save();
 
@@ -276,7 +275,9 @@ export const updatePasswordinStudentProfile = async (req: Request, res: Response
     console.log('User ID:', userId);
     
     const { currentPassword, newPassword } = req.body;
+   
 
+   console.log('sdada')
     const user = await Student.findById(userId);
     console.log('user',user)
     
@@ -288,6 +289,9 @@ export const updatePasswordinStudentProfile = async (req: Request, res: Response
     console.log('match',isMatch)
     if (!isMatch) {
       return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+    if (!passwordValidator(newPassword)) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long and include letters, numbers, and special characters.' });
     }
     console.log('user',user)
 
@@ -422,7 +426,6 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       const courseId = req.params.id;
       console.log('Fetching course details for ID:', courseId);
       
-      // Fetch the single course along with tutor details
       const [course] = await CourseModel.aggregate([
         {
           $match: { _id: new mongoose.Types.ObjectId(courseId) },

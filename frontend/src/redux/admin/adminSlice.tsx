@@ -98,6 +98,10 @@ const AdminSlice=createSlice({
         adminSignInFailure:(state,action:PayloadAction<string>)=>{
             state.error=action.payload
         },
+        adminSignout:(state)=>{
+          state.currentAdmin=null
+          state.loading=false
+        },
         adminStoreTutorDetails:(state,action:PayloadAction<TutorDetails[]>)=>{
             state.tutorDetails=action.payload
         },
@@ -126,5 +130,5 @@ const AdminSlice=createSlice({
       }
 })
 
-export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch,setAllCategory,setEachCategory,setTutorCourses,setCourseDetails}=AdminSlice.actions
+export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminSignout,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch,setAllCategory,setEachCategory,setTutorCourses,setCourseDetails}=AdminSlice.actions
 export default AdminSlice.reducer

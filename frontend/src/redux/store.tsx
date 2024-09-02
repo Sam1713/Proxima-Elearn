@@ -5,6 +5,7 @@ import tutorReducer from './tutor/tutorSlice'
 import feedReducer from './feed/feedSlice'
 import adminReducer from './admin/adminSlice'
 import courseReducer from './courses/courseSlice'
+import roomReducer from './room/roomSlice'
 import {persistReducer} from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
 import persistStore from 'redux-persist/es/persistStore';
@@ -14,7 +15,8 @@ const rootReducer=combineReducers({
     tutor:tutorReducer,
     feed:feedReducer,
     admin:adminReducer,
-    course:courseReducer
+    course:courseReducer,
+    room:roomReducer
 })
 
 const persistConfig={

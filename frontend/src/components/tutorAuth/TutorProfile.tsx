@@ -80,10 +80,10 @@ const TutorProfile:React.FC=()=> {
               
               
             </div>
-            <div className= ' gap-4 flex justify-end mt-16 mr-10'>
+            {/* <div className= ' gap-4 flex justify-end mt-16 mr-10'>
                 <button  className='p-2 bg-green-500 text-white rounded-lg'>Approve</button>
                 <button  className='p-2 bg-red-500 text-white rounded-lg'>Reject</button>
-              </div>
+              </div> */}
           </div>
 
     

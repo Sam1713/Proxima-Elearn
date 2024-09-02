@@ -2,14 +2,14 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const axiosInstance = axios.create({
-  baseURL: '', // Ensure this is the correct base URL
-  withCredentials: true, // Include credentials like cookies in requests
+  baseURL: '', 
+  withCredentials: true, 
 });
-
+ 
 const getToken = (config: any) => {
-  const tokenType = config.headers['X-Token-Type']; // Check if this header is being set
+  const tokenType = config.headers['X-Token-Type']; 
   console.log('tokentype',tokenType)
-
+ 
   switch (tokenType) {
     case 'tutor':
       return localStorage.getItem('tutor_access_token');
@@ -19,7 +19,7 @@ const getToken = (config: any) => {
         return localStorage.getItem('access_token')
         default:
           console.error('Invalid token type');
-          return null; // Return null for invalid token types
+          return null; 
       }
   
 };

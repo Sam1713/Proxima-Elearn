@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setAllCategory } from '../../redux/admin/adminSlice';
 import { response } from 'express';
+import Swal from 'sweetalert2';
 
 const AdminCategory: React.FC = () => {
   const dispatch = useDispatch();
@@ -85,13 +86,42 @@ const AdminCategory: React.FC = () => {
     setSortOrder(event.target.value);
   };
 
-  const handleDelete=async(id:string)=>{
-    await api.delete(`/backend/admin/deleteCategory/${id}`,{
+  const handleDeleteCategory=async(id:string)=>{
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to approve this tutor?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, approve it!',
+      cancelButtonText: 'Cancel'
+    });
+  
+    if (result.isConfirmed) {
+    try{
+      
+    const response=await api.delete(`/backend/admin/deleteCategory/${id}`,{
       headers:{
         'X-Token-Type':'admin'
       }
     })
-    console.log('res',response)
+      console.log('res',response)
+      fetchAllCategory();
+
+
+    Swal.fire({
+      title: 'Approved!',
+      text: 'The tutor has been approved.',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    })
+  }
+  catch(error){
+    console.log('err',error)
+  }
+    }
+  
   }
 
   return (
@@ -144,7 +174,7 @@ const AdminCategory: React.FC = () => {
                       Edit
                     </button>
                     <button 
-                    onClick={()=>handleDelete(category?._id)}
+                    onClick={()=>handleDeleteCategory(category?._id)}
                       className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition"
                     >
                       Remove

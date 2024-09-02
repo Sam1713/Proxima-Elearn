@@ -17,11 +17,11 @@ export const passwordValidator = (password:string): boolean => {
 };
 export const validateConfirmPassword = (confirmPassword: string, password: string): boolean => {
   return confirmPassword === password;
-};
-
+};  
+  
 export const titleValidator = (title: string): boolean => {
   return title.length >= 5;
-};
+};  
 
 /// Validators for feed data
 

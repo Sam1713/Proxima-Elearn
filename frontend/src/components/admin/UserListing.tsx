@@ -52,7 +52,7 @@ function UserListing() {
      {
       const result = await Swal.fire({
     title: 'Are you sure?',
-    text: 'Do you want to approve this tutor?',
+    text: 'Do you want to block this tutor?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -61,17 +61,14 @@ function UserListing() {
     cancelButtonText: 'Cancel'
   });
 
-  // Check user's response
   if (result.isConfirmed) {
     try {
-      // Optimistically update the local state
     
       const updatedUsers = adminUsers.map(user => 
         user._id === id ? { ...user, isBlocked: !isBlocked } : user
       );
       dispatch(adminUsersFetch(updatedUsers));
 
-      // Make the API call
       const response = await api.put(`/backend/admin/blockOrUnblock/${id}`, {}, {
         headers: {
           'X-Token-Type': 'admin',
@@ -80,14 +77,13 @@ function UserListing() {
 
       dispatch(signInSuccess(response.data.user));
       Swal.fire({
-        title: 'Approved!',
-        text: 'The tutor has been approved.',
+        title: 'Blocked!',
+        text: 'The user has been blocked.',
         icon: 'success',
         confirmButtonText: 'OK'
       });
     } 
   
-    // Optionally, dispatch any required actions here
   catch (error) {
     console.error('Error approving tutor:', error);
     Swal.fire({

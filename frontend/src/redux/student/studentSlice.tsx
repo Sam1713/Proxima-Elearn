@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface StudentState {
     currentStudent: Student | null;
     courses:Course[];
+    callDetails:CallRequestType|null
     loading: boolean;
     error: string | null;
 }
@@ -33,9 +34,29 @@ interface Course {
     price: number;
 
   }
+  interface CallRequestType{
+    _id:string;
+    name:string;
+    email:string;
+    purpose:string;
+    description?:string;
+    status:string,
+    courseId:string;
+    tutorId:string;
+    studentId:string;
+    profilePic:string;
+    callId:string;
+    tutorResponse?:{
+        responseDate?:string;
+        startingTime?:string;
+        endingTime?:string;
+        notes?:string;
+    }
+}
 const initialState: StudentState = {
     currentStudent: null,
     loading: false,
+    callDetails:null,
     courses:[],
     error: null,
 };
@@ -72,10 +93,13 @@ const studentSlice = createSlice({
         setStudentCourses: (state, action: PayloadAction<Course[]>) => {
             state.courses =action.payload; // Merge new courses
         },
+        setCallDetails:(state,action:PayloadAction<CallRequestType>)=>{
+            state.callDetails=action.payload
+        }
         
     },
 });
 
-export const { signInStart, signInSuccess, signInFailure,signout,updateStart,updateSuccess,setStudentCourses } = studentSlice.actions;
+export const { signInStart, signInSuccess, signInFailure,signout,updateStart,updateSuccess,setStudentCourses,setCallDetails } = studentSlice.actions;
 
 export default studentSlice.reducer;

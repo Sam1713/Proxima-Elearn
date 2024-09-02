@@ -11,7 +11,6 @@ export const VerifyUser = async (req: Request, res: Response, next: NextFunction
 
         if (user?.isBlocked) {
             console.log('sfsdf')
-            // Clear the cookie and respond with an error
             res.clearCookie('access_token').status(403).json({ error: 'UserBlocked', message: 'Sorry, your account has been blocked. Please sign in again.' });
         } else {
             next();

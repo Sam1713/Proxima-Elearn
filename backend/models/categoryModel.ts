@@ -4,7 +4,7 @@ interface CategoryType{
     _id?:mongoose.Types.ObjectId;
     categoryName:string;
     catDescription:string;
-   //  isDelete?:boolean;
+    isDelete?:boolean;
 }
 
 const categorySchema=new Schema<CategoryType>({
@@ -17,10 +17,10 @@ const categorySchema=new Schema<CategoryType>({
         type:String,
         required:true,
      },
-   //   isDelete:{
-   //    type:Boolean,
-   //    default:false
-   //   }
+     isDelete:{
+      type:Boolean,
+      default:false
+     }
 })
 const CategoryeModel = mongoose.model<CategoryType>('Category', categorySchema);
 

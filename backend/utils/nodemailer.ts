@@ -15,7 +15,7 @@ export const sendEmail = (to: string, subject: string, text: string) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const mailOptions = {
-        from: process.env.EMAIL,
+        from: process.env.EMAIL,    
         to, 
         subject,
         text,

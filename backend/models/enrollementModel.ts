@@ -27,7 +27,7 @@ const enrollementSchema=new Schema<EnrollementTypes>({
         type:Array,
         required:true,
         default:[]
-      },
+      }, 
       isComplete:{
         type:Boolean,
         required:true,

@@ -98,8 +98,9 @@ export const getTutorCourses = async (req: Request, res: Response): Promise<void
     const page = parseInt(req.query.page as string) || 1; 
     const limit = parseInt(req.query.limit as string) || 3; 
     const skip = (page - 1) * limit;
+    console.log('sjop',skip)
    const course=await CourseModel.find({isDelete:true})
-   console.log('cor',course)
+  //  console.log('cor',course)
     const tutorCourses = await CourseModel.aggregate([
       { $match: { tutorId:tutorId,isDelete:false } }, 
       { $project: {
@@ -117,7 +118,7 @@ export const getTutorCourses = async (req: Request, res: Response): Promise<void
 
     const totalCourses = await CourseModel.countDocuments({ tutorId: tutorId });
     const totalPages = Math.ceil(totalCourses / limit);
-   console.log('rt',tutorCourses)
+  //  console.log('rt',tutorCourses)
     if(tutorCourses.map(tutor=>tutor?.isDelete==true)){
       res.json({
         courses: tutorCourses,
@@ -184,10 +185,9 @@ export const updateCourseNonFileDetail=async(req:Request,res:Response):Promise<v
         AboutCourse,
         
       },
-      { new: true } // Return the updated document
+      { new: true } 
     );
 
-    // Check if course was found and updated
     if (courseUpdate) {
       res.status(200).json(courseUpdate);
     } else {
@@ -224,7 +224,7 @@ export const updateCoverImage = async (req: Request, res: Response): Promise<unk
    
     await CourseModel.findByIdAndUpdate(courseId, { coverImageUrl: newCoverImageUrl }, { new: true });
 
-    const updatedCourse = await CourseModel.findById(courseId); // Fetch the updated course
+    const updatedCourse = await CourseModel.findById(courseId);
     console.log('up',updatedCourse)
     res.status(200).json({
       message: 'Cover image updated successfully',
@@ -237,7 +237,6 @@ export const updateCoverImage = async (req: Request, res: Response): Promise<unk
   }
 };
 
-// Helper function to extract the public ID from the Cloudinary URL
 const getPublicIdFromUrl = (url: string): string => {
   const parts = url.split('/');
   const lastPart = parts[parts.length - 1];
@@ -261,7 +260,6 @@ export const updateSubVideo = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // Find the video to be replaced
     const videoObjectId = new mongoose.Types.ObjectId(videoId);
     const video = course.videos.find((v: { _id: mongoose.Types.ObjectId }) => v._id.equals(videoObjectId));
 
@@ -271,16 +269,13 @@ export const updateSubVideo = async (req: Request, res: Response): Promise<void>
     }
 
     if (file) {
-      // Remove the existing video from Cloudinary
       const existingPublicId = getPublicIdFromUrl(video.fileUrl);
       await cloudinary.uploader.destroy(existingPublicId);
 
-      // Upload the new video to Cloudinary
       const uploadResponse = await cloudinary.uploader.upload(file.path, {
         resource_type: 'video'
       });
 
-      // Update the video details in MongoDB
       await CourseModel.findOneAndUpdate(
         { _id: courseId, 'videos._id': videoObjectId },
         {
@@ -292,7 +287,6 @@ export const updateSubVideo = async (req: Request, res: Response): Promise<void>
         { new: true }
       );
     } else {
-      // Update only the description if no new file is provided
       await CourseModel.findOneAndUpdate(
         { _id: courseId, 'videos._id': videoObjectId },
         { $set: { 'videos.$.description': description } },
@@ -300,7 +294,6 @@ export const updateSubVideo = async (req: Request, res: Response): Promise<void>
       );
     }
 
-    // Fetch the updated course details
     const updatedCourse = await CourseModel.findById(courseId).exec();
     if (!updatedCourse) {
       res.status(404).json({ error: 'Course not found after update' });
@@ -334,7 +327,7 @@ export const getAllPurchasedStudents = async (req: Request, res: Response, next:
       },
       {
         $match: {
-          'Courses.tutorId': tutorId // Filter by tutorId in the CourseDetails
+          'Courses.tutorId': tutorId 
         }
       },
       {
@@ -352,18 +345,17 @@ export const getAllPurchasedStudents = async (req: Request, res: Response, next:
       {
         $project: {
           "_id": 0,
-          "title": "$Courses.title",         // Flattening the course title
-          "category": "$Courses.category",   // Flattening the course category
-          "username": "$Student.username",   // Flattening the student username
-          "email": "$Student.email",         // Flattening the student email
-          "profilePic": "$Student.profilePic" // Flattening the student profilePic
+          "title": "$Courses.title",         
+          "category": "$Courses.category",   
+          "username": "$Student.username",   
+          "email": "$Student.email",        
+          "profilePic": "$Student.profilePic" 
         }
       }
     ]);
 
     console.log('cour', studentDetails);
 
-    // Sending the response back to the client
     res.status(200).json(studentDetails);
 
   } catch (error) {

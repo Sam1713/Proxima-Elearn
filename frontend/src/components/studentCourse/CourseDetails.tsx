@@ -55,8 +55,8 @@ function CourseDetails() {
         })
         console.log('res',response)
         const { courseDetail, otherCourses } = response.data;
-const courseDetailData = courseDetail.Courses; // Extract Courses from courseDetail
-const otherDetailData = otherCourses // Extract Courses from courseDetail
+const courseDetailData = courseDetail.Courses; 
+const otherDetailData = otherCourses 
 
 dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses :otherDetailData}));
 
@@ -78,6 +78,11 @@ dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses 
   };
   const handleNavigate=(id:string)=>{
     navigate(`/singleCourseDetail/${id}`)
+  }
+
+  const handleVideoCall=(id:string)=>{
+    console.log('id',id)
+    navigate(`/booking/${id}`)
   }
   return (
     <div className='min-h-screen md:w-full py-16 bg-custom-gradient'>
@@ -143,7 +148,7 @@ dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses 
           <button className='w-full md:w-[15%] mt-4 md:mt-0 text-white py-2 rounded-lg text-center border-black border-2 hover:bg-custom-gradient'>
             Chat With Tutor
           </button>
-          <button className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
+          <button onClick={()=>handleVideoCall(id)} className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
             Video Call
           </button>
         </div>

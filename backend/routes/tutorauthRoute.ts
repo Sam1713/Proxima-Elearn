@@ -21,5 +21,5 @@ router.put('/updateBio',authMiddleware('tutor'),updateBio)
 router.post('/updateFiles',authMiddleware('tutor'),tutorFilesUpload.array('files'),updateFiles)
 // router.delete('/deleteFile',authMiddleware('tutor'),deleteFile)
 router.post('/acceptLicense',authMiddleware('tutor'),acceptLicense)
-export default router;
+export default router; 
  

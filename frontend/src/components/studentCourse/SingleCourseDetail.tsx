@@ -45,14 +45,12 @@ function SingleCourseDetail() {
       if (error.response) {
         const { status, data } = error.response;
  
-        // Check if the error is due to the user being blocked
         if (status === 403 && data.error === 'UserBlocked') {
           console.log('sdfsd')
           dispatch(signout());
           dispatch(clearFeed());
-          localStorage.removeItem('access_token'); // Clear access token from local storage
+          localStorage.removeItem('access_token'); 
         } else {
-          // Handle other errors
           console.error('An error occurred:', error);
         }
       } else {

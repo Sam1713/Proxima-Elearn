@@ -14,11 +14,11 @@ function GetTutorCourses() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 3; // Number of courses per page
+  const limit = 3; 
 
-  // Function to fetch tutor courses
   const fetchTutorCourses = async () => {
     try {
+      console.log('sdfsf')
       const response = await api.get(`/backend/course/getTutorCourses?page=${page}&limit=${limit}`, {
         headers: {
           'X-Token-Type': 'tutor',
@@ -53,7 +53,6 @@ function GetTutorCourses() {
         cancelButtonText: 'Cancel'
       });
     
-      // Check user's response
       if (result.isConfirmed) {
       await api.delete(`/backend/course/deleteCourse/${id}`, {
         headers: {
@@ -74,6 +73,7 @@ function GetTutorCourses() {
   };
 
   const handleNextPage = () => {
+    console.log('next page')
     if (page < totalPages) {
       setPage(page + 1);
     }
@@ -87,7 +87,7 @@ function GetTutorCourses() {
 
   return (
     <div className="bg-custom-gradient min-h-screen w-full px-8">
-      <h1 className="text-3xl text-red-600 underline font-bold text-center mb-8">
+      <h1 className="text-3xl text-white underline font-thin text-center mb-8">
         Your Courses
       </h1>
 
@@ -139,7 +139,7 @@ function GetTutorCourses() {
         >
           Previous
         </button>
-        <p>{page}-{totalPages}</p>
+        <p className='text-white mt-2 '>Page {page} of {totalPages}</p>
         <button
           onClick={handleNextPage}
           disabled={page === totalPages}

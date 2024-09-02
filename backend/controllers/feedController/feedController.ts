@@ -85,7 +85,7 @@ export const feedPost = async (
             content,
             files: fileArray
         });
-      console.log('feed',newFeed)
+    //   console.log('feed',newFeed)
         await newFeed.save();
         const formattedTimestamp = formatTimestamp(newFeed.createdAt!);
 
@@ -117,7 +117,7 @@ export const getFeedPage = async (req: Request, res: Response, next: NextFunctio
 
         // Query MongoDB for feeds by studentId
         const feeds = await Feed.find({ student: studentId }).exec();
-        console.log('feeds',feeds)
+        // console.log('feeds',feeds)
 
         // Log the fetched feeds for debugging
 
@@ -130,3 +130,4 @@ export const getFeedPage = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+  
