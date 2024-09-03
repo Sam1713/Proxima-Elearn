@@ -28,6 +28,7 @@ interface AdminDetails{
     getTutorCourses:TutorCourses[],
     viewAllCategory:Category[],
     eachCategory:Category|null
+    ordersList:OrdersListType[]
     loading:boolean;
     error:string|null
 }
@@ -68,6 +69,14 @@ interface Video {
     price: number;
     videos: Video[];
   }
+  interface OrdersListType{
+createdAt:string
+email:string;
+price:string
+profilePic:string
+title:string
+username:string
+  }
   
 const initialState:AdminDetails={
      currentAdmin:null,
@@ -76,6 +85,7 @@ const initialState:AdminDetails={
      viewAllCategory:[],
      getTutorCourses:[],
      singleCourseDetail:null,
+     ordersList:[],
      eachCategory:null,
      singleTutor:null,
      isApproved:false,
@@ -125,10 +135,13 @@ const AdminSlice=createSlice({
           },
           setCourseDetails:(state,action:PayloadAction<CourseDocument>)=>{
             state.singleCourseDetail=action.payload
+          },
+          setOrdersList:(state,action:PayloadAction<OrdersListType[]>)=>{
+            state.ordersList=action.payload
           }
 
       }
 })
 
-export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminSignout,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch,setAllCategory,setEachCategory,setTutorCourses,setCourseDetails}=AdminSlice.actions
+export const {adminSignInStart,adminSignInSuccess,adminSignInFailure,adminSignout,adminStoreTutorDetails,adminStoreEachTutorDetail,tutorApproved,adminUsersFetch,setAllCategory,setEachCategory,setTutorCourses,setCourseDetails,setOrdersList}=AdminSlice.actions
 export default AdminSlice.reducer

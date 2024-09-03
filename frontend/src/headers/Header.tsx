@@ -7,6 +7,7 @@ import { signout } from '../redux/student/studentSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
+import Notifications from '../components/studentNotification/Notification';
 
 function StudentHeader() {
   const [isOpen, setToggle] = useState(false);
@@ -42,12 +43,15 @@ function StudentHeader() {
         </div>
       </div>
       <nav className={`w-full ${isOpen ? 'block' : 'hidden'} sm:flex mt-4 sm:mt-0`}>
-        <ul className="flex flex-col sm:flex-row justify-end w-full text-white">
+        <ul className="flex flex-col sm:flex-row justify-end w-full text-white items-center">
           <li className="mx-5">
             <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
           </li>
           <li className="mx-5">
             <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
+          </li>
+          <li className="mx-5 relative text-white">
+            <Notifications />
           </li>
           <li className="mx-5">
             <Link to='/studentProfile' className="hover:text-blue-300 transition-colors duration-300">Profile</Link>
@@ -57,6 +61,8 @@ function StudentHeader() {
               Signout
             </Link>
           </li>
+          {/* Add Notifications Component Here */}
+          
         </ul>
       </nav>
     </header>

@@ -1,7 +1,7 @@
 import express from 'express'
 const router=express.Router()
 import createMulterConfig from '../middleware/multer';
-import { uploadCourse,getTutorCourses,getTutorCourseDetail, updateCourseNonFileDetail, updateCoverImage, updateSubVideo, getAllPurchasedStudents, deleteCourse } from '../controllers/courseController/courseController';
+import { uploadCourse,getTutorCourses,getTutorCourseDetail, updateCourseNonFileDetail, updateCoverImage, updateSubVideo, getAllPurchasedStudents, deleteCourse, getWalletDetails } from '../controllers/courseController/courseController';
 import authMiddleware from '../middleware/jwt';
 const courseFilesUpload = createMulterConfig('./backend/uploads/courseFiles');
 
@@ -17,5 +17,7 @@ router.post('/uploadCourse',authMiddleware('tutor'),courseFilesUpload.fields([
   router.patch('/updateSubVideo/:id',authMiddleware('tutor'),courseFilesUpload.single('subVideo'),updateSubVideo)
   router.get('/getPurchasedStudents',authMiddleware('tutor'),getAllPurchasedStudents)
   router.delete('/deleteCourse/:id',authMiddleware('tutor'),deleteCourse)
+  router.get('/getWalletDetails',authMiddleware('tutor'),getWalletDetails)
+
   
   export default router  

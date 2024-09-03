@@ -44,7 +44,7 @@ function TutorSidebar() {
   };
 
   return (
-    <div className='md:w-[20%] fixed  pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
+    <div className='md:w-[20%] z-10 fixed  pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'
@@ -71,7 +71,7 @@ function TutorSidebar() {
             arrow={false}
           />
           </Link>
-          <Link to='/tutorlist'>
+          <Link to='/tutorWallet'>
           <SidebarItem
             icon={GiTeacher}
             text='My Wallet'

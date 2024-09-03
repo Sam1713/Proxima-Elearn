@@ -4,6 +4,7 @@ import CourseModel from '../../models/courseModel';
 import mongoose from 'mongoose';
 import Enrollment from '../../models/enrollementModel';
 import CategoryeModel from '../../models/categoryModel';
+import Payment from '../../models/paymentModel';
 
 export const uploadCourse = async (req: Request, res: Response) => {
   try {
@@ -385,6 +386,171 @@ export const deleteCourse = async (req: Request, res: Response, next: NextFuncti
     res.status(200).json({ message: 'Course successfully deleted', course });
   } catch (error) {
     console.error('Error deleting course:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getWalletDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const TutorId = req.userId; 
+    const tutorId = new mongoose.Types.ObjectId(TutorId);
+    console.log('Tutor ID:', tutorId);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const skip = (page - 1) * limit;
+    
+    const totalAmount = await Payment.aggregate([
+      {
+        $lookup: {
+          from: 'enrollments',
+          localField: 'enrollmentId',
+          foreignField: '_id',
+          as: 'EnrolledCourses'
+        }
+      },
+      {
+        $unwind: '$EnrolledCourses'
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'EnrolledCourses.courseId',
+          foreignField: '_id',
+          as: 'CourseDetails'
+        }
+      },
+      {
+        $unwind: '$CourseDetails'
+      },
+      {
+        $lookup:{
+          from: 'students',
+          localField: 'EnrolledCourses.studentId',
+          foreignField: '_id',
+          as: 'StudentDetails'
+        }
+      },
+      {
+        $unwind: { path: '$StudentDetails' }
+      },
+      {
+        $match: {
+          'CourseDetails.tutorId': tutorId
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' }
+        }
+      }
+    ]);
+    console.log('totalAmont',totalAmount)
+
+    const totalAmountValue = totalAmount[0]?.totalAmount || 0;
+
+    const deductedAmount = totalAmountValue * 0.7;
+    const balanceAmount = totalAmountValue - deductedAmount;
+
+    const walletDetails = await Payment.aggregate([
+      {
+        $lookup: {
+          from: 'enrollments',
+          localField: 'enrollmentId',
+          foreignField: '_id',
+          as: 'EnrolledCourses'
+        }
+      },
+      {
+        $unwind: '$EnrolledCourses'
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'EnrolledCourses.courseId',
+          foreignField: '_id',
+          as: 'CourseDetails'
+        }
+      },
+      {
+        $unwind: '$CourseDetails'
+      },
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'EnrolledCourses.studentId',
+          foreignField: '_id',
+          as: 'StudentDetails'
+        }
+      },
+      {
+        $unwind: { path: '$StudentDetails' }
+      },
+      {
+        $match: {
+          'CourseDetails.tutorId': tutorId
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          studentName: '$StudentDetails.username',
+          courseId: '$CourseDetails._id',
+          courseTitle: '$CourseDetails.title',
+          amountPaid: '$amount',
+          paymentDate: '$created_at'
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limit
+      }
+    ]);
+
+    const totalDocResult = await Payment.aggregate([
+      {
+        $lookup: {
+          from: 'enrollments',
+          localField: 'enrollmentId',
+          foreignField: '_id',
+          as: 'EnrolledCourses'
+        }
+      },
+      {
+        $unwind: '$EnrolledCourses'
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'EnrolledCourses.courseId',
+          foreignField: '_id',
+          as: 'CourseDetails'
+        }
+      },
+      {
+        $unwind: '$CourseDetails'
+      },
+     
+      {
+        $match: {
+          'CourseDetails.tutorId': tutorId
+        }
+      },
+      {
+        $count: 'totalDocs'
+      }
+    ]);
+
+    const totalDoc = totalDocResult[0]?.totalDocs || 0;
+    console.log('totalDoc:', totalDoc);
+    const totalPages = Math.ceil(totalDoc / limit);
+
+    res.status(200).json({ walletDetails, deductedAmount, balanceAmount, totalPages });
+  } catch (error) {
+    console.error('Error fetching wallet details:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

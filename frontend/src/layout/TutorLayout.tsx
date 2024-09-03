@@ -7,7 +7,7 @@ const TutorLayout: React.FC = () => {
   const location = useLocation();
   
   // List the paths where the sidebar should be visible
-  const sidebarPaths = ['/tutorprofile','/getTutorCourses','/purchasedStudents']; // Add more paths as needed
+  const sidebarPaths = ['/tutorprofile','/getTutorCourses','/purchasedStudents','/tutorWallet']; // Add more paths as needed
 
   const showSidebar = sidebarPaths.includes(location.pathname);
 
@@ -16,7 +16,7 @@ const TutorLayout: React.FC = () => {
       <TutorHeader />
       <div className='md:flex'>
         {showSidebar && <TutorSidebar />} {/* Conditionally render the sidebar */}
-        <div className={`w-[100%]  ${showSidebar ? 'md:pt-16 ml-[25%]' : ''}`}> {/* Adjust margin if sidebar is present */}
+        <div className={`w-[100%]  ${showSidebar ? 'md:pt-16 md:ml-[25%]' : ''}`}> {/* Adjust margin if sidebar is present */}
           <Outlet />
         </div>
       </div>

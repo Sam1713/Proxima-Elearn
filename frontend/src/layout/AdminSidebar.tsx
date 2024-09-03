@@ -7,7 +7,7 @@ import { AiOutlineDown, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import TutorListing from '../components/admin/TutorListing';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Define the types for SidebarItem props
 interface SidebarItemProps {
@@ -37,10 +37,10 @@ function AdminSidebar() {
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState<boolean>(true); // Toggle sidebar state
-
+  const naivagate=useNavigate()
   const toggleCourses = () => setIsCoursesOpen(prev => !prev);
-  const handleClick = (item: string) => {
-    setActiveItem(prev => (prev === item ? null : item));
+  const handleClick = () => {
+    naivagate('/admin/ordersList')
   };
   const tutorlist=useSelector((state:RootState)=>state.admin.singleTutor)
 
@@ -81,7 +81,7 @@ function AdminSidebar() {
           </Link>
           <SidebarItem
             icon={BiSolidVideos}
-            text='Courses'
+            text='OrderedCourses'
             onClick={toggleCourses}
             isActive={activeItem === 'courses'}
             arrow={true}

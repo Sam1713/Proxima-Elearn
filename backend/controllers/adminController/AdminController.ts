@@ -10,6 +10,8 @@ import Student from "../../models/studentModel";
 import CategoryeModel from "../../models/categoryModel";
 import CourseModel from "../../models/courseModel";
 import mongoose from "mongoose";
+import Enrollment from "../../models/enrollementModel";
+import Payment from "../../models/paymentModel";
 
 export const AdminSignup = async (req: Request<{},{},AdminSignupType>, res: Response): Promise<unknown> => {
   console.log('Request Body:', req.body);
@@ -368,3 +370,87 @@ export const getTutorCourseDetails = async (req: Request, res: Response, next: N
 export const adminSignout=async(req:Request,res:Response)=>{
   res.clearCookie('access_token').status(200).json({message:"Signout successful"})
 }
+
+
+
+export const getOrdersList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('Fetching orders list...');
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 4;
+    const skip=(page-1)*limit
+    const totalOrders=await Payment.countDocuments()
+
+
+    const ordersList = await Payment.aggregate([
+      // Lookup enrollment details using enrollmentId
+      {
+        $lookup: {
+          from: 'enrollments',
+          localField: 'enrollmentId',
+          foreignField: '_id',
+          as: 'EnrollmentDetails'
+        }
+      },
+      {
+        $unwind: { path: "$EnrollmentDetails" }
+      },
+      // Lookup student details using studentId from enrollment
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'EnrollmentDetails.studentId',
+          foreignField: '_id',
+          as: 'StudentDetails'
+        }
+      },
+      {
+        $unwind: { path: "$StudentDetails" }
+      },
+      // Lookup course details using courseId from enrollment
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'EnrollmentDetails.courseId',
+          foreignField: '_id',
+          as: 'CourseDetails'
+        }
+      },
+      {
+        $unwind: { path: "$CourseDetails" }
+      },
+      // Project the fields to include in the final output
+      {
+        $project: {
+          _id: 0,
+          username: '$StudentDetails.username',
+          email: '$StudentDetails.email',
+          profilePic: '$StudentDetails.profilePic',
+          title: '$CourseDetails.title',
+          price: '$CourseDetails.price',
+            createdAt: '$created_at'
+        }
+      },
+      {
+        $sort:{
+          createdAt:-1
+        }
+      },
+      {
+        $skip:skip
+      },
+      {
+        $limit:limit
+      },
+     
+    ]);
+    const totalPages = Math.ceil(totalOrders / limit);
+    console.log('tit',totalPages)
+
+    console.log('Orders list:', ordersList);
+    res.status(200).json({ordersList,totalPages});
+  } catch (error) {
+    console.error('Error fetching orders list:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

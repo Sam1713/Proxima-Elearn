@@ -10,7 +10,8 @@ export interface TutorState {
     purchased:PurchasedStudentDetails[]
     CallRequestDetails:CallRequestType[],
     CallRequestAccept:CallRequestType|null,
-    bookingDetails:callRequestType|null
+    bookingDetails:CallRequestType|null,//changed callRequestType
+    walletInfo:WalletDetailsTypes|null
     newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
@@ -90,6 +91,19 @@ interface CallRequestType{
         notes?:string;
     }
 }
+
+interface WalletTypes{
+    studentName:string;
+    courseTitle:string;
+    courseId:string;
+    amountPaid:string;
+    paymentDate:string;
+}
+interface WalletDetailsTypes{
+    WalletDetails:WalletTypes[],
+    deductedAmount:string;
+    balanceAmount:string
+}
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
@@ -99,6 +113,7 @@ const initialState:TutorState={
     CallRequestDetails:[],
     CallRequestAccept:null,
     bookingDetails:null,
+    walletInfo:null,
     categoryDetails:[],
     purchased:[],
     newBio:null,
@@ -163,6 +178,9 @@ const tutorSlice=createSlice({
         },
         setBookingDetails:(state,action:PayloadAction<CallRequestType>)=>{
             state.bookingDetails=action.payload
+        },
+        setWalletInfo:(state,action:PayloadAction<WalletDetailsTypes>)=>{
+            state.walletInfo=action.payload
         }
 
 
@@ -170,6 +188,6 @@ const tutorSlice=createSlice({
     }
 })
 
-export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails,setWalletInfo } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

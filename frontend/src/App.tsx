@@ -42,6 +42,8 @@ import socketIO from 'socket.io-client'
 import Room from './components/room/Room';
 import { ContextProvider, SocketContext } from './components/context/RoomContext';
 import OpenRoom from './components/room/OpenRoom';
+import OrdersList from './components/admin/OrdersList';
+import TutorWallet from './components/courses/TutorWallet';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -112,6 +114,7 @@ function App() {
              <Route path='/getFullCallDetails/:id'element={<FullCallDetails/>}/>
 
              <Route path='/getCallList'element={<GetCallRequest/>}/>
+             <Route path='/tutorWallet'element={<TutorWallet/>}/>
              {/* <Route path="/room/:id" element={
             
               <Room/>
@@ -136,7 +139,7 @@ function App() {
               <Route path='/admin/category'element={<AdminCategory/>}/>
               <Route path='/admin/tutorCourses/:id'element={<TutorCourses/>}/>
               <Route path='/admin/tutorCourseDetail/:id'element={<TutorCourseDetails/>}/>
-
+              <Route path='/admin/ordersList'element={<OrdersList/>}/>
             </Route>
           </Route>
         </Routes>
