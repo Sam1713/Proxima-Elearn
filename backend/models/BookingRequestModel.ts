@@ -5,7 +5,7 @@ interface RequestType extends Document {
     email: string;
     purpose: string;
     description?: string;
-    status: 'pending' | 'accepted' | 'rejected';
+    status: 'default'|'pending' | 'accepted' | 'rejected';
     courseId: mongoose.Types.ObjectId; // Reference to the course
     tutorId: mongoose.Types.ObjectId;  // Reference to the tutor
     studentId: mongoose.Types.ObjectId; // Reference to the student
@@ -38,22 +38,22 @@ const BookingSchema = new Schema<RequestType>({
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted','approved', 'rejected','completed'],
-        default: 'pending',
+        enum: ['default','pending', 'accepted','approved', 'rejected','completed'],
+        default: 'default',
     },
     courseId: {
         type: Schema.Types.ObjectId,
-        ref: 'Course', // Reference to the Course model
+        ref: 'Course', 
         required: true,
     },
     tutorId: {
         type: Schema.Types.ObjectId,
-        ref: 'Tutor', // Reference to the Tutor model
+        ref: 'Tutor',
         required: true,
     },
     studentId: {
         type: Schema.Types.ObjectId,
-        ref: 'Student', // Reference to the Student model
+        ref: 'Student',
         required: true,
     },
     tutorResponse: {

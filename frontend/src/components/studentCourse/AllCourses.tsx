@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { FaRupeeSign } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaRupeeSign } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setCourses } from '../../redux/courses/courseSlice';
@@ -11,31 +11,40 @@ import notFound from '../../assets/images/49342678_9214777.jpg';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setStudentCourses } from '../../redux/student/studentSlice';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@material-tailwind/react';
 
 function AllCourses() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedSort, setSelectedSort] = useState('Price: Low to High');
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchValue, setSearchValue] = useState<string>('');
+  const [page,setPage]=useState<number>(1)
+  const [totalPages,setTotalPages]=useState<number>(1)
+  const limit=4
   const dispatch = useDispatch();
   const navigate=useNavigate()
   const allCourses = useSelector((state: RootState) => state.student.courses);
   const categories = useSelector((state: RootState) => state.admin.viewAllCategory);
   console.log('cat',categories)
   useEffect(() => {
-    fetchAllCourses();
-  },[]);
+    fetchAllCourses(page,limit);
+  },[page,limit]);
 
-  const fetchAllCourses = async (pageNumber: number) => {
+  const fetchAllCourses = async (page: number,limit:number) => {
     try {
-      const response = await api.get(`/backend/auth/getAllCourses?page=${pageNumber}`, {
+      const response = await api.get(`/backend/auth/getAllCourses`, {
         headers: {
           'X-Token-Type': 'student'
+        },
+        params:{
+          page:page,
+          limit:limit
         }
       });
-
+console.log('res',response.data)
      
         dispatch(setStudentCourses(response.data.courses));
+        setTotalPages(response.data.totalPages)
       
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -60,7 +69,6 @@ function AllCourses() {
     if (selectedFilter === "$2000-$4000" && (price < 2000 || price > 4000)) matchesPriceRange = false;
     if (selectedFilter === "Over $4000" && price <= 4000) matchesPriceRange = false;
 
-    // Check search value
     const lowercasedSearchValue = searchValue.toLowerCase();
     const matchesSearch = (course?.title?.toLowerCase().includes(lowercasedSearchValue) ||
                            course?.category?.toLowerCase().includes(lowercasedSearchValue));
@@ -87,6 +95,13 @@ function AllCourses() {
 
   const handleNavigate=(id:string)=>{
     navigate(`/singleCourseDetail/${id}`)
+  }
+
+  const handleNext=()=>{
+    setPage((prev)=>prev+1)
+  }
+  const handlePrev=()=>{
+    setPage((prev)=>prev-1)
   }
   return (
     <div className='bg-custom-gradient min-h-screen p-8'>
@@ -181,6 +196,33 @@ function AllCourses() {
             </div>
           )}
         </div>
+        ;
+
+<div className="flex justify-center items-center space-x-4 py-4">
+  <Button
+  onClick={handlePrev}
+  disabled={page==1}
+    variant="gradient"
+    className="flex  items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out"
+  >
+    <FaChevronLeft className="mr-2" />
+    Prev
+  </Button>
+
+  <span className="text-white text-lg font-medium font-poppins">
+    {page}-{totalPages}
+  </span>
+
+  <Button
+  onClick={handleNext}
+  disabled={page==totalPages}
+    variant="gradient"
+    className="flex items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out"
+  >
+    Next
+    <FaChevronRight className="ml-2" />
+  </Button>
+</div>
     </div>
   );
 }

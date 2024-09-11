@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { AdminSignup,AdminSignin,GetAllTutors,GetTutorDetail,AdminApproveTutor,AdminRejectTutor,AdminUserListing,AdminBlockOrUnblock, addCategory, getAllCategories,updateCategory, getTutorCourses, getTutorCourseDetails,deleteCategory, adminSignout, getOrdersList } from '../controllers/adminController/AdminController';
+import { AdminSignup,AdminSignin,GetAllTutors,GetTutorDetail,AdminApproveTutor,AdminRejectTutor,AdminUserListing,AdminBlockOrUnblock, addCategory, getAllCategories,updateCategory, getTutorCourses, getTutorCourseDetails,deleteCategory, adminSignout, getOrdersList, getAdminWalletDetails } from '../controllers/adminController/AdminController';
 import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 
@@ -22,4 +22,5 @@ router.get('/tutorCourseDetail/:id',authMiddleware('admin'),getTutorCourseDetail
 router.delete('/deleteCategory/:id',authMiddleware('admin'),deleteCategory)
 router.get('/adminSignout',adminSignout)
 router.get('/getOrdersList',authMiddleware('admin'),getOrdersList)
+router.get('/getWalletDetails',authMiddleware('admin'),getAdminWalletDetails)
 export default router

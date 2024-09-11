@@ -39,7 +39,7 @@ function TutorCourses() {
   };
 
   return (
-    <div className="bg-custom-gradient w-[80%] mt-5 rounded-xl p-5 shadow-lg">
+    <div className="bg-custom-gradient md:w-[125%] md:mx-10 mt-5 rounded-xl p-5 shadow-lg">
       {loading ? (
         <div className='flex justify-center items-center h-[60vh]'>
           <div className='w-16 h-16 border-4 border-t-4 border-white border-opacity-30 border-t-blue-500 rounded-full animate-spin'></div>

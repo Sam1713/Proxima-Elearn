@@ -21,28 +21,30 @@ function Courses() {
   useScrollRestoration();
   const coursesArray = useSelector((state: RootState) => state.course.courses);
   const allCategories = useSelector((state: RootState) => state.admin.viewAllCategory);
+  const allCourses = useSelector((state: RootState) => state.student.courses);
+console.log('add',allCourses)
   
   const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 3;
+  const coursesPerPage = 4;
   const totalPages = Math.ceil(coursesArray.length / coursesPerPage);
   const [showAll, setShowAll] = useState(false);
 
-  const fetchCourses = async () => {
-    console.log('dsfs')
-    try {
-      const response = await api.get('/backend/auth/getAllCourses', {
-        headers: { 'X-Token-Type': 'student' },
-      });
-      console.log('res',response.data)
-      dispatch(setCourses(response.data.courses));
-    } catch (error) {
-      handleFetchError(error);
-    }
-  };  
+  // const fetchCourses = async () => {
+  //   console.log('dsfs')
+  //   try {
+  //     const response = await api.get('/backend/auth/getAllCourses', {
+  //       headers: { 'X-Token-Type': 'student' },
+  //     });
+  //     console.log('res',response.data)
+  //     dispatch(setCourses(response.data.courses));
+  //   } catch (error) {
+  //     handleFetchError(error);
+  //   }
+  // };  
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+  // useEffect(() => {
+  //   fetchCourses();
+  // }, []);
 
   const handleFetchError = (error: any) => {
     if (error.response) {
@@ -74,7 +76,7 @@ function Courses() {
   };
 
   const startIndex = (currentPage - 1) * coursesPerPage;
-  const currentCourses = coursesArray.slice(startIndex, startIndex + coursesPerPage);
+  const currentCourses = allCourses.slice(startIndex, startIndex + coursesPerPage);
 
   const handleNavigate = (id: string) => {
     navigate(`/singleCourseDetail/${id}`);

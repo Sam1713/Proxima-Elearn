@@ -158,7 +158,7 @@ const TutorListing = () => {
   );
 
   return (
-    <div className='md:w-[75%] w-[90%] mx-auto md:mt-[1%]  flex flex-col md:h-[85vh] mt-[10%] bg-custom-gradient rounded-xl p-5 shadow-lg'>
+    <div className='md:w-[110%] w-[90%] mx-10 md:mt-[1%]   flex flex-col md:h-[85vh] mt-[10%] bg-custom-gradient rounded-xl p-5 shadow-lg'>
       <div className='font-serif text-2xl mb-4 text-center'>
         <h1 className='text-gray-100 font-bold'>Welcome to Tutor's Page</h1>
       </div>

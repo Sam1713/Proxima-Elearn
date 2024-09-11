@@ -2,13 +2,13 @@ import {Request,Response,NextFunction } from "express";
 import CourseModel from "../../models/courseModel";
 import BookingModel from "../../models/BookingRequestModel";
 import mongoose from "mongoose";
+import Notification from "../../models/notificationModel";
 
 export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
     const {courseId,name,email,purpose,description}=req.body
     try {
         const userId = req.userId;
 
-        // Find the course and get the associated tutor ID
         const tutorDetails = await CourseModel.findById(courseId);
         if (!tutorDetails || !tutorDetails.tutorId) {
             return res.status(404).json({ error: 'Tutor not found for the course' });
@@ -43,14 +43,12 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                     const tutorId = req.userId;
                     const courseId = req.query.courseId as string;
             
-                    // Convert IDs to ObjectId
                     const tutorObjectId = new mongoose.Types.ObjectId(tutorId);
                     const courseObjectId = new mongoose.Types.ObjectId(courseId);
             
                     console.log('courseId:', courseObjectId);
                     console.log('tutorId:', tutorObjectId);
             
-                    // Aggregate query
                     const getAllCallRequest = await BookingModel.aggregate([
                         {
                             $match: {
@@ -105,7 +103,6 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                 endingTime?: string;
                 notes?: string;
                 status?: string;
-                // Include other fields as necessary
               }
               
             export const tutorApproveRequest=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
@@ -135,11 +132,20 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                     },
                     { new: true } 
                   );
-                //  console.log('upda',updatedBooking)
+                 console.log('upda',updatedBooking)
                   if (!updatedBooking) {
                     return res.status(404).json({ message: 'Booking not found' });
                   }
-              
+                  const bookingNotification=new Notification({
+                    studentId: booking?.studentId,
+                    courseId:booking?.courseId,
+                    tutorId: tutorId, 
+                    type:'booking',
+            message: `Your booking for ${date} has been approved by the tutor.`, 
+            isGlobal: false 
+                  })
+                  await bookingNotification.save()
+              console.log('bookNot',bookingNotification)
                   res.status(200).json({ message: 'Booking updated successfully', booking: updatedBooking });
                 } catch (error) {
                   console.error('Error updating booking:', error);
@@ -165,7 +171,7 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
 
               export const getCallData=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
                 const CourseId=req.params.id
-                // console.log('courseId',CourseId)
+                console.log('courseId',CourseId)
                 const StudentId=req.userId
                 // console.log('studentId',StudentId)
                 const courseId=new mongoose.Types.ObjectId(CourseId)
@@ -182,33 +188,26 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
 
               export const sendIdToStudent = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
                 try {
-                  // Log the request body and query parameters
                   console.log('Request Body:', req.body);
                   console.log('Query Parameters:', req.query);
               
-                  // Extract data from request
                   const {callId}  = req.body;
                   console.log('ca',callId)
                   const bookingId = req.query.id as string;
               
-                  // Find the booking from the database
                   const booking = await BookingModel.findById(bookingId);
                   if (!booking) {
-                    // Handle case where booking is not found
                     return res.status(404).json({ message: 'Booking not found' });
                   }
               
                   console.log('Booking:', booking);
               
-                  // Update the booking with the new callId
                   booking.callId = callId;
                   await booking.save(); 
                   console.log('newbookin',booking)
               
-                  // Respond with a success message
                   res.status(200).json({ message: 'Call ID updated successfully' });
                 } catch (error) {
-                  // Handle errors
                   console.error('Error updating call ID:', error);
                   res.status(500).json({ message: 'Internal server error' });
                 }
@@ -225,14 +224,14 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
               
                   if (booking) {
                     const updateBooking = await BookingModel.findByIdAndUpdate(
-                      bookingId, // ID of the booking to update
+                      bookingId, 
                       {
                         $set: {
-                          callId: '', // Clear the call ID
-                          status: 'completed' // Set status to completed
+                          callId: '', 
+                          status: 'completed' 
                         }
                       },
-                      { new: true } // Return the updated document
+                      { new: true } 
                     );
               
                     console.log('Updated booking:', updateBooking);

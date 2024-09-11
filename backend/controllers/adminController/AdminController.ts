@@ -258,14 +258,20 @@ export const addCategory=async(req:Request,res:Response,next:NextFunction):Promi
 
 
 export const getAllCategories=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  const page=parseInt(req.query.page as string)
+  const limit=parseInt(req.query.limit as string)
+  const skip=(page-1)*limit
+  const totalCategory=await CategoryeModel.countDocuments()
+  const totalPage=Math.ceil(totalCategory/limit)
   console.log('hello')
 try{
-  const getAllCategory=await CategoryeModel.find({isDelete:false})
+  const getAllCategory=await CategoryeModel.find({isDelete:false}).skip(skip).limit(limit)
+
   console.log('adad',getAllCategory)
   if(!getAllCategory){
     res.status(404).json('Categories not found')
   }
-  res.json(getAllCategory)
+  res.json({getAllCategory,totalPage})
 }catch(error){
   res.json(error)
 }
@@ -383,7 +389,6 @@ export const getOrdersList = async (req: Request, res: Response, next: NextFunct
 
 
     const ordersList = await Payment.aggregate([
-      // Lookup enrollment details using enrollmentId
       {
         $lookup: {
           from: 'enrollments',
@@ -395,7 +400,6 @@ export const getOrdersList = async (req: Request, res: Response, next: NextFunct
       {
         $unwind: { path: "$EnrollmentDetails" }
       },
-      // Lookup student details using studentId from enrollment
       {
         $lookup: {
           from: 'students',
@@ -407,7 +411,6 @@ export const getOrdersList = async (req: Request, res: Response, next: NextFunct
       {
         $unwind: { path: "$StudentDetails" }
       },
-      // Lookup course details using courseId from enrollment
       {
         $lookup: {
           from: 'courses',
@@ -419,7 +422,6 @@ export const getOrdersList = async (req: Request, res: Response, next: NextFunct
       {
         $unwind: { path: "$CourseDetails" }
       },
-      // Project the fields to include in the final output
       {
         $project: {
           _id: 0,
@@ -454,3 +456,26 @@ export const getOrdersList = async (req: Request, res: Response, next: NextFunct
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+export const getAdminWalletDetails=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  try{
+  const id=req.userId
+  console.log('id',id)
+  const walletDetails=await Payment.aggregate([
+    {
+      $group:{
+        _id:null,
+        totalAmount:{$sum:'$amount'}
+      }
+    }
+  ])
+  console.log('wallet',walletDetails[0].totalAmount)
+  const totalAmount=walletDetails[0].totalAmount
+  const adminAmount=walletDetails[0].totalAmount*0.3
+  console.log('admin',adminAmount)
+  res.json({adminAmount,totalAmount})
+}catch(error){
+  console.log('err',error)
+}
+}

@@ -102,7 +102,7 @@ const approveTutor = async () => {
 
   return (
     <>
-    <div className='flex flex-col md:flex-row font-serif md:w-[78%] md:mt-5 rounded-3xl bg-custom-gradient p-5 gap-5'>
+    <div className='flex flex-col md:flex-row font-serif md:w-[125%] md:mx-10 md:mt-5 rounded-3xl bg-custom-gradient p-5 gap-5'>
       <div className='md:w-[30%] shadow-2xl bg-white bg-opacity-40 p-5 rounded-2xl'>
         <img className='border-slate-900 rounded-3xl shadow-2xl' src={tutorimage} alt="Tutor" />
         <div className='text-left flex mt-5 justify-between items-center mb-4'>

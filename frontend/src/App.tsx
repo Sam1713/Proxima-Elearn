@@ -44,6 +44,9 @@ import { ContextProvider, SocketContext } from './components/context/RoomContext
 import OpenRoom from './components/room/OpenRoom';
 import OrdersList from './components/admin/OrdersList';
 import TutorWallet from './components/courses/TutorWallet';
+import Dashboard from './components/admin/Dashboard';
+import QuizGeneration from './components/courses/QuizGeneration';
+import QuizPage from './components/studentCourse/QuizPage';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -82,6 +85,7 @@ function App() {
                 <Route path='/checkout'element={<Checkout/>}/>
                 <Route path='/allCourses'element={<AllCourses/>}/>
                 <Route path='/booking/:id'element={<BookingCall/>}/>
+                <Route path='/getQuiz/:id'element={<QuizPage/>}/>
                 {/* <Route path="/room/:id" element={
                 <Room/>
                   
@@ -115,6 +119,7 @@ function App() {
 
              <Route path='/getCallList'element={<GetCallRequest/>}/>
              <Route path='/tutorWallet'element={<TutorWallet/>}/>
+             <Route path='/addQuiz/:id'element={<QuizGeneration/>}/>
              {/* <Route path="/room/:id" element={
             
               <Room/>
@@ -140,6 +145,7 @@ function App() {
               <Route path='/admin/tutorCourses/:id'element={<TutorCourses/>}/>
               <Route path='/admin/tutorCourseDetail/:id'element={<TutorCourseDetails/>}/>
               <Route path='/admin/ordersList'element={<OrdersList/>}/>
+              <Route path='/admin/dashboard'element={<Dashboard/>}/>
             </Route>
           </Route>
         </Routes>

@@ -15,13 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import ReactPlayer from 'react-player';
 import VideoPlayer from '../../utils/VideoPlayer';
+import { setStudentQuizDetails } from '../../redux/student/studentSlice';
 
 function CourseDetails() {
   const {id}=useParams()
   // useScrollRestoration()
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
-  
+  console.log('ors',orderedCourseDetail)
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [isOverviewTwoOpen, setIsOverviewTwoOpen] = useState(false);
   const [currentIndex,setCurrentIndex]=useState('0')
@@ -30,6 +31,8 @@ function CourseDetails() {
   const handleOpen=()=>{
     setCourseOpen(!courseOpen)
   }
+  const quizDetails=useSelector((state:RootState)=>state.student.StudentQuizDetails)
+console.log('quiz',quizDetails)
   const toggleOverview = () => setIsOverviewOpen(!isOverviewOpen);
   const toggleOverviewTwo = () => setIsOverviewTwoOpen(!isOverviewTwoOpen);
   const imageAnimation = useSpring({
@@ -54,11 +57,13 @@ function CourseDetails() {
           withCredentials: true,
         })
         console.log('res',response)
-        const { courseDetail, otherCourses } = response.data;
+        const { courseDetail, otherCourses,quizzes } = response.data;
 const courseDetailData = courseDetail.Courses; 
 const otherDetailData = otherCourses 
+const studentquiz=quizzes
 
 dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses :otherDetailData}));
+dispatch(setStudentQuizDetails(studentquiz))
 
       
       }
@@ -84,14 +89,40 @@ dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses 
     console.log('id',id)
     navigate(`/booking/${id}`)
   }
+
+  const handelQuiz=()=>{
+    navigate(`/getQuiz/${id}`,{state:{quizDetails,orderedCourseDetail}})
+  }
   return (
+
     <div className='min-h-screen md:w-full py-16 bg-custom-gradient'>
+      {orderedCourseDetail?.courseDetail== undefined ? (
+    <div className="translate-y-[50%]">
+      <div className='text-center m-auto'>
+    <h1 className='text-white text-3xl font-bold mb-4 animate-pulse'>
+      Please purchase the course
+    </h1>
+    <p className='text-gray-300 text-lg'>
+      Unlock all the learning materials by enrolling in this course.
+    </p>
+    <button onClick={()=>{navigate('/courses')}} className='mt-6 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all'>
+      Purchase Now
+    </button>
+    </div>
+  </div> 
+):(
+  <>
       <div className='md:relative md:w-[95%] mx-auto p-[10%] bg-black bg-opacity-35 md:flex md:justify-between md:items-center rounded-2xl'>
         <div className='md:w-[50%]'>
-          <p className='text-white bg-blue-900 p-1 mt-2 md:mt-0 md:w-[30%] text-center rounded-lg'>
+          <p className='text-white bg-blue-900 p-1 mb-4 mt-2 md:mt-0 md:w-[30%] text-center rounded-lg'>
           <AnimatedText text="Most Subscribed" />
           </p>
-          <h1 className='text-white text-3xl md:mt-0 mt-5 w-[100%]'>
+          <h1 className=' font-protest  text-3xl md:mt-0 mt-5  w-[100%]'style={{
+    background: 'linear-gradient(to right, #FF7E5F, #FFB89C)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  }}>
           {orderedCourseDetail?.courseDetail?.title && (
             <AnimatedText text={orderedCourseDetail?.courseDetail?.title} />
 )}
@@ -259,8 +290,39 @@ dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses 
         ))}
       </div>
     </div>
-      </div>
+   {quizDetails!=null?( <div className='my-10 shadow-2xl rounded-lg p-8 text-center'>
+  <h1 className='text-3xl font-protest mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text'>
+    Have you completed the tutorial?
+  </h1>
+  <p className='text-lg font-semibold text-gray-600 mb-6 italic'>
+    Test your knowledge by taking the quiz now!
+  </p>
 
+  <div className="flex items-center justify-center space-x-4">
+    <button 
+      className='px-6 py-3 font-protest bg-green-500 text-white rounded-full font-medium shadow-md hover:bg-green-600 transition-all flex items-center space-x-2'
+      onClick={handelQuiz}>
+      <svg className='w-5 h-5' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+      <span className='tracking-wide font-protest'>Go to Quiz</span>
+    </button>
+    <button 
+      className='px-6 font-protest py-3 fon bg-gray-300 text-gray-800 rounded-full font-medium shadow-md hover:bg-gray-400 transition-all'>
+      Review Tutorial
+    </button>
+  </div>
+</div>
+):(
+  <div className="flex items-center justify-center space-x-4">
+    <h1       className='px-6 my-6 text-3xl font-protest bg-green-500 text-white rounded-full font-medium shadow-md hover:bg-green-600 transition-all flex items-center space-x-2'
+    > Sorry,No Quiz available right now</h1>
+  </div>
+)}
+
+
+      </div>
+    
      
       <div className='mx-10'>
         <div>
@@ -305,7 +367,8 @@ dispatch(setOrderedCourseDetails({ courseDetail: courseDetailData, otherCourses 
         </div> 
         )}          
     </div>
-
+    </>
+)}
       </div>
 
       

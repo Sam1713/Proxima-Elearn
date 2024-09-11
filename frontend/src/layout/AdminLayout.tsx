@@ -13,7 +13,9 @@ function AdminLayout() {
       <AdminHeader />
       <div className='md:w-full md:flex'>
         {showSidebar && <AdminSidebar />}
+        <div className='md:mx-[20%]  md:my-[7%]  md:w-full'>
         <Outlet />
+        </div>
       </div>
     </div>
   );

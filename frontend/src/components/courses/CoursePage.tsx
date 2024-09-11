@@ -12,7 +12,6 @@ const  CoursePage:React.FC=()=> {
     const handleCourseClose=()=>{
         setCourseOpen(false)
     }
-  // Floating animation with react-spring
   const floatAnimation = useSpring({
     from: { transform: 'translateY(20px) ' },
     to: { transform: 'translateY(-20px)' },

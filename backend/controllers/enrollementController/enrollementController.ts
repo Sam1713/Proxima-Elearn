@@ -6,6 +6,7 @@ import { createRazorpayOrder, IRazorder, verifyRazorpayPayment } from '../../uti
 import Payment from '../../models/paymentModel';
 import mongoose, { Mongoose } from 'mongoose';
 import TutorModel from '../../models/tutorModal';
+import Quiz from '../../models/quizModel';
 
 export const createCheckout = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
     try {
@@ -214,7 +215,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
           console.log('course',courseId)
           const enrolledCourseDetail=await Enrollment.aggregate([
             {
-              $match:{courseId:courseId,studentId:userId}
+              $match:{courseId:courseId,studentId:userId,payment_status:'completed'}
             },
             {
               $lookup:{
@@ -273,12 +274,26 @@ export const verifyPayment=async(req:Request,res:Response)=>{
              _id:{$ne:courseId },
 
           })
+          const quizzes = await Quiz.findOne({ courseId: courseId });
+          // if(!quizzes){
+          //   res.json(null)
+          // }
+           const formattedQuiz = quizzes ? {
+            _id: quizzes._id,
+            courseId: quizzes.courseId,
+            questions: quizzes.questions
+          } : null;
+      
+      
+         
+        console.log('quiz',quizzes)
 
-          console.log('Other courses by the tutor:', otherCourses);
+          // console.log('Other courses by the tutor:', otherCourses);
 
           res.json({
         courseDetail,
-        otherCourses
+        otherCourses,
+        quizzes:formattedQuiz
           });        }
 
 export const getPaymentDetails=async(req:Request,res:Response)=>{

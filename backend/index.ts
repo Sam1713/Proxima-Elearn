@@ -14,7 +14,7 @@ import adminRoute from './routes/adminRoute';
 import courseRoute from './routes/courseRoute';
 import enrollementRoute from './routes/enrollementRoute';
 import contactRoute from './routes/contactRoute';
-
+import quizRoute from './routes/quizRoute'
 dotenv.config();
 
 const mongoUri = process.env.MONGO as string;
@@ -79,6 +79,7 @@ app.use('/backend/admin', adminRoute);
 app.use('/backend/course', courseRoute);
 app.use('/backend/enroll', enrollementRoute);
 app.use('/backend/contact', contactRoute);
+app.use('/backend/quiz',quizRoute)
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000!');

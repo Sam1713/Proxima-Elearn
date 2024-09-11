@@ -1,5 +1,5 @@
 import express from 'express';
-import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword,GetAllCourses,getSingleCourse } from '../controllers/authController/authController';
+import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword,GetAllCourses,getSingleCourse, getAllNotifications, deleteNotification } from '../controllers/authController/authController';
 import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 import { VerifyUser } from '../middleware/VerifyUser';
@@ -22,5 +22,7 @@ router.post('/verifyOtpAndResetPassword',verifyOtpAndResetPassword)
 router.get('/getAllCourses',authMiddleware('student'),VerifyUser,GetAllCourses)
 router.get('/singleCourseDetail/:id',authMiddleware('student'),VerifyUser,getSingleCourse)
 // router.get('/getAllCourseSinglePage',authMiddleware('student'),getAllCoursesSinglePage)
+router.get('/getNotifications',authMiddleware('student'),getAllNotifications)
+router.put('/deleteNotifications',authMiddleware('student'),deleteNotification)
    
 export default router;

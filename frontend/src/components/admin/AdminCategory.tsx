@@ -6,6 +6,7 @@ import { RootState } from '../../redux/store';
 import { setAllCategory } from '../../redux/admin/adminSlice';
 import { response } from 'express';
 import Swal from 'sweetalert2';
+import { Button } from '@material-tailwind/react';
 
 const AdminCategory: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,23 +19,31 @@ const AdminCategory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<string>('asc'); // or 'desc'
   const [filteredCategories, setFilteredCategories] = useState(allCategory);
+  const [page,setPage]=useState<number>(1)
+  const [totalPage,setTotalPage]=useState<number>(1)
+  const limit=4
  console.log('sdsfd',allCategory)
   useEffect(() => {
-    fetchAllCategory();
-  }, [dispatch]);
+    fetchAllCategory(page,limit);
+  }, [dispatch,page,limit]);
 
   useEffect(() => {
     filterAndSortCategories();
   }, [allCategory, searchTerm, sortOrder]);
 
-  const fetchAllCategory = async () => {
+  const fetchAllCategory = async (page:number,limit:number) => {
     try {
       const response = await api.get('/backend/admin/category', {
         headers: {
           'X-Token-Type': 'admin',
         },
+        params:{
+          page:page,
+          limit:limit
+        }
       });
-      dispatch(setAllCategory(response.data)); // Ensure response.data is Category[]
+      dispatch(setAllCategory(response.data.getAllCategory)); // Ensure response.data is Category[]
+      setTotalPage(response.data.totalPage)
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -125,7 +134,7 @@ const AdminCategory: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-5 w-full">
+    <div className="bg-gray-100 min-h-screen p-5 w-full md:w-[130%] md:mx-5">
       <div className="container mx-auto bg-custom-gradient shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">Manage Categories</h1>
 
@@ -188,6 +197,30 @@ const AdminCategory: React.FC = () => {
           </ul>
         </div>
       </div>
+      <div className='flex justify-center items-center space-x-4'>
+  <div>
+    <Button 
+      disabled={page === 1} 
+      onClick={() => setPage((prev) => prev - 1)}
+      className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      Prev
+    </Button>
+  </div>
+  <span className='text-lg font-semibold'>
+    {page} - {totalPage}
+  </span>
+  <div>
+    <Button 
+      disabled={page === totalPage} 
+      onClick={() => setPage((prev) => prev + 1)}
+      className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === totalPage ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      Next
+    </Button>
+  </div>
+</div>
+
 
       <AddCategoryModal 
         isOpen={openCat} 

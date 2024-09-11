@@ -19,7 +19,8 @@ function BookingCall() {
   const [booking, setBooking] = useState(null);
   const dispatch = useDispatch();
   const bookingDetails = useSelector((state: RootState) => state.student.callDetails);
-  
+  console.log('nno',booking)
+  const bookId=useSelector((state:RootState)=>state.student.bookingId)
   const handleOpen = () => setOpen(!open);
 
   useEffect(() => {
@@ -31,27 +32,29 @@ function BookingCall() {
       const response = await api.get(`/backend/contact/getCallData/${id}`, {
         headers: {
           'X-Token-Type': 'student'
-        }
+        },
+       
       });
       console.log('res', response);
+      
       setBooking(response.data.bookingResult);
       dispatch(setCallDetails(response.data.bookingResult));
     } catch (error) {
       console.log('err', error);
     }
   };
-
+console.log('book',bookingDetails)
   return (
     <div className="py-20 bg-custom-gradient min-h-screen flex flex-col items-center font-serif">
-      {bookingDetails?.status === 'completed' ? (
-        <>
+{(bookingDetails?.status === 'default' || bookingDetails?.status === 'completed' || bookingDetails ===undefined||bookingDetails===null ) ? (
+        <> 
         <div className="flex flex-col m-auto">
         <Button
             onClick={handleOpen}
             variant="gradient"
-            className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out p-8"
+            className=" text-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out p-8"
           >
-            Book a New Call
+            Book a Slot
           </Button>
           <BookingModal open={open} handleOpen={handleOpen} id={id} fetchCallData={fetchCallData} />
           <div className="m-auto flex items-center justify-center mt-5">

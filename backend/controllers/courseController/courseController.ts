@@ -548,7 +548,7 @@ export const getWalletDetails = async (req: Request, res: Response, next: NextFu
     console.log('totalDoc:', totalDoc);
     const totalPages = Math.ceil(totalDoc / limit);
 
-    res.status(200).json({ walletDetails, deductedAmount, balanceAmount, totalPages });
+    res.status(200).json({ walletDetails,totalAmount, deductedAmount, balanceAmount, totalPages });
   } catch (error) {
     console.error('Error fetching wallet details:', error);
     res.status(500).json({ message: 'Server error' });

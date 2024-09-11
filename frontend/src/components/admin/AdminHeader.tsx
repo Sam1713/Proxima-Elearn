@@ -19,7 +19,7 @@ function AdminHeader() {
       dispatch(adminSignout())
   }
   return (
-    <div className='w-full h-20 shadow-xl' style={{ background: 'linear-gradient(to right, #d1d1d1, #333333)' }}>
+    <div className='w-full fixed z-10 h-20 shadow-xl' style={{ background: 'linear-gradient(to right, #d1d1d1, #333333)' }}>
       <div className='p-4 flex justify-between items-center'>
         <div className="flex items-center">
           <img className="w-10 h-10 mx-4 rounded-full" src={image} alt="Landing" />

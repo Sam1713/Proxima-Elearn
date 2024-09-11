@@ -45,7 +45,7 @@ function AdminSidebar() {
   const tutorlist=useSelector((state:RootState)=>state.admin.singleTutor)
 
   return (
-    <div className='static flex md:flex-col md:mx-3 flex-row justify-between items-center'>
+    <div className='fixed flex md:flex-col md:my-[6%] md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'
@@ -54,6 +54,8 @@ function AdminSidebar() {
       </button>
       <div className={`md:flex ${showSidebar ? 'flex ' : 'hidden'} p-4 mt-6  md:w-[100%] w-full bg-custom-gradient md:h-[80vh] overflow-scroll md:overflow-hidden  bg-opacity-60 rounded-xl`}>
         <div className='md:m-auto  flex md:flex-col md:gap-0 gap-4 flex-row md:w-full w-auto'>
+        <Link to='/admin/dashboard'>
+
           <SidebarItem
             icon={MdDashboard}
             text='Admin Dashboard'
@@ -61,6 +63,7 @@ function AdminSidebar() {
             isActive={activeItem === 'dashboard'}
             arrow={false}
           />
+          </Link>
           <Link to='/admin/userlisting'>
            <SidebarItem
             icon={FaUsers}

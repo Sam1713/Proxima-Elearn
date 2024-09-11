@@ -54,14 +54,13 @@ const ContextProvider = ({ children }) => {
     
     socket.on('connect', () => {
       console.log('Socket connected');
-      socket.emit('me', socket.id); // Emit 'me' event after connection
+      socket.emit('me', socket.id); 
     });
 
     socket.on('me', (id) => {
       console.log('Received my ID:', id);
       setMe(id);
     });
-    // Initialize media
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
@@ -70,7 +69,6 @@ const ContextProvider = ({ children }) => {
         }
       });
 
-    // Initialize socket
    
 
     socket.on('calluser', ({ from, name: callerName, signal }) => {
@@ -213,10 +211,10 @@ const ContextProvider = ({ children }) => {
       leaveCall,
       answerCall,
       shareScreen,
-      toggleVideo, // Expose the toggleVideo function
-      toggleAudio, // Expose the toggleAudio function
-      videoEnabled, // Expose the videoEnabled state
-      audioEnabled, // Expose the audioEnabled state
+      toggleVideo, 
+      toggleAudio, 
+      videoEnabled, 
+      audioEnabled, 
     }}>
       {children}
     </SocketContext.Provider>

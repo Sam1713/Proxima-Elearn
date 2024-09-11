@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import image from '../assets/images/OIP (28).jpeg'; // Adjusted path
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signout } from '../redux/student/studentSlice';
+import { setStudentNotifications, signout } from '../redux/student/studentSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
 import Notifications from '../components/studentNotification/Notification';
+import NotificationBadge from 'react-notification-badge'; // Import NotificationBadge
 
+import api from '../components/API/Api'
 function StudentHeader() {
   const [isOpen, setToggle] = useState(false);
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
   const dispatch = useDispatch<AppDispatch>();
-
+  const location=useLocation()
   const toggleMenu = () => {
     setToggle(!isOpen);
   };
@@ -28,7 +30,25 @@ function StudentHeader() {
       console.log(error);
     }
   };
+  const studentNotification=useSelector((state:RootState)=>state.student.Notifications)
+  console.log('st',studentNotification)
 
+  useEffect(()=>{
+    if (currentStudent) {
+      console.log('hai')
+      fetchNotifications();
+    }
+  },[currentStudent, dispatch,location])
+
+  const fetchNotifications=async()=>{
+    const response=await api.get('/backend/auth/getNotifications',{
+         headers:{
+          'X-Token-Type':'student'
+         }
+    })
+    dispatch(setStudentNotifications(response.data))
+    console.log('res',response)
+  }
   return (
     <header className="fixed bg-custom-gradient left-0 z-10 h-auto w-full flex flex-col sm:flex-row justify-between items-center p-4 bg-transparent shadow-lg">
       <div className="flex items-center justify-between w-full sm:w-auto">
@@ -51,8 +71,16 @@ function StudentHeader() {
             <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
           </li>
           <li className="mx-5 relative text-white">
-            <Notifications />
-          </li>
+  <div className="relative">
+    <NotificationBadge count={studentNotification.length} className="absolute top-0 right-0">
+      {/* Apply any additional styling for the badge if needed */}
+    </NotificationBadge>
+    
+  </div>
+  <Notifications />
+</li>
+
+
           <li className="mx-5">
             <Link to='/studentProfile' className="hover:text-blue-300 transition-colors duration-300">Profile</Link>
           </li>

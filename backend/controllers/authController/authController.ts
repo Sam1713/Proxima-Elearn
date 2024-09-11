@@ -19,6 +19,7 @@ import cloudinary from "../../utils/cloudinaryConfig";
 import { OTP } from "../../utils/randomPassword";
 import CourseModel from "../../models/courseModel";
 import mongoose from "mongoose";
+import Notification from "../../models/notificationModel";
 
 export const auth = async (
   req: Request<{}, {}, StudentDetails>,
@@ -385,11 +386,17 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
     }
   };
 
-  export const GetAllCourses=async(req:Request,res:Response)=>{
+  export const GetAllCourses=async(req:Request,res:Response):Promise<void>=>{
     console.log('reached...') 
+    const page=parseInt(req.query.page as string)
+    const limit=parseInt(req.query.limit as string)
+    console.log('li',limit)
+    const skip=(page-1)*limit
+    console.log('skip',skip) 
+    const totalCourses=await CourseModel.countDocuments()
     const courses = await CourseModel.aggregate([
       {$match:{isDelete:false}},
-      {
+      { 
         $lookup: {
           from: 'tutors', 
           localField: 'tutorId',
@@ -398,7 +405,7 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
         }
       },
       {
-        $unwind: { 
+        $unwind: {  
           path: '$tutorDetails',
           preserveNullAndEmptyArrays: false
         }
@@ -414,11 +421,18 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
           'tutorDetails.tutorname': 1,
           'tutorDetails.bio': 1
         }
+      },
+      {
+        $skip:skip
+      },
+      {
+        $limit:limit
       }
     ]);
+    const totalPages=Math.ceil(totalCourses/limit)
 
-    console.log('Courses with tutor details:', courses);
-    res.json({courses})
+    // console.log('Courses with tutor details:', courses);
+    res.json({courses,totalPages})
   }
 
   export const getSingleCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -499,3 +513,38 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
   //   console.log('err',error)
   // }
   // }
+
+  export const getAllNotifications=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+    const studentId=req.userId
+    // console.log('id',studentId)
+    const notifications=await Notification.find({
+      $or:[
+        
+        {studentId:studentId,read:false},
+        {isGlobal:true,read:false}
+      ]
+    }).sort(
+      {createdAt:-1}
+    ) 
+    // console.log('not',notifications)
+    res.json(notifications)
+  }
+
+  export const deleteNotification=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+    console.log('started...')
+    const {id}=req.body
+    console.log('id',id)
+    const notId=new mongoose.Types.ObjectId(id)
+    const notifications=await Notification.findById(notId)
+    console.log('n',notifications)
+    if(!notifications){
+      res.status(404).json("Notification not found")
+    }
+    const updateNotification=await Notification.findByIdAndUpdate(
+      notId,
+        {$set:{read:true}},
+        {new:true}
+    )
+   console.log('updateNo',updateNotification)
+   res.json('Successfully deleted')
+  }   

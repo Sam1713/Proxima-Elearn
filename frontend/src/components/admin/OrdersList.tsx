@@ -60,7 +60,7 @@ function OrdersList() {
     setPage(prevPage => Math.max(prevPage - 1, 1)); // Ensure page doesn't go below 1
   };
   return (
-    <div className="mt-5 mx-10 w-full">
+    <div className="mt-5 mx-10 w-full md:w-[120%]">
       <Card className="bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         <h1 className="text-2xl pt-4 mx-5 text-gray-100 font-extrabold underline">Orders List</h1>
         <CardHeader

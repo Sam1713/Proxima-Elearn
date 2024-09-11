@@ -1,10 +1,16 @@
 // studentSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { string } from "yup";
 
 export interface StudentState {
     currentStudent: Student | null;
     courses:Course[];
-    callDetails:CallRequestType|null
+    callDetails:CallRequestType|null;
+    Notifications:NotificationType[];
+    StudentQuizDetails:StudentQuiz|null;
+    bookingId:getBookingId|null;
+    quizResult:QuizResultType|null;
+    resultQuiz:ResultTypes|null
     loading: boolean;
     error: string | null;
 }
@@ -53,11 +59,53 @@ interface Course {
         notes?:string;
     }
 }
+interface getBookingId{
+    id:string
+}
+interface NotificationType{
+    _id:string;
+    studentId?:string;
+    tutorId?:string;
+    courseId?:string;
+    type: 'booking' | 'courses' | 'default';
+    global?:boolean;
+    message:string;
+    createdAt:Date;
+}
+interface Stud {
+    courseId: string;
+  }
+  
+  interface QuizQuestions {
+    _id: string;
+    question: string;
+    options: string[];
+    totalMarks: number; // Use number instead of string for numeric values
+    correctAnswer: number; // Use number instead of string for numeric values
+  }
+  
+  interface StudentQuiz extends Stud {
+    questions: QuizQuestions[];
+  }
+
+  interface QuizResultType{
+    courseId:string;
+    correctCount:number;
+    percentage:number
+  }
+  interface ResultTypes{
+    result:number,totalMarks:number
+  }
 const initialState: StudentState = {
     currentStudent: null,
     loading: false,
     callDetails:null,
+    bookingId:null,
     courses:[],
+    StudentQuizDetails:null,
+    quizResult:null,
+    resultQuiz:null,
+    Notifications:[],
     error: null,
 };
 
@@ -95,11 +143,38 @@ const studentSlice = createSlice({
         },
         setCallDetails:(state,action:PayloadAction<CallRequestType>)=>{
             state.callDetails=action.payload
-        }
+        },
+        setStudentNotifications:(state,action:PayloadAction<NotificationType[]>)=>{
+            console.log('Setting notifications:', action.payload);
+            state.Notifications=action.payload
+        },
+        setBookingId:(state,action:PayloadAction<getBookingId>)=>{
+            state.bookingId=action.payload
+        },
+        setRemoveNotification: (state, action: PayloadAction<string>) => {
+            console.log('Before removal:', state.Notifications);
+            state.Notifications = state.Notifications.filter(
+              (notification) => notification._id !== action.payload
+            );
+            console.log('After removal:', state.Notifications);
+          },
+          setStudentQuizDetails:(state,action:PayloadAction<StudentQuiz>)=>{
+            state.StudentQuizDetails=action.payload
+          },
+          setQuizResult:(state,action:PayloadAction<QuizResultType>)=>{
+            state.quizResult=action.payload
+          },
+          setRemoveQuiz:(state)=>{
+            state.quizResult=null
+          },
+          setResult:(state,action:PayloadAction<ResultTypes>)=>{
+            state.resultQuiz=action.payload
+          }
+          
         
     },
 });
 
-export const { signInStart, signInSuccess, signInFailure,signout,updateStart,updateSuccess,setStudentCourses,setCallDetails } = studentSlice.actions;
+export const { signInStart, signInSuccess, signInFailure,signout,updateStart,updateSuccess,setStudentCourses,setCallDetails,setStudentNotifications,setRemoveNotification,setBookingId,setStudentQuizDetails,setQuizResult,setRemoveQuiz,setResult } = studentSlice.actions;
 
 export default studentSlice.reducer;

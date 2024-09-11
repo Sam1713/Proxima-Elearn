@@ -8,7 +8,15 @@ module.exports = withMT({
 
   ],
   theme: {
+    fontFamily: {
+      protest: ['Protest Guerrilla', 'sans-serif'],
+      roboto: ['Roboto', 'sans-serif'],
+      open: ['Open Sans', 'sans-serif'],
+      dmsans: ['DM Sans', 'sans-serif'],
+      poppins: ['Poppins', 'sans-serif'],
+    },
     extend: {
+     
       backgroundImage: {
         'custom-gradient': 'linear-gradient(135deg, #000000, #1a1a1a, #333333, #4d4d4d)',
       },

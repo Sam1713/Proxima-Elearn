@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -16,8 +16,9 @@ import api from '../../components/API/Api'
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css'; // Ensure this import is included for styling
 import './BookingModal.css'; // Adjust the path as needed
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { setBookingId } from '../../redux/student/studentSlice';
 interface DialogComponentProps {
   open: boolean;
   handleOpen: () => void;
@@ -37,7 +38,8 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.singleCourse)
  console.log('sda',id)
  const courseId=id
- 
+ const dispatch=useDispatch()
+ const [book,setBook]=useState(null)
   const formik = useFormik({
     initialValues: {
         courseId: courseId || '',
@@ -88,6 +90,8 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
                 }
               });
               console.log('Response:', response);
+              setBook(response.data.newBooking)
+              dispatch(setBookingId(response.data.newBooking?._id))
               Swal.fire('Success!', 'Your request has been submitted.', 'success');
               handleOpen(); // Close the modal after successful submission
               fetchCallData()

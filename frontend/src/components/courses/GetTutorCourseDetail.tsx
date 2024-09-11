@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../API/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategoryDetails, setUploadedCoursesDetails } from '../../redux/tutor/tutorSlice';
@@ -9,6 +9,7 @@ import { MdDelete } from 'react-icons/md';
 import EditCourseModal from '../../modals/tutorModal/editCourseModal/EditCourseModal';
 import EditCoverImage from '../../modals/tutorModal/editCourseModal/EditCoverImage';
 import EditSubVideosModal from '../../modals/tutorModal/editCourseModal/EditSubVideosModal';
+import { Button } from '@material-tailwind/react';
 
 function GetTutorCourseDetail() {
   const { id } = useParams();
@@ -103,21 +104,29 @@ function GetTutorCourseDetail() {
     fileUrl: `${video.fileUrl}?${new Date().getTime()}`
   }));
 
+  const navigate=useNavigate()
+  const handleGo=()=>{
+   navigate('/getCallList')
+  }
+  const handleQuiz=(id:string)=>{
+    console.log('quizid',id)
+    navigate(`/addQuiz/${id}`)
+  }
   return (
     <div className="bg-custom-gradient min-h-screen py-20 px-4 font-serif">
-      <div>
-        <button className='bg-red-500 p-4 rounded-xl'>Call Request</button>
+      <div className='mx-8 mb-4'>
+        <Button onClick={handleGo} className='bg-red-500 p-4 rounded-xl'>Call Request</Button>
       </div>
-      
+      <div><Button onClick={()=>handleQuiz(details?._id)}></Button></div>
       {/* Cover Image */}
       <div className="relative max-w-7xl mx-auto bg-white bg-opacity-30 shadow-xl rounded-lg overflow-hidden mb-8 p-4">
         <div className="absolute top-0 right-8 mt-2 flex space-x-3">
-          <button
+          <Button
             onClick={onEditCoverImage}
             className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
           >
             <CiEdit className="text-xl" />
-          </button>
+          </Button>
         </div>
         <div className="w-[98%] mx-auto">
           <h1 className="text-3xl font-extrabold text-white">Cover Image</h1>
