@@ -4,15 +4,12 @@ import mongoose from "mongoose";
 
 export const postQuizTutor = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
     try {
-        // Get the courseId from the query parameters
         const courseId = req.query.courseId as string;
         console.log('courseId:', courseId);
 
-        // Get questions from the request body
         const { questions } = req.body;
         console.log('questions:', questions);
 
-        // Validate questions format
         if (!Array.isArray(questions) || questions.length <= 0) {
             return res.status(400).json({ message: 'Not found or Invalid format' });
         }
@@ -29,7 +26,6 @@ export const postQuizTutor = async (req: Request, res: Response, next: NextFunct
             }
         }
 
-        // Create and save a single quiz document with all questions
         const quiz = new Quiz({
             courseId,
             questions
@@ -37,11 +33,10 @@ export const postQuizTutor = async (req: Request, res: Response, next: NextFunct
 
         const savedQuiz = await quiz.save();
 
-        // Return the saved quiz in the response
         res.status(201).json(savedQuiz);
     } catch (error) {
         console.error('Error posting quiz:', error);
-        next(error); // Pass the error to the next middleware (usually error handler)
+        next(error); 
     }
 };
 
@@ -49,15 +44,13 @@ export const postQuizResult = async (req: Request, res: Response, next: NextFunc
     try {
         const courseId = req.query.courseId as string;
 
-        // Fetch the quiz data based on courseId
-        const quiz = await Quiz.findOne({ courseId }); // Adjust this query based on your schema
+        const quiz = await Quiz.findOne({ courseId }); 
         if (!quiz) {
             return res.status(404).json({ message: 'Quiz not found for the given courseId' });
         }
 
         const { selectedOptions, questions } = req.body;
 
-        // Calculate correct answers and total marks
         let correctCount = 0;
 
         quiz.questions.forEach((question: any, index: number) => {
@@ -74,11 +67,8 @@ export const postQuizResult = async (req: Request, res: Response, next: NextFunc
 
         console.log('Correct Count:', correctCount);
         console.log('Total Marks:', totalMarks);
-        quiz.result = correctCount;
-     
-        await quiz.save()
+        
 
-        // Return the result to the client
         res.status(200).json({courseId, correctCount, totalMarks });
     } catch (error) {
         next(error);
@@ -91,15 +81,12 @@ export const getQuizResult = async (req: Request, res: Response, next: NextFunct
         const courseId = req.query.courseId as string;
         console.log('courseId:', courseId);
 
-        // Find the quiz based on courseId
         const getQuiz = await Quiz.findOne({ courseId });
 
-        // If no quiz is found or no result exists, send null
         if (!getQuiz || !getQuiz.result) {
-            return res.status(200).json(null);  // Make sure to return here
+            return res.status(200).json(null);  
         }
 
-        // Calculate total marks
         const totalMarks = getQuiz.questions.reduce((acc: number, curr: any) => {
             return acc + curr.totalMarks;
         }, 0);
@@ -107,11 +94,61 @@ export const getQuizResult = async (req: Request, res: Response, next: NextFunct
         console.log('Result:', getQuiz.result);
         console.log('Total Marks:', totalMarks);
 
-        // Send the result and total marks
         res.status(200).json({ result: getQuiz.result, totalMarks });
     } catch (error) {
         console.log('Error:', error);
-        next(error);  // Pass the error to the error handler
+        next(error);  
     }
 };
 ``
+
+
+export const getQuizTutor = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const courseId = req.query.courseId as string;
+        console.log('courseId from query:', courseId);
+        
+        const getQuiz = await Quiz.findOne({ courseId, isDelete: false }).sort({ createdAt: -1 });
+        console.log('dsf')
+        // if (!getQuiz) {
+        //     return res.status(404).json({ message: 'Quiz not found for this course' });
+        // }
+
+        console.log('quiz', getQuiz);
+
+        res.status(200).json(getQuiz);
+    } catch (error) {
+        console.error('Error fetching quiz:', error);
+        res.status(500).json({ message: 'An error occurred while fetching the quiz', error });
+    }
+};
+
+export const deleteQuiz = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const courseId = req.query.courseId as string;
+  
+      if (!courseId) {
+        res.status(400).json({ message: 'Course ID is required' });
+        return;
+      }
+  
+      // Find the quiz by courseId
+      const quiz = await Quiz.findOne({ courseId });
+  
+      if (!quiz) {
+        res.status(404).json({ message: 'No quiz found for this course' });
+        return;
+      }
+  
+      quiz.isDelete = true;
+      
+      await quiz.save();
+  
+      console.log('Quiz marked as deleted:', quiz);
+  
+      res.status(200).json({ message: 'Quiz successfully marked as deleted', quiz });
+    } catch (error) {
+      console.error('Error deleting quiz:', error);
+      res.status(500).json({ message: 'Server error. Could not delete the quiz' });
+    }
+  };

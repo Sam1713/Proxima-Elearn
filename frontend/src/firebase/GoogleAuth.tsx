@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInSuccess } from '../redux/student/studentSlice';
+import { Button } from '@material-tailwind/react';
+import { FcGoogle } from 'react-icons/fc';
 
 export const GoogleAuth: React.FC = () => {
   const currentStudent=useSelector((state)=>state.student.currentStudent)
@@ -49,13 +51,23 @@ export const GoogleAuth: React.FC = () => {
     }
   return (
     <div>
-      <button
+      {/* <button
        onClick={handleGoogleClick}
         type="button"
         className="my-5 w-full bg-slate-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
       >
-        Continue with Google
-      </button>
+        
+      </button> */}
+
+      <Button
+       onClick={handleGoogleClick}
+      type='submit'
+      className="w-full my-5 flex items-center justify-center bg-green-400 py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors">
+  <span className="mr-2">
+    <FcGoogle className="w-6 h-6" />
+  </span>
+  <span>Continue with Google</span>
+</Button>
     </div>
   );
 };

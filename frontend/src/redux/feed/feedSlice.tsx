@@ -4,6 +4,12 @@ export interface Feed {
   title: string;
   content: string;
   files: string[];
+  createdAt:Date;
+  userDetails:{
+    username:string;
+    email:string
+    profilePic:string
+  }
 }
 
 interface FeedDetails {

@@ -3,12 +3,17 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import api from '../API/Api'
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setQuizDetails } from '../../redux/tutor/tutorSlice';
 const QuizGeneration = () => {
     const [numQuestions, setNumQuestions] = useState<number>(0);
     const [questions, setQuestions] = useState<{question: string, options: string[], totalMarks: number, correctAnswer: number}[]>([]);
     const [currentQuestion, setCurrentQuestion] = useState<number>(1);
     const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
     const [errors, setErrors] = useState<{ question?: string, options?: string, totalMarks?: string, correctAnswer?: string }[]>([]);
+    const quizDetails=useSelector((state:RootState)=>state.tutor.quizDetails)
+    const dispatch=useDispatch()
     const {id}=useParams()
     useEffect(() => {
         if (numQuestions > 0) {
@@ -85,21 +90,18 @@ const QuizGeneration = () => {
         setQuestions(updatedQuestions);
     };
 
-    // Handler for updating option text
     const handleOptionChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const updatedQuestions = [...questions];
         updatedQuestions[currentQuestion - 1].options[index] = e.target.value;
         setQuestions(updatedQuestions);
     };
 
-    // Handler for updating total marks
     const handleTotalMarksChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updatedQuestions = [...questions];
         updatedQuestions[currentQuestion - 1].totalMarks = parseInt(e.target.value, 10);
         setQuestions(updatedQuestions);
     };
 
-    // Handler for updating correct answer
     const handleCorrectAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updatedQuestions = [...questions];
         updatedQuestions[currentQuestion - 1].correctAnswer = parseInt(e.target.value, 10);
@@ -148,14 +150,109 @@ const QuizGeneration = () => {
             });
         }
     };
+    console.log('ipe',quizDetails)
+
+    useEffect(()=>{
+        fetchUploadedQuiz()
+    },[])
+    const fetchUploadedQuiz=async()=>{
+        const response=await api.get('/backend/quiz/getQuiz',{
+            headers:{
+                'X-Token-Type':'tutor'
+            },
+            params:{
+                courseId:id
+            }
+        })
+        console.log('res',response)
+        dispatch(setQuizDetails(response.data))
     
-  
+    }
+    
+    const handleDelete = async () => {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "Do you really want to delete the quiz?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await api.delete('/backend/quiz/deleteQuiz', {
+                headers: {
+                  'X-Token-Type':'tutor'
+                },
+                params:{
+                    courseId:id
+
+                }
+              });
+              console.log('res',response)
+              fetchUploadedQuiz()
+              if (response.status === 200) {
+                Swal.fire(
+                  'Deleted!',
+                  'Your quiz has been deleted.',
+                  'success'
+                );
+              }
+            } catch (error) {
+              console.error("Error deleting quiz:", error);
+              Swal.fire(
+                'Error!',
+                'There was a problem deleting the quiz. Please try again later.',
+                'error'
+              );
+            }
+          }
+        });
+      };
+      
     return (
         <div className='w-[80%] mx-auto my-10 flex justify-center items-center min-h-screen'>
             <div className='shadow-lg bg-black rounded-lg p-8 w-full max-w-4xl'>
                 <h1 className='text-gray-100 text-4xl font-bold mb-6 text-center'>Create Quiz</h1>
+                {quizDetails ? (
+    <div className='bg-gray-900 p-8 rounded-lg shadow-lg text-white'>
+        <Button onClick={handleDelete} className='float-end bg-red-500'>Delete</Button>
+    <h2 className='text-3xl font-protest mb-6  text-indigo-400'>Quiz Already Created</h2>
+    <p className='text-lg text-gray-300 font-poppins mb-6 '>The quiz has already been created for this course. Here are the details:</p>
 
-                {!isQuizStarted ? (
+    {quizDetails.questions && quizDetails.questions.length > 0 ? (
+        <ul className='space-y-6'>
+            {quizDetails.questions.map((quiz, index) => (
+                <li key={quiz._id} className='border border-gray-800 bg-gray-800 p-6 rounded-lg shadow-md'>
+                    <p className='text-xl font-semibold text-indigo-300 mb-2'>
+                        Question {index + 1}: <span className='text-gray-200'>{quiz.question}</span>
+                    </p>
+                    <div className='mb-2'>
+                        <p className='text-lg font-medium text-indigo-300'>Options:</p>
+                        <ul className='list-disc list-inside text-gray-400'>
+                            {quiz.options.map((option, i) => (
+                                <li key={i} className={`${quiz.correctAnswer === i + 1 ? 'text-green-400 font-bold' : ''}`}>
+                                    Option {i + 1}: {option}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <p className='text-lg font-medium text-indigo-300'>
+                        Correct Answer: <span className='text-green-400'>Option {quiz.correctAnswer}</span>
+                    </p>
+                </li>
+            ))}
+        </ul>
+    ) : (
+        <p className='text-gray-400 text-center'>No questions available for this quiz.</p>
+    )}
+</div>
+
+) : (
+      
+                !isQuizStarted ? (
                     <div className='w-full max-w-lg h-[40vh]  mx-auto flex flex-col items-center'>
                         <div className='w-[80%] bg-gray-900 p-6 rounded-lg shadow-lg'>
                             <h2 className='text-2xl font-semibold text-gray-100 mb-4 text-center'>Quiz Setup</h2>
@@ -295,7 +392,7 @@ const QuizGeneration = () => {
                             </>
                         )}
                     </>
-                )}
+                ))}
             </div>
         </div>
     );

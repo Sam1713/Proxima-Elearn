@@ -1,102 +1,59 @@
 import React from 'react';
 import LandingFeed from './LandingFeed';
-
+import { Button } from '@material-tailwind/react';
+import heroImg from '../assets/images/hero-Dv8sjFKx.png'
+import { FaPlay } from 'react-icons/fa';
+import {motion} from 'framer-motion'
+import { SlideRight } from '../animation/animation';
 function LandingDescription() {
   return (
     <>
-    <div className='bg-gradient-to-r from-gray-800 via-black to-gray-800 w-full mx-auto'>
-      <div className='w-full my-10 flex justify-center bg-gradient-to-r from-gray-800 via-black to-gray-800'>
-        <h1 className='w-full md:w-1/3 text-center text-4xl font-bold text-white shadow-lg p-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full'>
-          Our Success
-        </h1>
+    <div className='container  grid grid-cols-1 md:grid-cols-2 w-full mx-auto min-h-[650px] relative'>
+      <div className='flex flex-col justify-center py-14 md:pl-16 xl:pr-40 md:py-0'>
+      <div className='text-center md:text-left space-y-6'>
+            <motion.p
+            variants={SlideRight(0.4)}
+            initial="hidden"
+            animate="visible"
+            className='text-orange-600 uppercase'>100% Satisfaction Guarentee</motion.p>
+            <motion.h1
+            variants={SlideRight(0.6)}
+            initial="hidden"
+            animate="visible"
+            className='text-5xl font-semibold  lg:text-6xl text-white'>Find your Perfect <span className='text-yellow-700 font-protest'>Tutor</span></motion.h1>
+            <motion.p
+            variants={SlideRight(0.8)}
+            initial="hidden"
+            animate="visible"
+            className='text-gray-100 font-poppins'
+            >
+              We help you find Perfect Tutor for 1 to 1 lessons
+              It is 
+              completely free and private
+            </motion.p>
+            <motion.div
+             variants={SlideRight(1.0)}
+             initial="hidden"
+             animate="visible"
+            className='flex gap-4 justify-center md:justify-start !mt-8 items-center'>
+            <Button className='bg-yellow-700 font-semibold px-6 py-3 rounded-full hover:!scale-110 hover:!shadow-xl duration-300'>Get Started</Button>
+            <Button className='flex justify-end items-center gap-2 font-semibold bg-gray-800 rounded-full text-white border-indigo-200 shadow-2xl' ><span className='w-5 h-5  bg-blue-400 rounded-full flex  justify-center items-center'><FaPlay className='text-blue-300'/></span>See how it works</Button>
+      </motion.div>
       </div>
-      <div className='flex justify-center'>
-        <div className='text-sm w-full md:w-1/2 p-4 bg-white shadow-md rounded-lg'>
-          <span className='text-center leading-relaxed'>
-            Ornare id fames interdum porttitor nulla turpis etiam. Diam vitae sollicitudin at nec nam et pharetra gravida. Adipiscing a quis ultrices eu ornare tristique vel nisl orci.
-          </span>
-        </div>
       </div>
-      <div className='flex flex-wrap justify-center mt-12 gap-28'>
-        <div className='flex flex-col items-center text-gray-800'>
-          <span className='text-3xl font-bold'>15k+</span>
-          <span className='text-sm mt-2'>Success</span>
-        </div>
+      <div className='flex justify-center items-center'>
+      <motion.img
+      initial={{opacity:0,x:200}}
+      animate={{opacity:1,x:0}}
+      transition={{type:"spring",stiffness:100,delay:0.2}}
+      className='w-[350px] md:w-[550px] lg:w-[700px]' src={heroImg} alt="No image" />
+    </div>
 
-        {/* Pair 2 */}
-        <div className='flex flex-col items-center text-gray-800'>
-          <span className='text-3xl font-bold'>75%</span>
-          <span className='text-sm mt-2'>Total Success</span>
-        </div>
+    </div>
+    <LandingFeed/>
 
-        {/* Pair 3 */}
-        <div className='flex flex-col items-center text-gray-800'>
-          <span className='text-3xl font-bold'>35</span>
-          <span className='text-sm mt-2'>Main Questions</span>
-        </div>
-
-        {/* Pair 4 */}
-        <div className='flex flex-col items-center text-gray-800'>
-          <span className='text-3xl font-bold'>25</span>
-          <span className='text-sm mt-2'>Chief Experts</span>
-        </div>
-
-        {/* Pair 5 */}
-        <div className='flex flex-col items-center text-gray-800'>
-          <span className='text-3xl font-bold'>1+</span>
-          <span className='text-sm mt-2'>Years of Experience</span>
-        </div>
-      </div>
-     
-      <div className='text-center mt-12'>
-        <h1 className='text-xl md:text-4xl font-extrabold text-transparent bg-clip-text   bg-gradient-to-r from-blue-400 to-blue-600 shadow-lg p-2 inline-block'>
-          Categories
-        </h1>
-      </div>
-
-      <div className='flex flex-wrap justify-center gap-12 mt-20'>
-        
-        {/* Web Development */}
-        <div className='w-full sm:w-1/2 lg:w-1/3 p-4 bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg rounded-lg'>
-          <div className='flex flex-col items-center'>
-            <span className='text-2xl font-bold mb-2'>Web Development</span>
-            <span className='text-sm text-center'>
-              Web development involves creating and maintaining websites, focusing on both front-end (user interface) and back-end (server-side functionality).
-            </span>
-          </div>
-        </div>
-
-        {/* Java Programming */}
-        <div className='w-full sm:w-1/2 lg:w-1/3 p-4 bg-gradient-to-r from-yellow-400 to-red-500 text-white shadow-lg rounded-lg'>
-          <div className='flex flex-col items-center'>
-            <span className='text-2xl font-bold mb-2'>Java Programming</span>
-            <span className='text-sm text-center'>
-              Java is a versatile, high-level programming language known for its portability across platforms, thanks to the "write once, run anywhere" capability provided by the Java Virtual Machine (JVM).
-            </span>
-          </div>
-        </div>
-        <div className='w-full sm:w-1/2 lg:w-1/3 p-4 bg-gradient-to-r from-purple-400 to-pink-500 text-white shadow-lg rounded-lg'>
-          <div className='flex flex-col items-center'>
-            <span className='text-2xl font-bold mb-2'>Data Science</span>
-            <span className='text-sm text-center'>
-              Data Science involves extracting insights and knowledge from data through statistical analysis, machine learning, and data visualization.
-            </span>
-          </div>
-        </div>
-
-        {/* Machine Learning */}
-        <div className='w-full sm:w-1/2 lg:w-1/3 p-4 bg-gradient-to-r from-indigo-400 to-teal-500 text-white shadow-lg rounded-lg'>
-          <div className='flex flex-col items-center'>
-            <span className='text-2xl font-bold mb-2'>Machine Learning</span>
-            <span className='text-sm text-center'>
-              Machine Learning is a branch of artificial intelligence that focuses on building systems that learn from data and improve over time without being explicitly programmed.
-            </span>
-          </div>
-        </div>
-      </div>
-      <LandingFeed/>
-      </div>
-    </>
+   
+   </>
   );
 }
 

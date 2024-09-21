@@ -20,6 +20,7 @@ import { OTP } from "../../utils/randomPassword";
 import CourseModel from "../../models/courseModel";
 import mongoose from "mongoose";
 import Notification from "../../models/notificationModel";
+import CategoryeModel from "../../models/categoryModel";
 
 export const auth = async (
   req: Request<{}, {}, StudentDetails>,
@@ -386,12 +387,16 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
     }
   };
 
-  export const GetAllCourses=async(req:Request,res:Response):Promise<void>=>{
+  export const GetAllCourses=async(req:Request,res:Response):Promise<unknown>=>{
     console.log('reached...') 
-    const page=parseInt(req.query.page as string)
-    const limit=parseInt(req.query.limit as string)
-    console.log('li',limit)
-    const skip=(page-1)*limit
+    const page: number = parseInt(req.query.page as string) || 1;  
+    const limit: number = parseInt(req.query.limit as string) || 10; 
+
+    const skip: number = (page - 1) * limit;
+
+    if (isNaN(skip) || skip < 0) {
+      return res.status(400).json({ message: 'Invalid page or limit parameters' });
+    }
     console.log('skip',skip) 
     const totalCourses=await CourseModel.countDocuments()
     const courses = await CourseModel.aggregate([
@@ -500,6 +505,40 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
     }
   };
 
+
+  export const getAllCategory=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
+    try{
+      const page: number = parseInt(req.query.page as string) || 1;  
+    const limit: number = parseInt(req.query.limit as string) || 10; 
+
+    const skip: number = (page - 1) * limit;
+
+    if (isNaN(skip) || skip < 0) {
+      return res.status(400).json({ message: 'Invalid page or limit parameters' });
+    }
+
+    console.log('Page:', page, 'Limit:', limit, 'Skip:', skip);
+
+      const totalNumber=await CategoryeModel.countDocuments()
+
+    console.log('yes')
+    const getAllCategories=await CategoryeModel.find().skip(skip).limit(limit)
+    if(!getAllCategories){
+      res.json('No Course Found')
+    }
+    const totalPages= Math.ceil(totalNumber / limit)
+
+    console.log('tit',totalPages)
+    res.json(
+      {getAllCategories, 
+        totalCategories: totalNumber,
+        totalPages 
+ }) 
+  }catch(error){
+    res.json('Error Occured')
+  }
+  }
+
   // export const getAllCoursesSinglePage=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
   //   console.log('sfdsdfs')
   //   try{
@@ -548,3 +587,53 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
    console.log('updateNo',updateNotification)
    res.json('Successfully deleted')
   }   
+
+
+  export const getFullCourses=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+    console.log('reached...') 
+    const page=parseInt(req.query.page as string)
+    const limit=parseInt(req.query.limit as string)
+    console.log('li',limit)
+    const skip=(page-1)*limit
+    console.log('skip',skip) 
+    const totalCourses=await CourseModel.countDocuments()
+    const courses = await CourseModel.aggregate([
+      {$match:{isDelete:false}},
+      { 
+        $lookup: {
+          from: 'tutors', 
+          localField: 'tutorId',
+          foreignField: '_id',
+          as: 'tutorDetails'
+        }
+      },
+      {
+        $unwind: {  
+          path: '$tutorDetails',
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $project: { 
+          id:1,
+          title: 1,
+          category: 1,
+          coverImageUrl: 1,
+          price:1,
+          description:1,
+          'tutorDetails.tutorname': 1,
+          'tutorDetails.bio': 1
+        }
+      },
+      {
+        $skip:skip
+      },
+      {
+        $limit:limit
+      }
+    ]);
+    const totalPages=Math.ceil(totalCourses/limit)
+
+    // console.log('Courses with tutor details:', courses);
+    res.json({courses,totalPages})
+  }

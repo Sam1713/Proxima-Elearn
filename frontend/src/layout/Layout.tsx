@@ -1,20 +1,18 @@
-// Layout.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import StudentProfile from '../components/studentAuth/StudentProfile'; // Import your sidebar component
-
+import StudentProfile from '../components/studentAuth/StudentProfile';
 const Layout: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   return (
-    <div className='md:flex w-[100%] bg-custom-gradient min-h-screen '>
-      <div className='md:w-[20%]'>
-      <StudentProfile /> {/* Sidebar */}
-      </div>
-      
-      <main className="bg-custom-gradient rounded-xl md:mt-20 md:w-[75%] ml-[4%] "> {/* Main content area */}
-        <Outlet /> {/* Renders the matched child route */}
+    <div className="flex w-[100%] min-h-screen bg-custom-gradient">
+      <StudentProfile isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <main className="bg-custom-gradient rounded-xl md:mt-20 md:w-[80%] md:ml-[20%] ">        <Outlet /> {/* Renders the matched child route */}
       </main>
-      </div>
+    </div>
   );
-};
+}; 
 
 export default Layout;

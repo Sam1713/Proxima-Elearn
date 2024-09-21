@@ -54,13 +54,11 @@ function TutorSignin() {
   return (
     
     <div
-      className="relative pt-2 font-poppins min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url(https://wallpapercave.com/wp/wp2832043.jpg)" }}
-    >
+      className="relative pt-2 font-poppins min-h-screen flex items-center justify-center bg-black"    >
         <ToastContainer/>
       <div className="p-8 rounded-lg bg-white bg-opacity-20 shadow-2xl border w-11/12 md:w-2/3 lg:w-1/3">
         <form onSubmit={formik.handleSubmit} className='mx-auto'>
-          <h1 className='text-3xl font-extrabold text-center mb-6'>Signin</h1>
+          <h1 className='text-3xl font-extrabold text-left text-white font-protest mb-6'>Signin</h1>
           <div className='flex flex-wrap mb-4 mx-auto'>
             <div className='w-full md:w-full pr-2 relative mb-4 sm:mb-0 mx-auto'>
               <FaUser className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'/>

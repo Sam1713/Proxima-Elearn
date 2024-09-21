@@ -7,7 +7,13 @@ import { signout } from '../redux/student/studentSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
+import { TbUserScreen } from "react-icons/tb";
+
 import License from '../modals/tutorModal/License';
+import { FaHome } from "react-icons/fa";
+import { FaChalkboardTeacher } from "react-icons/fa";
+
+
 import Api from '../components/API/Api'
 import { tutorsignout } from '../redux/tutor/tutorSlice';
 function TutorHeader() {
@@ -54,25 +60,25 @@ console.log('va',val)
         </div>    
       </div>
       <nav className={`w-full ${isOpen ? 'block' : 'hidden'} sm:flex mt-4 sm:mt-0`}>
-        <ul className="flex flex-col sm:flex-row justify-end w-full text-white">
-          <li className="mx-5">
-            <Link to='/tutorhome' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
+        <ul className="flex flex-col sm:flex-row justify-end w-full  text-white">
+          <li className="mx-10">
+            <Link to={myTutor?'/tutorhome':'/'} className="hover:text-blue-300 transition-colors duration-300"><FaHome size={30}/></Link>
           </li>
-          <li className="mx-5"> 
-            <Link to='/tutorprofile' className="hover:text-blue-300 transition-colors duration-300">Tutor Profile</Link>
+          <li className="mx-10"> 
+            <Link to='/tutorprofile' className="hover:text-blue-300 transition-colors duration-300"><TbUserScreen size={30}/></Link>
           </li>
-          <li className="mx-5">
+          <li className="mx-10">
           <Link 
   to={val ? '/coursepage' : '#'}
   onClick={!val ? handleLicense : undefined}
   className="hover:text-blue-300 transition-colors duration-300"
 >
-  Course
+  <FaChalkboardTeacher size={30}/>
 </Link>
 
           </li>
-          <li className="mx-5">
-            <Link onClick={handleSignout} to='/tutorsignin' className="hover:text-blue-300 transition-colors duration-300">
+          <li className="mx-10">
+            <Link onClick={handleSignout} to='/tutorsignin' className="hover:text-blue-300 font-protest text-2xl transition-colors duration-300">
               {!myTutor?'Signin':'Signout'}
             </Link>
           </li>

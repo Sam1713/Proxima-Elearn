@@ -61,14 +61,28 @@ const ContextProvider = ({ children }) => {
       console.log('Received my ID:', id);
       setMe(id);
     });
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
+    // navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    //   .then((currentStream) => {
+    //     setStream(currentStream);
+    //     if (myVideo.current) {
+    //       myVideo.current.srcObject = currentStream;
+    //     }
+    //   });
+
+    const getMediaStream = async () => {
+      try {
+        const currentStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         setStream(currentStream);
         if (myVideo.current) {
           myVideo.current.srcObject = currentStream;
         }
-      });
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+        alert('Could not access the camera or microphone. Please check your permissions and try again.');
+      }
+    };
 
+    getMediaStream();
    
 
     socket.on('calluser', ({ from, name: callerName, signal }) => {
@@ -91,6 +105,7 @@ const ContextProvider = ({ children }) => {
     setCallAccepted(true);
     
     const peer = new Peer({ initiator: false, trickle: false, stream });
+    console.log('perr',peer)
     
     peer.on('signal', (data) => {
       socket.emit('answercall', { signal: data, to: call.from });
@@ -98,6 +113,7 @@ const ContextProvider = ({ children }) => {
     
     peer.on('stream', (currentStream) => {
       if (userVideo.current) {
+        console.log('userC',userVideo.current)
         userVideo.current.srcObject = currentStream;
       }
     });
@@ -127,6 +143,7 @@ const ContextProvider = ({ children }) => {
       if (userVideo.current) {
         console.log('ha')
         userVideo.current.srcObject = currentStream;
+        console.log('fsfsdfs',userVideo.current.srcObject)
       }
     });
     

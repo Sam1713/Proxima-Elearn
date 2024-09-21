@@ -9,9 +9,13 @@ import { IoIosSearch } from "react-icons/io";
 import AnimatedText from '../../animation/AnimatedText';
 import notFound from '../../assets/images/49342678_9214777.jpg';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { setStudentCourses } from '../../redux/student/studentSlice';
+import { setLoading, setLoadingClose, setStudentCourses } from '../../redux/student/studentSlice';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@material-tailwind/react';
+import { Button, CardBody, CardFooter, CardHeader, Typography } from "@material-tailwind/react";
+import { Card } from "@material-tailwind/react";
+import CourseShimmer from '../shimmers/CourseShimmer';
+import { SlideRight, SlideUp } from '../../animation/animation';
+import {motion} from 'framer-motion'
 
 function AllCourses() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -23,8 +27,10 @@ function AllCourses() {
   const limit=4
   const dispatch = useDispatch();
   const navigate=useNavigate()
+  const loading=useSelector((state:RootState)=>state.student.loading)
   const allCourses = useSelector((state: RootState) => state.student.courses);
   const categories = useSelector((state: RootState) => state.admin.viewAllCategory);
+  
   console.log('cat',categories)
   useEffect(() => {
     fetchAllCourses(page,limit);
@@ -32,6 +38,7 @@ function AllCourses() {
 
   const fetchAllCourses = async (page: number,limit:number) => {
     try {
+      dispatch(setLoading())
       const response = await api.get(`/backend/auth/getAllCourses`, {
         headers: {
           'X-Token-Type': 'student'
@@ -42,11 +49,13 @@ function AllCourses() {
         }
       });
 console.log('res',response.data)
-     
+       dispatch(setLoadingClose())
         dispatch(setStudentCourses(response.data.courses));
         setTotalPages(response.data.totalPages)
       
     } catch (error) {
+      dispatch(setLoadingClose())
+
       console.error('Error fetching courses:', error);
     }
   };
@@ -103,46 +112,55 @@ console.log('res',response.data)
   const handlePrev=()=>{
     setPage((prev)=>prev-1)
   }
+  if (loading) {
+    return (
+      <>
+      <CourseShimmer/>
+      </>
+
+    );
+  }
+  
   return (
     <div className='bg-custom-gradient min-h-screen p-8'>
       <h1 className='text-white text-3xl mb-8'>All Courses</h1>
       
-      <div className='relative flex gap-4 px-16 mb-8 w-full'>
-        <div className="absolute mx-16 pl-[68%] flex w-[0%] mb-8">
+      <div className='relative md:flex    gap-4 md:px-20 mb-8 md:w-full '>
+        <div className=" md:absolute  md:mx-16 md:pl-[68%] flex mb-8">
           <input 
             onChange={handleChange} 
-  className='relative px-6 p-3 bg-custom-gradient text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ring-2 ring-blue-500'            type="text" 
+  className='md:relative  px-6 p-3 bg-custom-gradient text-white w-[100%]  rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ring-2 ring-blue-500'            type="text" 
             placeholder="Search courses..." 
           />
-          <IoIosSearch className='absolute text-gray-100 top-1/4 text-2xl' />
+          <IoIosSearch className='absolute text-gray-100 md:top-1/4 top-3  text-2xl' />
         </div>
-
-        <div className='relative'>
+        <div className='grid grid-cols-2 md:flex gap-4 w-[100%] mx-auto'>
+        <div className='relative     '>
           <select 
             value={selectedCategory}
             onChange={handleDropdownChange(setSelectedCategory)}
-            className='bg-black text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='bg-black  md:w-full  text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             {uniqueCategories.map((category) => (
               <option className='font-thin' key={category} value={category}>{category}</option>
             ))}
           </select>
-          <IoMdArrowDropdown className='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-100' />
+          <IoMdArrowDropdown className='absolute  md:right-2 right-1 top-1/2 transform -translate-y-1/2 text-gray-100' />
         </div>
         
         {/* Sort Dropdown */}
-        <div className='relative'>
+        <div className='relative '>
           <select 
             value={selectedSort}
             onChange={handleDropdownChange(setSelectedSort)}
-            className='bg-black text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='bg-black w text-white  border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             <option value="Price: Low to High">Price: Low to High</option>
             <option value="Price: High to Low">Price: High to Low</option>
             <option value="Most Popular">Most Popular</option>
             <option value="Newest First">Newest First</option>
           </select>
-          <IoMdArrowDropdown className='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-100' />
+          <IoMdArrowDropdown className='absolute md:right-2 right-1  top-1/2 transform -translate-y-1/2 text-gray-100' />
         </div>
         
         {/* Filter Dropdown */}
@@ -150,7 +168,7 @@ console.log('res',response.data)
           <select 
             value={selectedFilter}
             onChange={handleDropdownChange(setSelectedFilter)}
-            className='bg-black text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='bg-black  text-white border  border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             <option value="All">All</option>
             <option value="Under $1000">Under $1000</option>
@@ -158,20 +176,28 @@ console.log('res',response.data)
             <option value="$2000-$4000">$2000-$4000</option>
             <option value="Over $4000">Over $4000</option>
           </select>
-          <IoMdArrowDropdown className='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-100' />
+          <IoMdArrowDropdown className='absolute md:right-2 right-10  top-1/2 transform -translate-y-1/2 text-gray-100' />
         </div>
       </div>
       
+</div>
+      
       {/* Course Listings */}
       
-        <div className='bg-white bg-opacity-10 rounded-lg p-4 md:w-[90%] w-full mx-auto'>
+        <motion.div
+   initial={{  y: -100, opacity: 0.2 }}
+   whileInView={{ skew: 0, y: 0, opacity: 1 }}
+   transition={{ duration: 0.5, ease: "easeInOut" }}
+   variants={SlideUp(0.5)}
+
+        className='bg-white bg-opacity-10 rounded-lg p-4  md:w-[90%] w-full md:mx-auto'>
           {sortedCourses && sortedCourses.length > 0 ? (
-            <div className='md:grid md:grid-cols-1 grid-cols-2 lg:grid-cols-4 gap-6'>
+            <div className='md:grid md:grid-cols-1 grid-cols-2 lg:grid-cols-4 gap-6 '>
               {sortedCourses.map((course) => (
                 <div 
                 onClick={()=>handleNavigate(course._id)}
                   key={course._id} 
-                  className='bg-black text-white rounded-2xl p-4 md:w-full w-[70%] hover:shadow-2xl transition-shadow duration-300 cursor-pointer'
+                  className='bg-black text-white rounded-2xl p-4 md:w-full w-[100%]  mt-10 md:mt-0 hover:shadow-2xl transition-shadow duration-300 cursor-pointer'
                   style={{ boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)' }}
                 >
                   <img className='w-full h-[20vh] object-cover rounded-2xl mb-4' src={course.coverImageUrl} alt={course.title} />
@@ -195,7 +221,7 @@ console.log('res',response.data)
               <img className='w-[20%] h-22 rounded-xl  animate-bounce mt-20' src={notFound} alt="No courses found" />
             </div>
           )}
-        </div>
+        </motion.div>
         ;
 
 <div className="flex justify-center items-center space-x-4 py-4">

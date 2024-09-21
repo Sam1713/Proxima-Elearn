@@ -11,10 +11,19 @@ export interface TutorState {
     CallRequestDetails:CallRequestType[],
     CallRequestAccept:CallRequestType|null,
     bookingDetails:CallRequestType|null,//changed callRequestType
-    walletInfo:WalletDetailsTypes|null
+    walletInfo:WalletDetailsTypes|null,
+    quizDetails:StudentQuiz|null,
+    studentChat:[],
+    sortedStudents: Student[],
     newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
+}
+
+export interface Student {
+    id: string;
+    name: string;
+    // Add other properties of Student as needed
 }
 
 export interface Tutor {
@@ -104,6 +113,29 @@ interface WalletDetailsTypes{
     deductedAmount:string;
     balanceAmount:string
 }
+interface Stud {
+    courseId: string;
+  }
+  
+  interface QuizQuestions {
+    _id: string;
+    question: string;
+    options: string[];
+    totalMarks: number; 
+    correctAnswer: number; 
+  }
+  
+  interface StudentQuiz extends Stud {
+    questions: QuizQuestions[];
+  }
+
+interface studentChatType{
+    sender:string;
+    receiver:string
+    createedAt:Date;
+    senderType:string
+}
+
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
@@ -114,8 +146,11 @@ const initialState:TutorState={
     CallRequestAccept:null,
     bookingDetails:null,
     walletInfo:null,
+    quizDetails:null,
+    studentChat:[],
     categoryDetails:[],
     purchased:[],
+    sortedStudents: [],
     newBio:null,
     loading:false,
     error:""
@@ -181,13 +216,37 @@ const tutorSlice=createSlice({
         },
         setWalletInfo:(state,action:PayloadAction<WalletDetailsTypes>)=>{
             state.walletInfo=action.payload
+        },
+        setStudetnChat:(state,action:PayloadAction<StudentChatTyppe[]>)=>{
+            state.studentChat=action.payload
+        },
+        setStudentChat(state, action: PayloadAction<{ studentId: string, chats: StudentChatType[] }>) {
+            const { studentId, chats } = action.payload;
+            const lastMessage = chats[chats.length - 1];
+            
+            // Update student chat data
+            const updatedChats = {
+                ...state.studentChat,
+                [studentId]: chats,
+            };
+            state.studentChat = updatedChats;
+
+            // Update sorted students list
+            const sortedStudents = state.sortedStudents
+                .map(student => ({
+                    ...student,
+                    lastMessageTimestamp: updatedChats[student._id]?.[chats.length - 1]?.createdAt.getTime() || 0,
+                }))
+                .sort((a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp);
+
+            state.sortedStudents = sortedStudents;
+        },
+        setQuizDetails:(state,action:PayloadAction<StudentQuiz>)=>{
+            state.quizDetails=action.payload
         }
+    },
+});
 
-
-        
-    }
-})
-
-export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails,setWalletInfo } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails,setWalletInfo,setStudentChat,setQuizDetails } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

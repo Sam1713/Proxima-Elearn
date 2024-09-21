@@ -274,7 +274,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
              _id:{$ne:courseId },
 
           })
-          const quizzes = await Quiz.findOne({ courseId: courseId });
+          const quizzes = await Quiz.findOne({ courseId: courseId,isDelete:false });
           // if(!quizzes){
           //   res.json(null)
           // }
@@ -282,7 +282,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
             _id: quizzes._id,
             courseId: quizzes.courseId,
             questions: quizzes.questions
-          } : null;
+          } : null; 
       
       
          

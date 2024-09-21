@@ -5,7 +5,7 @@ import LandingBody from './LandingBody';
 function Landing() {
   return (
     <div className=''>
-      <main className=''>
+      <main className='bg-black'>
       <LandingBody />
 
       </main>

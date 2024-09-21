@@ -34,14 +34,17 @@ function GetCallRequest() {
     const courseId = details?._id;
     const [search, setSearch] = useState<string>("");
     const [bookingId, setBookingId] = useState<string>('');
+    const [page,setPage]=useState<number>(1)
+    const [totalPage,setTotalPage]=useState<number>(1)
+    const limit=4
 
     useEffect(() => {
         if (courseId) {
-            fetchCallRequest(courseId);
+            fetchCallRequest(courseId,limit,page);
         }
-    }, [courseId]);
+    }, [courseId,limit,page]);
 
-    const fetchCallRequest = async (courseId: string) => {
+    const fetchCallRequest = async (courseId: string,limit:number,paage:number) => {
         try {
             const response = await api.get('/backend/contact/getCallRequest', {
                 headers: {
@@ -49,9 +52,12 @@ function GetCallRequest() {
                 },
                 params: {
                     courseId: courseId,
+                    limit:limit,
+                    page:page
                 },
             });
-            dispatch(setCallRequests(response.data));
+            dispatch(setCallRequests(response.data.getAllCallRequest));
+            setTotalPage(response.data.totalPages)
         } catch (error) {
             console.error('Error fetching call requests:', error);
         }
@@ -81,40 +87,45 @@ function GetCallRequest() {
         console.log('id',id)
         navigate(`/getFullCallDetails/${id}`);
     };
+    
+const handelPrevious=()=>{
+    setPage(page-1)
+}
+const handleForward=()=>{
+    setPage(page+1)
+}
 
     return (
         <div className="min-h-screen">
-        <Card className="w-[90%] mx-auto my-20 shadow-lg rounded-3xl">
+        <Card className="w-[90%] mx-auto my-20 shadow-lg rounded-3xl"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             <CardHeader
-                floated={false}
-                shadow={false}
-                className="rounded-lg bg-custom-gradient p-6 flex flex-col items-center"
-            >
-                <Typography variant="h4" color="white" className="font-bold mb-2 text-center">
+                    floated={false}
+                    shadow={false}
+                    className="rounded-lg bg-custom-gradient p-6 flex flex-col items-center" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            >
+                <Typography variant="h4" color="white" className="font-bold mb-2 text-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     Call Request Students
                 </Typography>
                 <div className="w-full md:w-1/2 mb-4">
                     <Input
-                        label="Search"
-                        onChange={handleChange}
-                        icon={<MagnifyingGlassIcon className="h-5 w-5 text-black" />}
-                        className="rounded-full text-black bg-white placeholder-white focus:ring-2 focus:ring-red-600 focus:outline-none"
-                        containerProps={{
-                            className: "rounded-full bg-red-400",
-                        }}
-                    />
+                            label="Search"
+                            onChange={handleChange}
+                            icon={<MagnifyingGlassIcon className="h-5 w-5 text-black" />}
+                            className="rounded-full text-black bg-white placeholder-white focus:ring-2 focus:ring-red-600 focus:outline-none"
+                            containerProps={{
+                                className: "rounded-full bg-red-400",
+                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                    />
                 </div>
                 <div className="flex items-center gap-3 text-white">
-                    <Typography variant="small" className="font-normal">
+                    <Typography variant="small" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                         Total Requests: {filteredRequests.length}
                     </Typography>
-                    <Button variant="filled" size="sm" className="bg-white text-red-400">
+                    <Button variant="filled" size="sm" className="bg-white text-red-400"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                         Add Request
                     </Button>
                 </div>
             </CardHeader>
 
-            <CardBody className="overflow-x-auto px-4 py-6">
+            <CardBody className="overflow-x-auto px-4 py-6"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <table className="w-full table-auto text-left bg-white rounded-xl">
                     <thead>
                         <tr>
@@ -123,7 +134,7 @@ function GetCallRequest() {
                                     key={head}
                                     className="p-4 text-teal-900 border-b-2 border-teal-600"
                                 >
-                                    <Typography variant="small" color="teal" className="font-semibold">
+                                    <Typography variant="small" color="teal" className="font-semibold" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                         {head}
                                     </Typography>
                                 </th>
@@ -136,21 +147,21 @@ function GetCallRequest() {
                                 <tr key={_id} className="hover:bg-teal-50 transition-all">
                                     <td className="p-4 border-b border-gray-200">
                                         <div className="flex items-center gap-3">
-                                            <Avatar src={profilePic} alt={name} size="sm" />
+                                            <Avatar src={profilePic} alt={name} size="sm" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
                                             <div>
-                                                <Typography variant="small" color="teal" className="font-semibold">
+                                                <Typography variant="small" color="teal" className="font-semibold"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                                     {name}
                                                 </Typography>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal">
+                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                             {email}
                                         </Typography>
                                     </td>
                                     <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal">
+                                        <Typography variant="small" color="gray" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                             {purpose}
                                         </Typography>
                                     </td>
@@ -173,7 +184,7 @@ function GetCallRequest() {
                                     </td>
 
                                     <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal">
+                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                             {description}
                                         </Typography>
                                     </td>
@@ -184,21 +195,21 @@ function GetCallRequest() {
                                         fetchCallRequest={() => fetchCallRequest(courseId)} 
                                     />
                                     <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal">
+                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                                             {dayjs(createdAt).format('MMM D, YYYY h:mm A')}
                                         </Typography>
                                     </td>
                                     <td className="p-4 border-b border-gray-200 text-right flex gap-2">
     {status === 'pending' || status === 'rejected' ? (
         <Tooltip content="Approve Request">
-            <IconButton onClick={() => handleApprove(_id)} variant="text">
+            <IconButton onClick={() => handleApprove(_id)} variant="text"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <CheckIcon className="h-4 w-4 text-green-500" />
             </IconButton>
         </Tooltip>
     ) : status === 'completed' ? (
         <span className="text-blue-900 font-bold mt-1">Done</span> // Display "Completed" text or any other custom content
     ) : (
-        <Button onClick={() => handleView(_id)} size="sm">View</Button>
+        <Button onClick={() => handleView(_id)} size="sm" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>View</Button>
     )}
 </td>
 
@@ -207,8 +218,8 @@ function GetCallRequest() {
                         ) : (
                             <tr>
                                 <td colSpan={TABLE_HEAD.length} className="p-4 text-center">
-                                    <Typography variant="small" color="gray" className="font-normal">
-                                        No course found
+                                    <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                                        No Request found
                                     </Typography>
                                 </td>
                             </tr>
@@ -216,20 +227,21 @@ function GetCallRequest() {
                     </tbody>
                 </table>
             </CardBody>
-            <CardFooter className="flex items-center justify-center p-6 border-t border-gray-200">
-                <Typography variant="small" color="teal" className="font-normal">
-                    Page 1 of 10
+            <CardFooter className="flex items-center justify-center p-6 border-t border-gray-200"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                <Typography variant="small" color="teal" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                    Page {page} out of {totalPage}
                 </Typography>
                 <div className="flex gap-4 ml-auto">
-                    <Button variant="outlined" size="sm">
+                    <Button disabled={page === 1} onClick={handelPrevious} variant="outlined" size="sm"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                         Previous
                     </Button>
-                    <Button variant="outlined" size="sm">
+                    <Button disabled={page === totalPage} onClick={handleForward} variant="outlined" size="sm"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                         Next
                     </Button>
                 </div>
             </CardFooter>
         </Card>
+        
         </div>
     );
 }

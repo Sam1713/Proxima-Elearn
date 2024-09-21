@@ -5,11 +5,13 @@ import { string } from "yup";
 export interface StudentState {
     currentStudent: Student | null;
     courses:Course[];
+    fullCourses:Course[];
     callDetails:CallRequestType|null;
     Notifications:NotificationType[];
     StudentQuizDetails:StudentQuiz|null;
     bookingId:getBookingId|null;
     quizResult:QuizResultType|null;
+    categories:Category[]
     resultQuiz:ResultTypes|null
     loading: boolean;
     error: string | null;
@@ -62,6 +64,13 @@ interface Course {
 interface getBookingId{
     id:string
 }
+
+
+interface Category {
+  _id: string;
+  categoryName: string;
+  catDescription: string;
+}
 interface NotificationType{
     _id:string;
     studentId?:string;
@@ -102,7 +111,9 @@ const initialState: StudentState = {
     callDetails:null,
     bookingId:null,
     courses:[],
+    fullCourses:[],
     StudentQuizDetails:null,
+    categories:[],
     quizResult:null,
     resultQuiz:null,
     Notifications:[],
@@ -130,6 +141,12 @@ const studentSlice = createSlice({
             state.loading=false;
             state.error=null
         },
+        setLoading:(state)=>{
+          state.loading=true
+        },
+        setLoadingClose:(state)=>{
+          state.loading=false
+        },
         updateStart:(state)=>{
             state.loading=true
         },
@@ -141,12 +158,18 @@ const studentSlice = createSlice({
         setStudentCourses: (state, action: PayloadAction<Course[]>) => {
             state.courses =action.payload; // Merge new courses
         },
+        setFullCourses:(state,action:PayloadAction<Course[]>)=>{
+          state.fullCourses=action.payload
+        },
         setCallDetails:(state,action:PayloadAction<CallRequestType>)=>{
             state.callDetails=action.payload
         },
         setStudentNotifications:(state,action:PayloadAction<NotificationType[]>)=>{
             console.log('Setting notifications:', action.payload);
             state.Notifications=action.payload
+        },
+        setCategories:(state,action:PayloadAction<Category[]>)=>{
+          state.categories=action.payload
         },
         setBookingId:(state,action:PayloadAction<getBookingId>)=>{
             state.bookingId=action.payload
@@ -175,6 +198,6 @@ const studentSlice = createSlice({
     },
 });
 
-export const { signInStart, signInSuccess, signInFailure,signout,updateStart,updateSuccess,setStudentCourses,setCallDetails,setStudentNotifications,setRemoveNotification,setBookingId,setStudentQuizDetails,setQuizResult,setRemoveQuiz,setResult } = studentSlice.actions;
+export const { signInStart, signInSuccess, signInFailure,signout,setLoading,setLoadingClose,updateStart,updateSuccess,setStudentCourses,setFullCourses,setCallDetails,setCategories,setStudentNotifications,setRemoveNotification,setBookingId,setStudentQuizDetails,setQuizResult,setRemoveQuiz,setResult } = studentSlice.actions;
 
 export default studentSlice.reducer;

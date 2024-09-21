@@ -30,7 +30,7 @@ const StudentProfileDetails: React.FC = () => {
 
   return (
     <>
-    <div className='md:w-[40%] w-full md:mt-5 md:mx-20  mt-5 md:flex-col rounded-lg shadow-lg'>
+    <div className='md:w-[30%] w-full md:mt-5 md:mx-20 py-[40%] md:py-0  mt-5 md:flex-col rounded-lg shadow-lg'>
       <ToastContainer />
       <div className='md:w-full w-full bg-custom-gradient  bg-opacity-10 p-4 rounded-lg shadow-lg flex flex-col items-start'>
         <div className='mx-auto'>
@@ -43,7 +43,7 @@ const StudentProfileDetails: React.FC = () => {
         </div>
         {!isFullScreen &&
           <>
-            <div className='mt-10 w-full text-start  bg-custom-gradient rounded-xl p-4'>
+            <div className='mt-10 w-full text-start   bg-custom-gradient rounded-xl p-4'>
               <div className='flex text-white items-center mb-5'>
                 <h2 className='text-xl text-white  font-semibold mr-2'>Name:</h2>
                 <p className=''>{currentStudent?.username}</p>

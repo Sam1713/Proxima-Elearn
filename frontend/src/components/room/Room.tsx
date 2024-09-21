@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Typography } from "@material-tailwind/react";
 import VideoPlayer from './VideoPlayer';
 import Options from './Options';
@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 
 function Room() {
   const { id } = useParams();
+  console.log('c',id)
 
   return (
     <ContextProvider>

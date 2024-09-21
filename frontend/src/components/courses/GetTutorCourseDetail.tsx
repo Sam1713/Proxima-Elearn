@@ -115,9 +115,12 @@ function GetTutorCourseDetail() {
   return (
     <div className="bg-custom-gradient min-h-screen py-20 px-4 font-serif">
       <div className='mx-8 mb-4'>
+        <div className='flex justify-between '>
         <Button onClick={handleGo} className='bg-red-500 p-4 rounded-xl'>Call Request</Button>
+     
+      <div><Button className='bg-green-400' onClick={()=>handleQuiz(details?._id)}>Start Quiz</Button></div>
       </div>
-      <div><Button onClick={()=>handleQuiz(details?._id)}></Button></div>
+      </div>
       {/* Cover Image */}
       <div className="relative max-w-7xl mx-auto bg-white bg-opacity-30 shadow-xl rounded-lg overflow-hidden mb-8 p-4">
         <div className="absolute top-0 right-8 mt-2 flex space-x-3">

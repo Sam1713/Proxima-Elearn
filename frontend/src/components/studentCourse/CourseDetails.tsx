@@ -15,10 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import ReactPlayer from 'react-player';
 import VideoPlayer from '../../utils/VideoPlayer';
-import { setStudentQuizDetails } from '../../redux/student/studentSlice';
+import { setLoading, setLoadingClose, setStudentQuizDetails } from '../../redux/student/studentSlice';
+import OrderCOurseShimmer from '../shimmers/OrderCOurseShimmer';
+import {motion,useScroll} from 'framer-motion'
+import { SlideLeft, SlideRight, SlideUp } from '../../animation/animation';
+import CountUp from 'react-countup';
 
 function CourseDetails() {
-  const {id}=useParams()
+  const {id}=useParams() 
   // useScrollRestoration()
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
@@ -33,6 +37,7 @@ function CourseDetails() {
   }
   const quizDetails=useSelector((state:RootState)=>state.student.StudentQuizDetails)
 console.log('quiz',quizDetails)
+const loading=useSelector((state:RootState)=>state.student.loading)
   const toggleOverview = () => setIsOverviewOpen(!isOverviewOpen);
   const toggleOverviewTwo = () => setIsOverviewTwoOpen(!isOverviewTwoOpen);
   const imageAnimation = useSpring({
@@ -45,9 +50,11 @@ console.log('quiz',quizDetails)
     },
     config: { duration: 3000 },
   });
+
+  const { scrollYProgress } = useScroll();
   const videoLength=orderedCourseDetail?.courseDetail?.videos?.length
   useEffect(()=>{
-
+      dispatch(setLoading())
     const token=localStorage.getItem('access_token')
      const getOrderedCourseDetail=async()=>{
         const response=await axios.get(`/backend/enroll/getOrderedCourseDetail/${id}`,{
@@ -57,6 +64,7 @@ console.log('quiz',quizDetails)
           withCredentials: true,
         })
         console.log('res',response)
+        dispatch(setLoadingClose())
         const { courseDetail, otherCourses,quizzes } = response.data;
 const courseDetailData = courseDetail.Courses; 
 const otherDetailData = otherCourses 
@@ -93,9 +101,21 @@ dispatch(setStudentQuizDetails(studentquiz))
   const handelQuiz=()=>{
     navigate(`/getQuiz/${id}`,{state:{quizDetails,orderedCourseDetail}})
   }
-  return (
 
-    <div className='min-h-screen md:w-full py-16 bg-custom-gradient'>
+  const handleChat=(id:string)=>{
+    navigate(`/studentChat/${id}`,{state:{orderedCourseDetail}})
+  }
+
+  if(loading){
+    return(
+    <>
+    <OrderCOurseShimmer/>
+    </>
+    )
+  }
+  return (
+    <div
+    className='min-h-screen md:w-full py-16 bg-custom-gradient'>
       {orderedCourseDetail?.courseDetail== undefined ? (
     <div className="translate-y-[50%]">
       <div className='text-center m-auto'>
@@ -141,55 +161,122 @@ dispatch(setStudentQuizDetails(studentquiz))
           </div>
         </div>
         <div>
-         <animated.img
-            className='md:absolute w-[40%] md:top-1/4 md:my-[-5%] object-contain my-[10%]  md:mx-[5%] left-1/2 md:h-[55vh] h-[50vh] mx-auto'
+         <motion.img
+            initial={{opacity:0,scale:0.5}}
+            whileInView={{opacity:1,scale:1}}
+            transition={{type:"spring",stiffness:100,delay:0.2}}
+            className='md:absolute md:w-[40%] md:top-1/4 md:my-[-5%] md:object-contain object-fit w-[80] h-[30vh] my-[10%]  md:mx-[5%] left-1/2 md:h-[55vh]  mx-auto'
             src={orderedCourseDetail?.courseDetail?.coverImageUrl}
             alt="Course"
             style={{
                 ...imageAnimation,
                 marginBottom: '20px',
                 borderRadius: '10px',
-                boxShadow: '0 4px 15px rgba(255, 0, 0, 10)', // Red color with 0.3 opacity
-            }}
+                boxShadow: '10px 10px 255px rgba(0, 255, 255, 0.4)', // Cyan color with 0.9 opacity
+              }}
           />
         </div>
       </div>
 
-      <div className='flex justify-evenly items-center mt-10 rounded-xl mx-auto'>
+      <motion.div
+       initial="hidden"
+       whileInView={"visible"}
+       variants={SlideUp(0.3)}
+      className='flex justify-evenly items-center mt-10 rounded-xl mx-auto'>
         <div className='text-center text-white md:text-3xl'>
-          <h1 className='font-extrabold'>18</h1>
-          <p className='font-extralight'>Total Assignments</p>
+          <h1 className='font-extrabold'> <CountUp
+        end={quizDetails?.questions?.length}
+        separator=','
+        suffix='+'
+        duration={5}
+        enableScrollSpy={true}
+        scrollSpyOnce={true}/>
+      </h1>
+          <p className='font-extralight font-poppins'>Total Assignments</p>
         </div>
         <div className='text-center text-white md:text-3xl'>
-          <h1 className='font-extrabold'>18</h1>
-          <p className='font-extralight'>Total Assignments</p>
+          <h1 className='font-extrabold'>
+          <CountUp
+        end={orderedCourseDetail?.courseDetail?.videos?.length}
+        separator=','
+        suffix='+'
+        duration={5}
+        enableScrollSpy={true}
+        scrollSpyOnce={true}/>
+          </h1>
+          <p className='font-extralight font-poppins'>Total Videos</p>
         </div>
         <div className='text-center text-white md:text-3xl'>
-          <h1 className='font-extrabold'>18</h1>
-          <p className='font-extralight'>Total Assignments</p>
+          <h1 className='font-extrabold'>
+
+          <CountUp
+        end={orderedCourseDetail?.otherCourses?.length}
+        separator=','
+        suffix='+'
+        duration={5}
+        enableScrollSpy={true}
+        scrollSpyOnce={true}/>
+          </h1>
+          <p className='font-extralight font-poppins'>Tutor Other Courses</p>
         </div>
-      </div>
+      </motion.div>
 
       <div className='md:w-[80%]  text-white mx-auto  rounded-xl mt-10'>
-        <div className='text-lg font-extralight flex flex-wrap justify-between items-center mx-auto px-4 md:px-[%] gap-4 bg-white bg-opacity-5 p-4 rounded-xl'>
-          <h1 className='font-bold md:w-[15%] text-center'>About Course</h1>
-          <h1 className='font-bold md:w-[15%] text-center'>Course Content</h1>
-          <h1 className='font-bold md:w-[15%] text-center'>About Publisher</h1>
-          <h1 className='font-bold md:w-[15%] text-center'>Success Stories</h1>
-          <button className='w-full md:w-[15%] mt-4 md:mt-0 text-white py-2 rounded-lg text-center border-black border-2 hover:bg-custom-gradient'>
+        <motion.div
+                        initial="hidden"
+                        whileInView={"visible"}
+                        variants={SlideLeft(0.5)}
+        className='text-lg font-extralight flex flex-wrap justify-between items-center mx-auto px-4 md:px-[%] gap-4 bg-white bg-opacity-5 p-4 rounded-xl'>
+          <motion.h1
+            initial="hidden"
+            whileInView={"visible"}
+            variants={SlideLeft(0.7)}
+          className='font-bold md:w-[15%] text-center'>About Course</motion.h1>
+          <motion.h1
+            initial="hidden"
+            whileInView={"visible"}
+            variants={SlideLeft(0.8)}
+             className='font-bold md:w-[15%] text-center'>Course Content</motion.h1> 
+          <motion.h1
+            initial="hidden"
+            whileInView={"visible"}
+            variants={SlideLeft(0.8)} className='font-bold md:w-[15%] text-center'>About Publisher</motion.h1>
+          <motion.h1
+            initial="hidden"
+            whileInView={"visible"}
+            variants={SlideLeft(0.9)} className='font-bold md:w-[15%] text-center'>Success Stories</motion.h1>
+          <motion.button
+           initial="hidden"
+           whileInView={"visible"}
+           variants={SlideRight(1)}
+          onClick={()=>handleChat(id)} className='w-full md:w-[15%] mt-4 md:mt-0 text-white py-2 rounded-lg text-center border-black border-2 hover:bg-custom-gradient'>
             Chat With Tutor
-          </button>
-          <button onClick={()=>handleVideoCall(id)} className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
+          </motion.button>
+          <motion.button
+           initial="hidden"
+           whileInView={"visible"}
+           variants={SlideRight(1.2)}
+          onClick={()=>handleVideoCall(id)} className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
             Video Call
-          </button>
-        </div>
-        <div className='mt-5 px-10 md:flex md:justify-between items-center'>
+          </motion.button>
+        </motion.div>
+        <motion.div
+          initial={{opacity:0,scale:0.5}}
+          whileInView={{opacity:1,scale:1}}
+          transition={{type:"spring",stiffness:50,delay:0.2}}
+        className='mt-5 px-10 md:flex md:justify-between items-center'>
           <div className='md:w-[45%]'>
             <h1>About Course</h1>
             <p className='text-2xl font-bold'>
-              Covers pretty much everything you need to know about UX
+              Covers pretty much everything you need to know about <motion.span
+              initial="hidden"
+              whileInView={"visible"}
+              variants={SlideRight(0.9)}
+              className='text-3xl font-protest text-cyan-200'>{orderedCourseDetail?.courseDetail?.title}</motion.span>
             </p>
-            <h1 className='font-bold mt-10'>Details:</h1>
+            <h1
+            
+            className='font-bold mt-10 text-xl'>Details:</h1>
             <p className='text-sm h-[40vh] overflow-y-scroll leading-7'>
 {orderedCourseDetail?.courseDetail?.AboutCourse}            </p>
           
@@ -240,8 +327,12 @@ dispatch(setStudentQuizDetails(studentquiz))
               </div>
             </div>
           </div>
-        </div>
-        <div className='my-[10%] px-10'>
+        </motion.div>
+        <motion.div
+        initial="hidden"
+        whileInView={"visible"}
+        variants={SlideRight(0.5)}
+        className='my-[10%] px-10'>
         <div className='md:w-[70%]'>
           <h1 className='font-bold underline'>Course Content</h1>
           <p className='mt-3 text-4xl font-extralight'>
@@ -321,7 +412,7 @@ dispatch(setStudentQuizDetails(studentquiz))
 )}
 
 
-      </div>
+      </motion.div>
     
      
       <div className='mx-10'>

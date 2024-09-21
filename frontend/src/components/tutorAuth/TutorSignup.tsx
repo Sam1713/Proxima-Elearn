@@ -80,10 +80,9 @@ const TutorSignup: React.FC = () => {
   return (
     <>
       <div
-        className={`relative pt-20 font-poppins min-h-screen flex items-center justify-center bg-cover bg-center ${
+        className={`relative pt-20 bg-black font-poppins min-h-screen flex items-center justify-center bg-cover bg-center ${
           loading ? 'opacity-50' : ''
         }`}
-        style={{ backgroundImage: "url(https://wallpapercave.com/wp/wp2832043.jpg)" }}
       >
         <ToastContainer />
         
@@ -102,7 +101,7 @@ const TutorSignup: React.FC = () => {
         
         <div className={`relative z-10 p-8 rounded-lg bg-white bg-opacity-20 shadow-2xl border- w-11/12 md:w-3/4 lg:w-2/4 ${loading ? 'pointer-events-none' : ''}`}>
           <form onSubmit={formik.handleSubmit}>
-            <h1 className='text-3xl font-extrabold text-center mb-6'>Signup</h1>
+            <h1 className='text-3xl font-extrabold text-center mb-6 font-protest text-white'>Tutor Signup</h1>
             <div className='flex flex-wrap mb-4'>
               <div className='w-full md:w-2/4 pr-2 relative mb-4 sm:mb-0'>
                 <FaUser className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'/>

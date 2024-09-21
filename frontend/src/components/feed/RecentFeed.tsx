@@ -9,6 +9,7 @@ import { RootState } from '../../redux/store';
 import api from '../API/Api'
 import { signout } from '../../redux/student/studentSlice';
 import { useNavigate } from 'react-router-dom';
+import PostModal from '../../modals/PostModal';
 
 
 function RecentFeed({fetchFeeds}) {
@@ -54,9 +55,9 @@ function RecentFeed({fetchFeeds}) {
     
   //   fetchFeeds();
   // }, [dispatch]);
-  useEffect(() => {
-    fetchFeeds();
-  }, [fetchFeeds]);
+  // useEffect(() => {
+  //   // fetchFeeds();
+  // }, [fetchFeeds]);
 
   const { feeds } = useSelector((state:RootState) => state.feed);
   const [modalOpen, setModalOpen] = useState(false);
@@ -93,12 +94,8 @@ function RecentFeed({fetchFeeds}) {
   };
 
   return (
-    <div className='flex  flex-col border border-transparent rounded-lg shadow-2xl  items-center justify-center my-10 w-full px-4'
-    style={{
-      background: 'linear-gradient(135deg, #000000, #1a1a1a, #333333, #4d4d4d)', // Subtle black-to-gray gradient background
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    }}
+    <div className='flex  flex-col border border-transparent   rounded-lg shadow-2xl  items-center justify-center my-10 w-full px-4'
+    
     >
       {feeds.map((feed, feedIndex) => {
         const mediaCount = feed.files.length;
@@ -113,21 +110,34 @@ function RecentFeed({fetchFeeds}) {
           : 'w-1/16 flex-wrap h-32'; // Adjust the default class for more than 3 items
 
         return (
-          <div key={feedIndex} className='md:w-full mt-20 max-w-4xl bg-white bg-opacity-40 rounded-xl p-4 mb-8 flex flex-col md:flex-row  items-start'>
+          <div key={feedIndex} className='md:w-[100%] mt-5 max-w-4xl bg-black rounded-xl p-4 flex flex-col md:flex-row  items-start'>
             <div className='flex-shrink-0 mb-4 md:mb-0 md:mr-4'>
               <div className='flex items-center justify-center w-16 h-16 rounded-full overflow-hidden'>
-                <img className='w-full h-full object-cover rounded-full' src='https://static.vecteezy.com/system/resources/previews/000/550/731/original/user-icon-vector.jpg'alt="Profile" />
+                <img className='w-full h-full object-cover rounded-full' src={feed?.userDetails?.profilePic}alt="Profile" />
               </div>
             </div>
             <div className='flex-grow  md:w-1/2'>
               <p className='text-white text-lg font-semibold '>
-                {feed.title}
+                {feed?.userDetails?.username}
               </p>
-              <p className='font-mono text-white text-sm opacity-80 mb-2 '>{feed.createdAt}</p>
+              <p className='font-mono text-white text-sm opacity-80 mb-2'>
+  {(() => {
+    const date = new Date(feed.createdAt);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  })()}
+</p>
+ 
               <p className='my-7 font-serif text-white md:w-auto'>
                 {feed.content}
               </p>
-              <div className='flex flex-wrap gap-4 max-w-prose md:max-w-screen-md'>
+              <div  className='flex flex-wrap gap-4 max-w-prose md:max-w-screen-md'>
                 {feed.files.map((item, index) => (
                   <div key={index} className={`flex-grow ${mediaClass} rounded-lg cursor-pointer`} onClick={() => handleMediaClick(feedIndex, index)}>
                     {item.fileType === 'image' ? (
@@ -189,11 +199,12 @@ function RecentFeed({fetchFeeds}) {
               <p>{feeds[selectedFeedIndex].content}</p>
             </div>
           </div>
-          <RecentFeed fetchFeeds={fetchFeeds}/>
+          {/* <RecentFeed fetchFeeds={fetchFeeds}/> */}
 
         </div>
         
       )}
+      {/* <PostModal fetchFeeds={fetchFeeds}/> */}
 
     </div>
   );

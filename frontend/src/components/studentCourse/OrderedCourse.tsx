@@ -59,14 +59,14 @@ function OrderedCourse() {
    navigate(`/courseDetail/${id}`)
     }
   return (
-    <div className='min-h-screen  bg-custom-gradient py-[80%] md:py-0  mx-10'>
+    <div className='min-h-screen  bg-custom-gradient py-[25%] md:py-0  mx-5'>
         <h1 className='text-white text-4xl md:text-2xl md:my-5 font-extralight mb-4'>My Courses</h1>
-      <div  className='grid grid-cols-1 md:grid-cols-3 gap-8 '>
+      <div  className='grid grid-cols-1 md:grid-cols-3 gap-8  '>
         {orderedCourses.map((course) => (
           <div 
           onClick={()=>handleNavigate(course?.Courses?._id)}
             key={course?.Courses?._id} 
-            className='w-[300px] bg-custom-gradient p-5 rounded-lg shadow-lg  transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl'
+            className='w-[] bg-custom-gradient p-5 rounded-lg shadow-lg  transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl'
             style={{ boxShadow: '0 4px 15px rgba(255, 0, 0, 10)' }}
           >
             <div className='mb-4 overflow-hidden rounded-lg'>
@@ -76,7 +76,7 @@ function OrderedCourse() {
                 className='w-full h-auto rounded-lg transition-transform duration-300 hover:scale-110'
               />
             </div>
-            <div className='text-center'>
+            <div className='text-left'>
               <p className='text-xl font-semibold mb-2 text-gray-100'>{course?.Courses?.title}</p>
               <p className='text-gray-100'>{course?.Courses?.Tutors?.tutorname}</p>
             </div>

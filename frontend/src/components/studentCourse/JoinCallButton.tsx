@@ -14,7 +14,7 @@ function JoinCallButton() {
   console.log('curr',currentStudent?._id)
   const id=currentStudent?._id
  const handleNavigate=()=>{
-  navigate(`/room/${id}`)
+  navigate(`/roomStudent/${id}`)
  }
 
   return (

@@ -1,0 +1,9 @@
+/* slider-styles.css */
+.slick-dots li button:before {
+    color: white !important; /* Dots color */
+  }
+  
+  .slick-dots li.slick-active button:before {
+    color: cyan !important; /* Active dot color */
+  }
+  

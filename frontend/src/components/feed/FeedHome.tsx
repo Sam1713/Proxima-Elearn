@@ -3,14 +3,17 @@ import bgImage from '../../assets/images/1d9UAi.jpg'; // Local high-resolution i
 import newImage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
 import Modal from '../../modals/PostModal'; // Import your modal component
 import RecentFeed from './RecentFeed';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearFeed, setFeeds } from '../../redux/feed/feedSlice';
-import { signout } from '../../redux/student/studentSlice';
+import { setLoading, setLoadingClose, signout } from '../../redux/student/studentSlice';
 import { useNavigate } from 'react-router-dom';
 import api from '../API/Api'
+import { RootState } from '../../redux/store';
+import FeedShimmer from '../shimmers/FeedShimmer';
 function FeedHome() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const loading=useSelector((state:RootState)=>state.student.loading)
   const dispatch=useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
@@ -22,20 +25,24 @@ function FeedHome() {
     
   }, []);
 
+
+
     const fetchFeeds = async () => {
       
-    
       try {
+        dispatch(setLoading())
         const response = await api.get('/backend/feed/getFeed',{
           headers: {
             'X-Token-Type': 'student',
           },
         });
+        dispatch(setLoadingClose())
         dispatch(setFeeds(response.data))
         
         console.log('Feeds response:', response.data);
         // Handle response
       } catch (error) {
+        dispatch(setLoadingClose())
           if (error.response) {
             const { status, data } = error.response;
      
@@ -57,11 +64,21 @@ function FeedHome() {
         
       }
     }    
-    
+    useEffect(()=>{
+      fetchFeeds()
+    },[])
     
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+
+  if(loading){
+    return(
+      <>
+      <FeedShimmer/>
+      </>
+    )
+  }
   return (
     <>
     <div

@@ -11,7 +11,10 @@ import { signInStart, signInSuccess, signInFailure } from "../../redux/student/s
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import api from '../API/Api';
-
+import { Button, Input, Typography } from "@material-tailwind/react";
+import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import {motion} from 'framer-motion'
 const Signin: React.FC = () => {
   const [form, setForm] = useState<SigninType>({ email: "", password: "" });
   const navigate = useNavigate();
@@ -47,15 +50,11 @@ console.log('currentStudent?.isBlocked',currentStudent)
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;
 
-        // Check if the error is due to the user being blocked
         if (status === 403 && data.error === 'UserBlocked') {
           toast.error("Your accounas been blocked. Please sign in again.");
-          // Optionally clear the token and redirect
           localStorage.removeItem('access_token');
           navigate('/signin');
-        } else {
-          toast.error(  "An error occurred");
-        }
+        } 
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
@@ -63,46 +62,67 @@ console.log('currentStudent?.isBlocked',currentStudent)
   };
 
   return (
-    <div className="flex h-screen shadow-2xl items-center justify-center p-4 bg-cover bg-center"
-         style={{ backgroundImage: "url('https://cdn.wallpapersafari.com/24/93/1d9UAi.jpg')" }}>
+    <div className="flex h-screen shadow-2xl items-center justify-center p-4 bg-black">
       <ToastContainer />
       <div className="flex flex-col md:flex-row shadow-lg rounded-lg overflow-hidden w-full max-w-4xl">
-        <div className="flex-1 flex items-center justify-center p-4">
-          <img src={oipImage} alt="Signin Background" className="object-cover w-full h-full" />
-        </div>
-        <div className="flex-1 flex items-center justify-center p-4 mx-[-11%]">
+        
+        <motion.div className="flex-1 flex items-center justify-center p-4 mx-[-11%]"
+        initial={{ opacity: 0, y: 200 }}  // Initial state before animation
+  animate={{ opacity: 1, y: 0 }}    // Final state after animation
+  transition={{ duration: 0.8, ease: "easeOut" }} >
           <form onSubmit={handleSubmit}
-                className="w-full max-w-sm p-8 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-white mb-6">Sign In</h2>
-            <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="email">
-                Email
-              </label>
-              <input
-                onChange={handleChange}
-                type="email"
-                id="email"
-                name="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white"
-                required
-              />
+                className="w-full max-w-sm p-8 bg-gray-900 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-white mb-6 font-protest">Login</h2>
+            <div className="mb-6">
+
+            <Input
+  onChange={handleChange}
+  color="white"
+  type="email"
+  id="email"
+  name="email"
+  className="w-full px-3 py-2 border border-gray-300 rounded  focus:border-blue-500 "
+  size="md"
+  label="Username"
+  labelProps={{
+    className: "text-white", // Change the label color here
+  }}
+/>
+
+
             </div>
             <div className="mb-6">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="password">
-                Password
-              </label>
-              <input
-                onChange={handleChange}
-                type="password"
-                id="password"
-                name="password"
-                className="w-full px-3 py-2 border border-gray-300 rounded bg-white"
-                required
-              />
+
+            <Input
+             onChange={handleChange}
+             color="white"
+             id="password"
+             name="password"
+            type="password" label="Password" />
+      <Typography
+        variant="small"
+        color="gray"
+        className="mt-2 flex items-center gap-1 font-normal"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="-mt-px h-4 w-4"
+        >
+          <path
+            fillRule="evenodd"
+            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Use at least 8 characters, one uppercase, one lowercase and one number.
+      </Typography>
+             
             </div>
-            <button
+            <Button
               type="submit"
-              className="w-full py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
+              className="w-full mb-2 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">
               {loading ? (
                 <ClipLoader
                   color={color}
@@ -115,13 +135,29 @@ console.log('currentStudent?.isBlocked',currentStudent)
               ) : (
                 "Sign in"
               )}
-            </button>
-            <Link className="mt-4 text-center text-blue-300 hover:underline cursor-pointer"
-                  to={"/forgotPassword"}>
-              Forgot Password?
-            </Link>
+            </Button>
+            <Button className="w-full flex items-center justify-center bg-green-400 py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors">
+  <span className="mr-2">
+    <FcGoogle className="w-6 h-6" />
+  </span>
+  <span>Sign In With Google</span>
+</Button>
+
+            <div className="flex justify-between items-center w-full my-2">
+  <div>
+    <Link className="mt-4 text-blue-300 hover:underline cursor-pointer" to="/forgotPassword">
+      Forgot Password?
+    </Link>
+  </div>
+  <div className="">
+  <Link to="/tutorSignup"  className="mt-4 text-blue-300 hover:underline cursor-pointer" >
+      Tutor Login?
+    </Link>
+  </div>
+</div>
+
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

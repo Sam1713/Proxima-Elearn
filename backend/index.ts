@@ -15,6 +15,7 @@ import courseRoute from './routes/courseRoute';
 import enrollementRoute from './routes/enrollementRoute';
 import contactRoute from './routes/contactRoute';
 import quizRoute from './routes/quizRoute'
+import chatRoute from './routes/chatRoute'
 dotenv.config();
 
 const mongoUri = process.env.MONGO as string;
@@ -57,6 +58,12 @@ io.on('connection', (socket) => {
   socket.on('answercall', (data) => {
     io.to(data.to).emit('callaccepted', data.signal);
   });
+
+  socket.on('sendMessage', (message) => {
+    console.log('Message received:', message);
+    io.emit('receiveMessage', message);
+  });
+
 });
 
 // Middleware
@@ -80,6 +87,7 @@ app.use('/backend/course', courseRoute);
 app.use('/backend/enroll', enrollementRoute);
 app.use('/backend/contact', contactRoute);
 app.use('/backend/quiz',quizRoute)
+app.use('/backend/chat',chatRoute)
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000!');

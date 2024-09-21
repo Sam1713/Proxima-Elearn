@@ -7,7 +7,10 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { override,color } from "../../utils/ClipLoader";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuth } from "../../firebase/GoogleAuth";
-
+import { Button, Input } from "@material-tailwind/react";
+import { FcGoogle } from "react-icons/fc";
+import { Link } from "react-router-dom";
+import {motion} from 'framer-motion'
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<FormDataType>({
@@ -49,49 +52,56 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen  flex items-center justify-center shadow-xl bg-cover bg-center"
-    style={{ backgroundImage: "url('https://cdn.wallpapersafari.com/24/93/1d9UAi.jpg')" }}>
+    <div className="pt-20 bg-black min-h-screen  flex items-center justify-center shadow-xl bg-cover bg-center">
       <ToastContainer className={'mt-20'} />
-      <main className="w-full max-w-md opacity-60 bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold mb-6">Register</h1>
+      <motion.main className="w-full max-w-md  bg-gray-900 p-8 rounded-lg shadow-md"
+       initial={{ opacity: 0, y: 200 }}  // Initial state before animation
+ animate={{ opacity: 1, y: 0 }}    // Final state after animation
+ transition={{ duration: 0.8, ease: "easeOut" }}>
+        <h1 className="text-2xl font-semibold mb-6 text-white font-protest">Signup</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col">
-            <label htmlFor="username" className="mb-1 font-medium">Username</label>
-            <input
-              onChange={handleChange}
-              id="username"
-              type="text"
-              className="p-2 border border-gray-300 rounded"
-              required
-            />
-            {errors.username && <p className="text-red-600 text-sm">{errors.username}</p>}
+          <Input
+          onChange={handleChange}
+          type="text"
+          id="username"
+           color="white"
+           label="Username" 
+           required
+           />
+           
+           {errors.username && <p className="text-red-600 text-sm">{errors.username}</p>}
+
           </div>
           <div className="flex flex-col">
-            <label htmlFor="email" className="mb-1 font-medium">Email</label>
-            <input
+            <Input
               onChange={handleChange}
+              label="email"
+              color="white"
               id="email"
               type="email"
-              className="p-2 border border-gray-300 rounded-full"
+              className="p-2 border border-gray-300 "
               required
             />
             {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
           </div>
           <div className="flex flex-col">
-            <label htmlFor="password" className="mb-1 font-medium">Password</label>
-            <input
+            <Input
               onChange={handleChange}
+              label="password"
+              color="white"
               id="password"
               type="password"
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border border-gray-300 "
               required
             />
             {errors.password && <p className="text-red-600 text-sm">{errors.password}</p>}
           </div>
           <div className="flex flex-col">
-            <label htmlFor="confirmPassword" className="mb-1 font-medium">Confirm Password</label>
-            <input
+            <Input
               onChange={handleChange}
+              label="Confirm password"
+              color="white"
               id="confirmPassword"
               type="password"
               className="p-2 border border-gray-300 rounded"
@@ -99,9 +109,9 @@ const Register: React.FC = () => {
             />
             {errors.confirmPassword && <p className="text-red-600 text-sm">{errors.confirmPassword}</p>}
           </div>
-          <button
+          <Button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300 flex items-center justify-center"
+            className="w-full  bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center"
           >
             {loading ? (
               <ClipLoader
@@ -115,10 +125,25 @@ const Register: React.FC = () => {
             ) : (
               'Signup'
             )}
-          </button>
+          </Button>
+         
+
         </form>
+        
         <GoogleAuth/>
-      </main>
+        <div className="flex justify-between text-blue-500">
+        <div>
+        <Link to='/signin'>
+          Already Registered?
+        </Link></div>
+        <div>
+        <Link to="/tutorSignup">
+        Tutor Register?
+        </Link>
+        </div>
+        </div>
+      </motion.main>
+      
     </div>
   );
 };

@@ -231,6 +231,14 @@ const VideoPlayer = () => {
     }
   }, [callAccepted, callEnded, call]);
 
+
+  if (!stream) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <div className="text-2xl">Loading...</div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
       <div className="flex justify-around w-full max-w-5xl mb-8">
@@ -277,7 +285,7 @@ const VideoPlayer = () => {
         </button>
         <button
           onClick={shareScreen}
-          className="p-3 bg-gray-800 rounded-full hover:bg-gray-700"
+          className="p-3  bg-gray-800 rounded-full hover:bg-gray-700"
           title="Share Screen"
         >
           <FaDesktop size={24} />

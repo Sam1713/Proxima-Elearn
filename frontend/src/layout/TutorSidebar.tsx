@@ -110,13 +110,15 @@ function TutorSidebar() {
               />
             </div>
           )}
+           <Link to={'/tutorChat'}>
           <SidebarItem
             icon={MdFeed}
-            text='Feeds'
-            onClick={() => handleClick('feeds')}
+            text='Chats'
+            onClick={() => handleClick('Chats')}
             isActive={activeItem === 'feeds'}
             arrow={false}
           />
+          </Link>
           <SidebarItem
             icon={BiSolidPurchaseTagAlt}
             text='Orders'

@@ -7,11 +7,16 @@ import {
   DialogFooter,
   Radio,
 } from "@material-tailwind/react";
+
 import { FaTrophy, FaFrown } from 'react-icons/fa'; // Import win/lose icons
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setQuizResult } from "../../redux/student/studentSlice";
+import generateCertificate from '../../components/studentCourse/Certificate'; // Import the function correctly
+
 import Swal from "sweetalert2";
 import api from '../../components/API/Api'
+import { useLocation } from "react-router-dom";
+import { RootState } from "../../redux/store";
 interface Questions {
   question: string;
   options: string[];
@@ -46,6 +51,15 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
   const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [percentage, setPercentage] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const currentUser=useSelector((state:RootState)=>state.student.currentStudent)
+
+  const location = useLocation();
+
+  const { orderedCourseDetail } = location.state || {};
+
+
+  const tutorName = orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname;
+  const courseName = orderedCourseDetail?.courseDetail?.title;
   const dispatch=useDispatch()
   useEffect(() => {
     const selectedForCurrentQuestion = selectedOptions.find(
@@ -147,13 +161,20 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
     // dispatch(setQuizResult({ correctCount:correctCount, percentage: percentage,courseId }));
       setPercentage(percentage)
   setShowResult(true); // Show result dialog
-    fetchQuizResult()
+    // fetchQuizResult()
 
     setIsSecondModalOpen(false); // Close the quiz modal
     }catch(error){
       console.log('err',error)
     }
   }
+  };
+const username=currentUser?.username||'user'
+
+  const handleDownloadCertificate = () => {
+    if (courseName && tutorName) {
+      generateCertificate(courseName, username);
+    }
   };
 
   // Get the current question
@@ -297,36 +318,43 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
       {showResult && (
         <Dialog open={true} handler={() => setShowResult(false)}>
           <DialogHeader className="text-2xl font-bold text-center">
-            {percentage && percentage >= 70 ? (
-              <div className="flex items-center justify-center text-green-500">
-                <FaTrophy className="text-4xl mr-2" />
-                <span>Congratulations!</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center text-red-500">
-                <FaFrown className="text-4xl mr-2" />
-                <span>Better luck next time!</span>
-              </div>
-            )}
-          </DialogHeader>
-          <DialogBody className="text-center">
-            <p className="text-xl mb-2">
-              Your score is <strong>{score}</strong> out of <strong>{quizDetails.questions.reduce((acc, q) => acc + q.totalMarks, 0)}</strong>.
-            </p>
-            <p className="text-lg">
-              Your percentage is <strong>{percentage?.toFixed(2)}%</strong>.
-            </p>
-          </DialogBody>
-          <DialogFooter className="flex justify-center mt-4">
-            <Button
-              variant="gradient"
-              color={percentage && percentage >= 70 ? "green" : "red"}
-              onClick={() => setShowResult(false)}
-              className="px-6 py-2"
-            >
-              Close
-            </Button>
-          </DialogFooter>
+  {percentage && percentage >= 70 ? (
+    <div className="flex items-center justify-center text-green-500">
+      <FaTrophy className="text-4xl mr-2" />
+      <span>Congratulations! You have passed</span>
+      <Button
+        onClick={handleDownloadCertificate}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ml-4" // Added margin-left for spacing
+      >
+        Download Certificate
+      </Button>
+    </div>
+  ) : (
+    <div className="flex items-center justify-center text-red-500">
+      <FaFrown className="text-4xl mr-2" />
+      <span>Better luck next time!</span>
+    </div>
+  )}
+</DialogHeader>
+<DialogBody className="text-center">
+  <p className="text-xl mb-2">
+    Your score is <strong>{score}</strong> out of <strong>{quizDetails.questions.reduce((acc, q) => acc + q.totalMarks, 0)}</strong>.
+  </p>
+  <p className="text-lg">
+    Your percentage is <strong>{percentage?.toFixed(2)}%</strong>.
+  </p>
+</DialogBody>
+<DialogFooter className="flex justify-center mt-4">
+  <Button
+    variant="gradient"
+    color={percentage && percentage >= 70 ? "green" : "red"}
+    onClick={() => setShowResult(false)}
+    className="px-6 py-2"
+  >
+    Close
+  </Button>
+</DialogFooter>
+
         </Dialog>
       )}
     </>

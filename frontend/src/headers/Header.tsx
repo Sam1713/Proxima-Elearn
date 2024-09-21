@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import image from '../assets/images/OIP (28).jpeg'; // Adjusted path
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, ChevronDownIcon, Cog6ToothIcon, InboxArrowDownIcon, LifebuoyIcon, PowerIcon, UserCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStudentNotifications, signout } from '../redux/student/studentSlice';
@@ -11,10 +11,41 @@ import Notifications from '../components/studentNotification/Notification';
 import NotificationBadge from 'react-notification-badge'; // Import NotificationBadge
 
 import api from '../components/API/Api'
+import { FaChalkboardTeacher, FaHome } from 'react-icons/fa';
+import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from '@material-tailwind/react';
+const profileMenuItems = [
+  {
+    label: "My Profile",
+    icon: UserCircleIcon,
+    route:'/studentProfile'
+  },
+  {
+    label: "Edit Profile",
+    icon: Cog6ToothIcon,
+  },
+  {
+    label: "Inbox",
+    icon: InboxArrowDownIcon,
+    route:'/studentChat'
+  },
+  {
+    label: "Help",
+    icon: LifebuoyIcon,
+  },
+  {
+    label: "Sign Out",
+    icon: PowerIcon,
+    route:'/signout'
+  },
+];
+ 
 function StudentHeader() {
   const [isOpen, setToggle] = useState(false);
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
   const dispatch = useDispatch<AppDispatch>();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
   const location=useLocation()
   const toggleMenu = () => {
     setToggle(!isOpen);
@@ -65,11 +96,23 @@ function StudentHeader() {
       <nav className={`w-full ${isOpen ? 'block' : 'hidden'} sm:flex mt-4 sm:mt-0`}>
         <ul className="flex flex-col sm:flex-row justify-end w-full text-white items-center">
           <li className="mx-5">
-            <Link to='/' className="hover:text-blue-300 transition-colors duration-300">Home</Link>
+          <Tooltip content="Home" placement="top">
+
+          <Link to='/' className="hover:text-blue-300 transition-colors duration-300">
+  <FaHome size={25} />
+</Link>
+</Tooltip>
           </li>
           <li className="mx-5">
-            <Link to='/courses' className="hover:text-blue-300 transition-colors duration-300">Courses</Link>
-          </li>
+      <Tooltip content="Courses" placement="top">
+        <Link
+          to="/courses"
+          className="hover:text-blue-300 transition-colors duration-300"
+        >
+          <FaChalkboardTeacher size={25} />
+        </Link>
+      </Tooltip>
+    </li>
           <li className="mx-5 relative text-white">
   <div className="relative">
     <NotificationBadge count={studentNotification.length} className="absolute top-0 right-0">
@@ -81,14 +124,84 @@ function StudentHeader() {
 </li>
 
 
-          <li className="mx-5">
-            <Link to='/studentProfile' className="hover:text-blue-300 transition-colors duration-300">Profile</Link>
-          </li>
-          <li className="mx-5">
-            <Link onClick={handleSignout} to='/signup' className="hover:text-blue-300 transition-colors duration-300">
-              Signout
-            </Link>
-          </li>
+         
+<li className="mx-5">{
+  currentStudent?(
+  <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
+    <MenuHandler>
+      <Button
+        variant="text"
+        color="blue-gray"
+        className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+      >
+        <Avatar
+          variant="circular"
+          size="sm"
+          alt="tania andrew"
+          className="border border-gray-900 p-0.5"
+          src={currentStudent?.profilePic}
+        />
+        <ChevronDownIcon
+          strokeWidth={2.5}
+          className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
+        />
+      </Button>
+    </MenuHandler>
+    <MenuList className="p-1">
+      {profileMenuItems.map(({ label, icon, route }, key) => {
+        const isLastItem = key === profileMenuItems.length - 1;
+        
+        // Add a condition to handle the Sign Out item
+        return isLastItem ? (
+          <MenuItem
+            key={label}
+            onClick={() => {
+              closeMenu();
+              handleSignout(); // Call the sign-out function
+            }}
+            className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+          >
+            {React.createElement(icon, {
+              className: "h-4 w-4 text-red-500",
+              strokeWidth: 2,
+            })}
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color="red"
+            >
+              {label}
+            </Typography>
+          </MenuItem>
+        ) : (
+          <Link to={route} key={label}>
+            <MenuItem
+              onClick={closeMenu}
+              className="flex items-center gap-2 rounded"
+            >
+              {React.createElement(icon, {
+                className: "h-4 w-4",
+                strokeWidth: 2,
+              })}
+              <Typography
+                as="span"
+                variant="small"
+                className="font-normal"
+              >
+                {label}
+              </Typography>
+            </MenuItem>
+          </Link>
+        );
+      })}
+    </MenuList>
+  </Menu>
+  ):(
+    <Link to={!currentStudent?"/signup":''}>Signup</Link>
+  )}
+</li>
+
           {/* Add Notifications Component Here */}
           
         </ul>

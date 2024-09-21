@@ -38,17 +38,28 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
 };
 
 
-            export const getCallRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+            export const getCallRequest = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
                 try {
                     const tutorId = req.userId;
                     const courseId = req.query.courseId as string;
+                    const page:number=parseInt(req.query.page as string)||1
+                    const limit:number=parseInt(req.query.limit as string)||10
+                    const skip:number=(page-1)*limit
+
+                    if (page < 1 || limit < 1) {
+                      return res.status(400).json({ message: 'Invalid page or limit parameters' });
+                  }
             
                     const tutorObjectId = new mongoose.Types.ObjectId(tutorId);
                     const courseObjectId = new mongoose.Types.ObjectId(courseId);
             
                     console.log('courseId:', courseObjectId);
                     console.log('tutorId:', tutorObjectId);
-            
+                    const totalDoc = await BookingModel.countDocuments({
+                      tutorId: tutorObjectId,
+                      courseId: courseObjectId,
+                  });
+                                       console.log('totalSoc',totalDoc) 
                     const getAllCallRequest = await BookingModel.aggregate([
                         {
                             $match: {
@@ -85,12 +96,16 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
             },
             {
                 $sort:{createdAt:-1}
+            },{
+              $skip:skip
+            },{
+              $limit:limit
             }
                        
                     ]);
-            
+            const totalPages=Math.ceil(totalDoc/limit)
                     console.log('d', getAllCallRequest);
-                    res.json(getAllCallRequest);
+                    res.json({getAllCallRequest,totalPages});
                 } catch (error) {
                     console.error('Error fetching call requests:', error);
                     res.status(500).json({ error: 'An error occurred while fetching call requests.' });
@@ -157,6 +172,7 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                 try{
                 console.log('hai')
                 const bookingId=req.params.id
+              
                 console.log('id',bookingId)
                 const booking=await BookingModel.findById(bookingId)
                 // console.log('book',booking)
@@ -178,11 +194,12 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                 const studentId=new mongoose.Types.ObjectId(StudentId)
                 const booking=await BookingModel.aggregate([
                     {
-                        $match:{studentId:studentId,courseId:courseId}
-                    }
-                ])
+                        $match:{studentId:studentId,courseId:courseId,  status: { $in : ['pending', 'accepted','approved'] }
+                        }
+                    } 
+                ])  
                 console.log('book',booking)
-                res.json({bookingResult:booking[0]})
+                res.json({bookingResult:booking[0]}) 
               }
 
 
@@ -244,4 +261,4 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                   res.status(500).json({ message: 'Internal server error' });
                 }
               };
-              
+               

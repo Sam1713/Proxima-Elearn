@@ -11,7 +11,7 @@ import { setBookingDetails } from '../../redux/tutor/tutorSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Options = ({ children, tutorId }) => {
-    const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
+    const { me, callAccepted, name, setName, callEnded, leaveCall, callUser,myVideo } = useContext(SocketContext);
     const [idToCall, setIdToCall] = useState('');
     const [copiedText, setCopiedText] = useState(''); // State to manage the copied text
     const currentTutor = useSelector((state: RootState) => state.tutor.currentTutor);
@@ -31,41 +31,26 @@ const Options = ({ children, tutorId }) => {
 
     const handleSend = async (id: string) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you want to add the Files?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!',
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                
-
-                    // Send the ID to the backend
-                    const response = await api.post('/backend/contact/sendId', {callId:idToCall} , {
-                        headers: {
-                            'X-Token-Type': 'tutor',
-                        },
-                        params: {
-                            id: id,
-                        },
-                    });
-
-                    console.log('Response:', response);
-
-                    Swal.fire(
-                        'Accepted!',
-                        'Your license agreement has been accepted.',
-                        'success'
-                    );
-                } catch (error) {
-                    console.error('Error sending ID:', error);
-                } 
-            }
+            title: 'Submitting...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(); // Show loading spinner when the popup opens
+            },
         });
+    
+        try {
+            const response = await api.post('/backend/contact/sendId', { callId: idToCall }, {
+                headers: { 'X-Token-Type': 'tutor' },
+                params: { id },
+            });
+    
+            Swal.fire('Success!', 'ID has been sent successfully.', 'success');
+        } catch (error) {
+            Swal.fire('Error', 'Failed to send the ID.', 'error');
+        }
     };
+    
+    
 
     const handleLeave=async(id:string)=>{
         console.log('leaving...');
@@ -84,12 +69,18 @@ const Options = ({ children, tutorId }) => {
 
         
     }
+    const handleLeaveStudent=()=>{
+        navigate('/feedHome')
+        leaveCall()
+    }
 
 
     useEffect(() => {
         console.log('me', me);
     }, [me]);
 
+
+    
     return (
         <div className="bg-gray-900">
             <div className="max-w-xl mx-auto bg-custom-gradient p-4 shadow-2xl rounded-xl">
@@ -155,11 +146,12 @@ const Options = ({ children, tutorId }) => {
                                 <>
                                     {callAccepted && !callEnded ? (
                                         <Button
+                                        onClick={handleLeaveStudent}
                                             variant="gradient"
                                             color="red"
                                             fullWidth
                                             className="mt-4 flex items-center justify-center"
-                                            onClick={leaveCall}
+                                            // onClick={leaveCall}
                                         >
                                             <PhoneXMarkIcon className="w-5 h-5 mr-2" />
                                             Hang Up

@@ -105,29 +105,42 @@ export const feedPost = async (
     }
 };
 
-export const getFeedPage = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+export const getFeedPage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        console.log('sdfdsfsdf')
-        // Extract the studentId from the request (assumed to be part of the request object)
-        const studentId = req.userId; // Adjust as needed, depending on how the studentId is passed
-        console.log('st',studentId)
-        if (!studentId) {
-            return res.status(400).json({ message: 'User ID is required' });
-        }
+        console.log('dsfsdfsd')
+     
+        const feeds = await Feed.aggregate([
+            {
+                $lookup: {
+                    from: 'students', 
+                    localField: 'student', 
+                    foreignField: '_id',
+                    as: 'userDetails' 
+                }
+            },
+            {
+                $unwind: '$userDetails' 
+            },
+            {
+                $project: {
+                    _id: 1,
+                    createdAt: 1,
+                    title: 1,
+                    content: 1, 
+                    files: 1,
+                    'userDetails.username': 1,
+                    'userDetails.email': 1,
+                    'userDetails.profilePic':1
+                }
+            },{
+                $sort: { createdAt: -1 }
+            }
+        ]);
+        console.log('feed',feeds)
 
-        // Query MongoDB for feeds by studentId
-        const feeds = await Feed.find({ student: studentId }).exec();
-        // console.log('feeds',feeds)
-
-        // Log the fetched feeds for debugging
-
-        // Send the feeds as a JSON array of objects
         res.json(feeds);
     } catch (error) {
-        // Handle errors
         console.error('Error fetching feeds:', error);
         res.status(500).json({ message: 'Server Error' });
     }
-};
-
-  
+}; 
