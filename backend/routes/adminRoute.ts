@@ -4,7 +4,7 @@ import { AdminSignup,AdminSignin,GetAllTutors,GetTutorDetail,AdminApproveTutor,A
 import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 
-const adminFiles= createMulterConfig('./backend/uploads/admin');
+const adminFiles= createMulterConfig('./uploads/admin');
 
 router.post('/adminSignup',adminFiles.single('none'),AdminSignup)
 router.post('/adminSignin',adminFiles.single('none'),AdminSignin)

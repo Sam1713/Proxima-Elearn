@@ -6,7 +6,7 @@ import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 import { VerifyUser } from '../middleware/VerifyUser';
 
-const feedFilesUpload = createMulterConfig('./backend/uploads/feedFiles');
+const feedFilesUpload = createMulterConfig('./uploads/feedFiles');
 
 
 router.post('/feedPost',authMiddleware('student'),feedFilesUpload.array('files'),feedPost)

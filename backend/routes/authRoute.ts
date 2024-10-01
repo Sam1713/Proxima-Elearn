@@ -5,7 +5,7 @@ import authMiddleware from '../middleware/jwt';
 import { VerifyUser } from '../middleware/VerifyUser';
 import { getAllCategories } from '../controllers/adminController/AdminController';
 
-const updateStudents= createMulterConfig('./backend/uploads/updateStudents');
+const updateStudents= createMulterConfig('./uploads/updateStudents');
 
 
 const router = express.Router();

@@ -5,7 +5,7 @@ import createMulterConfig from '../middleware/multer';
 import authMiddleware from '../middleware/jwt';
 import tutorApprove from '../middleware/tutorApprove';
 
-const tutorFilesUpload = createMulterConfig('./backend/uploads/tutorFiles');
+const tutorFilesUpload = createMulterConfig('./uploads/tutorFiles');
 
 const router = express.Router();
 

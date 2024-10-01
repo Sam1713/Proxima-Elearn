@@ -4,11 +4,11 @@ import * as Yup from 'yup';
 import { EditTutor } from '../../types/modalTypes/EditModat';
 import { IoIosCloseCircle } from 'react-icons/io';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import api from '../../components/API/Api'
 import { updateFiles } from '../../redux/tutor/tutorSlice';
 import { useDispatch } from 'react-redux';
 
-const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
+const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
@@ -19,11 +19,11 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
     validationSchema: Yup.object({
       files: Yup.array()
         .of(
-          Yup.mixed().test(
+          Yup.mixed<File>().test(
             'file',
             'Images and PDFs are allowed',
-            (file) => {
-              if (!file) return false;
+            (file: File | undefined) => {
+              if (!file) return false; 
               return /\.(jpeg|jpg|gif|png|pdf|webp)$/i.test(file.name);
             }
           )
@@ -31,6 +31,7 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
         .min(1, 'Please upload at least one file')
         .required('Please upload at least one file'),
     }),
+    
     onSubmit: async (values) => {
       console.log('Files to be uploaded:', values.files);
 
@@ -50,13 +51,13 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
           });
 
           try {
-            const token = localStorage.getItem('tutor_access_token');
-            const response = await axios.post('/backend/tutor/updateFiles', formData, {
-              withCredentials: true,
-              headers: { Authorization: `Bearer ${token}` },
+            const response = await api.post('/backend/tutor/updateFiles', formData, {
+             headers:{
+              'X-Token-Type':'tutor'
+             }
             });
             dispatch(updateFiles(response.data.rest));
-            onClose(); // Close modal after successful upload
+            onClose(); 
           } catch (error) {
             console.error('Error uploading files:', error);
           }
@@ -72,11 +73,11 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
   };
 
   useEffect(() => {
+    const objectUrls = formik.values.files.map((file) => URL.createObjectURL(file));
+
     return () => {
-      formik.values.files.forEach((file) => {
-        if (file instanceof File) {
-          URL.revokeObjectURL(file);
-        }
+      objectUrls.forEach((url) => {
+        URL.revokeObjectURL(url); 
       });
     };
   }, [formik.values.files]);
@@ -104,8 +105,16 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose}) => {
               multiple
             />
             {formik.errors.files && formik.touched.files ? (
-              <div className='text-red-500 mt-2'>{formik.errors.files}</div>
-            ) : null}
+  Array.isArray(formik.errors.files) ? (
+    <div className='text-red-500 mt-2'>
+      {formik.errors.files.map((error, index) => (
+        <div key={index}>Something wrong</div>
+      ))}
+    </div>
+  ) : (
+    <div className='text-red-500 mt-2'>{formik.errors.files}</div>
+  )
+) : null}
 
             <div className='mt-4 flex gap-4 p-4 rounded-lg shadow-inner max-w-full overflow-auto'>
               {formik.values.files.map((file, index) => (

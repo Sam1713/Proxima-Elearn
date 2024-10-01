@@ -3,7 +3,7 @@ const router=express.Router()
 import createMulterConfig from '../middleware/multer';
 import { uploadCourse,getTutorCourses,getTutorCourseDetail, updateCourseNonFileDetail, updateCoverImage, updateSubVideo, getAllPurchasedStudents, deleteCourse, getWalletDetails, getAllCategoryTutor, getSearchResultsCourse, getPriceBasedCourse, getCategorySort } from '../controllers/courseController/courseController';
 import authMiddleware from '../middleware/jwt';
-const courseFilesUpload = createMulterConfig('./backend/uploads/courseFiles');
+const courseFilesUpload = createMulterConfig('./uploads/courseFiles');
 
 router.post('/uploadCourse',authMiddleware('tutor'),courseFilesUpload.fields([
     { name: 'coverImage', maxCount: 1 },
