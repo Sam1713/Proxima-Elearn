@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { EditTutor } from '../../types/modalTypes/EditModal';
 import { FaPhoneAlt, FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useFormik } from 'formik';
@@ -11,17 +10,22 @@ import { RootState } from '../../redux/store';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { updateSuccessTutor } from '../../redux/tutor/tutorSlice';
-
+import api from '../../components/API/Api' 
+interface EditTutor{
+    isOpen:boolean,
+    onClose:()=>void
+}
 const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
     const currentTutor = useSelector((state: RootState) => state.tutor.currentTutor);
     const [initialEmail, setInitialEmail] = useState<string>(currentTutor?.email || '');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [getOtp, setGetOtp] = useState<string>('');
     const [otpSent, setOtpSent] = useState<boolean>(false);
     const [loadingOtp, setLoadingOtp] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [otpVerified, setOtpVerified] = useState<boolean>(false);
     const dispatch=useDispatch()
-
+    console.log('curtutor',currentTutor)
     const formik = useFormik({
         initialValues: {
             tutorname: currentTutor?.tutorname || '',
@@ -49,18 +53,16 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
             if (result.isConfirmed) {
                 try {
                     console.log('Form submitted:', values);
-                    const token=localStorage.getItem('tutor_access_token')
                     const formData=new FormData()
                     for(const key in values){
                         const value = values[key as keyof typeof values];
                         formData.append(key,String(value))
 
                     }
-                    const response=await axios.put('/backend/tutor/updateTutor',formData,{
+                    const response=await api.put('/backend/tutor/updateTutor',formData,{
                         headers: {
-                            'Authorization': `Bearer ${token}`
-                          },
-                          withCredentials: true,
+                            'X-Token-Type':'tutor'
+                            }
                     })
                     console.log('res',response)
                     dispatch(updateSuccessTutor(response.data.data))

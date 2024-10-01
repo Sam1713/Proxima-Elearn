@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import certificateImg from '../../assets/images/certificate-vector.jpg';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import editDetailModal from '../../modals/tutorModal/editDetailModal';
 import EditDetailModal from '../../modals/tutorModal/editDetailModal';
-import EditBio from '../../modals/tutorModal/EditBio';
 import BioModal from '../../modals/adminTutorModal/BioModal';
 import FileModal from '../../modals/adminTutorModal/FileModal';
 const TutorProfile:React.FC=()=> {

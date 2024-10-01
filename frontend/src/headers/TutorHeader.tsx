@@ -3,10 +3,7 @@ import image from '../assets/images/OIP (28).jpeg'; // Adjusted path
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signout } from '../redux/student/studentSlice';
 import { AppDispatch, RootState } from '../redux/store';
-import axios from 'axios';
-import { clearFeed } from '../redux/feed/feedSlice';
 import { TbUserScreen } from "react-icons/tb";
 
 import License from '../modals/tutorModal/License';
@@ -14,7 +11,7 @@ import { FaHome } from "react-icons/fa";
 import { FaChalkboardTeacher } from "react-icons/fa";
 
 
-import Api from '../components/API/Api'
+import api from '../components/API/Api'
 import { tutorsignout } from '../redux/tutor/tutorSlice';
 function TutorHeader() {
   const [isOpen, setToggle] = useState(false);
@@ -30,7 +27,7 @@ console.log('va',val)
   const handleSignout = async () => {
     try {
       localStorage.removeItem('tutor_access_token');
-      await Api.get("/backend/tutor/tutorSignout");
+      await api.get("/backend/tutor/tutorSignout");
       dispatch(tutorsignout());
     } catch (error) {
       console.log(error);

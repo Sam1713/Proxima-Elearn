@@ -29,7 +29,7 @@ export interface Student {
 
 export interface Tutor {
     id?: string;
-    name?: string;
+    tutorname?: string;
     email?:string;
     phonenumber?:string;
     bio?:string,
