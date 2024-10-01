@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { actions } from "react-table";
 
 export interface Admin{
     id:string;

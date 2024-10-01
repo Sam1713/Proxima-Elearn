@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Feed {
-  username: ReactNode;
+  username: string;
   title: string;
   content: string;
   files: FileType[];

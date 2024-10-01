@@ -1,6 +1,5 @@
 // studentSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { string } from "yup";
 
 export interface StudentState {
     currentStudent: Student | null;

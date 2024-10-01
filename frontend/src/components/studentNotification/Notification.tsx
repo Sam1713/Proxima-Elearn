@@ -6,11 +6,10 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { formatDistanceToNow } from 'date-fns'; // Import date-fns for formatting
 import { useNavigate } from "react-router-dom";
-import { setRemoveNotification } from "../../redux/student/studentSlice";
 import api from '../API/Api'
 function ClockIcon() {
   return (
@@ -118,13 +117,12 @@ const Notifications:React.FC=()=> {
               <div className="flex-1">
                 <Typography
                   variant="small"
-                  color="gray-800"
+                  color="gray"
                   className="text-blue-600"
-                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '250px' }}
-                >
+                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '250px' }}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                >
                   {notification.message.length > 30 ? `${notification.message.slice(0, 30)}...` : notification.message}
                 </Typography>
-                <Typography variant="small" color="gray-500">
+                <Typography variant="small" color="gray"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                   {notification.createdAt
                     ? formatDistanceToNow(new Date(notification?.createdAt), { addSuffix: true })
                     : 'No timestamp'}
@@ -134,7 +132,7 @@ const Notifications:React.FC=()=> {
           ))
         ) : (
           <MenuItem className="flex items-center justify-center py-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-            <Typography variant="small" color="gray-500">
+            <Typography variant="small" color="gray" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               No notifications
             </Typography>
           </MenuItem>
