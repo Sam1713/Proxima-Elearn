@@ -18,8 +18,6 @@ interface EditTutor{
 const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
     const currentTutor = useSelector((state: RootState) => state.tutor.currentTutor);
     const [initialEmail, setInitialEmail] = useState<string>(currentTutor?.email || '');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [getOtp, setGetOtp] = useState<string>('');
     const [otpSent, setOtpSent] = useState<boolean>(false);
     const [loadingOtp, setLoadingOtp] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -79,9 +77,8 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         setLoading(true);
         const email = formik.values.email;
         try {
-            const response = await axios.post('/backend/tutor/sendOtp', { email });
+           await api.post('/backend/tutor/sendOtp', { email });
             toast.success('OTP sent successfully');
-            setGetOtp(response.data.data);
             setOtpSent(true);
             setLoading(false);
         } catch (error) {
