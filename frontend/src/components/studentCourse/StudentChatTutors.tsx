@@ -26,7 +26,6 @@ const StudentChatTutors: React.FC<StudentChatTutorsProps> = ({
   filteredTutors,
   handlePass,
   selectedTutorId,
-  receiverId,
 }) => {
   const unreadMessagesRedux = useSelector((state: RootState) => state.student.unreadMessages || {});
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);

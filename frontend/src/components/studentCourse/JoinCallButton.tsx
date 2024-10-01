@@ -1,11 +1,11 @@
 // JoinCallButton.js
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from '@material-tailwind/react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 
-function JoinCallButton() {
+const JoinCallButton:React.FC=()=> {
   const navigate = useNavigate();
   const currentStudent=useSelector((state:RootState)=>state.student.currentStudent)
   console.log('curr',currentStudent?._id)

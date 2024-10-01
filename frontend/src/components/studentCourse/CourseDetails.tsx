@@ -4,28 +4,27 @@ import { GrCertificate } from "react-icons/gr";
 import { FaLaptop, FaWpbeginner, FaPlus } from "react-icons/fa";
 import tutorImage from '../../assets/images/OIP (30).jpeg'
 import AnimatedText from '../../animation/AnimatedText';
-import {  useSpring } from '@react-spring/web';
 import {  useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import { setOrderedCourseDetails } from '../../redux/courses/courseSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import VideoPlayer from '../../utils/VideoPlayer';
 import { setLoading, setLoadingClose, setStudentQuizDetails } from '../../redux/student/studentSlice';
 import OrderCOurseShimmer from '../shimmers/OrderCOurseShimmer';
-import {motion,useScroll} from 'framer-motion'
+import {motion} from 'framer-motion'
 import { SlideLeft, SlideRight, SlideUp } from '../../animation/animation';
 import CountUp from 'react-countup';
 import api from '../API/Api'
 
+
 const CourseDetails:React.FC=()=> {
-  const {id}=useParams() 
+  const {Id}=useParams() 
+  const id = Id as string;
+
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
   console.log('ors',orderedCourseDetail)
-  const [isOverviewOpen, setIsOverviewOpen] = useState<boolean>(false);
-  const [isOverviewTwoOpen, setIsOverviewTwoOpen] = useState<boolean>(false);
-  const [currentIndex,setCurrentIndex]=useState<number>('0')
+
   const [courseOpen,setCourseOpen]=useState<boolean>(false)
   const navigate=useNavigate()
   const handleOpen=()=>{
@@ -34,18 +33,8 @@ const CourseDetails:React.FC=()=> {
   const quizDetails=useSelector((state:RootState)=>state.student.StudentQuizDetails)
 console.log('quiz',quizDetails)
 const loading=useSelector((state:RootState)=>state.student.loading)
-  const toggleOverview = () => setIsOverviewOpen(!isOverviewOpen);
-  const toggleOverviewTwo = () => setIsOverviewTwoOpen(!isOverviewTwoOpen);
-  const imageAnimation = useSpring({
-    from: { transform: 'scale(1) rotate(0deg)' },
-    to: async (next) => {
-      while (true) {
-        await next({ transform: 'scale(1.1) rotate(10deg)' });
-        await next({ transform: 'scale(1) rotate(0deg)' });
-      }
-    },
-    config: { duration: 3000 },
-  });
+  
+ 
 
   const videoLength=orderedCourseDetail?.courseDetail?.videos?.length
   useEffect(()=>{
@@ -161,10 +150,10 @@ dispatch(setStudentQuizDetails(studentquiz))
             src={orderedCourseDetail?.courseDetail?.coverImageUrl}
             alt="Course"
             style={{
-                ...imageAnimation,
-                marginBottom: '20px',
+                 
+                marginBottom: '40px',
                 borderRadius: '10px',
-                boxShadow: '10px 10px 255px rgba(0, 255, 255, 0.4)', // Cyan color with 0.9 opacity
+                boxShadow: '0px 0px 255px rgba(0, 255, 255, 0.2)', // Cyan color with 0.9 opacity
               }}
           />
         </div>
@@ -176,9 +165,9 @@ dispatch(setStudentQuizDetails(studentquiz))
        variants={SlideUp(0.3)}
       className='flex justify-evenly items-center mt-10 rounded-xl mx-auto'>
         <div className='text-center text-white md:text-3xl'>
-          <h1 className='font-extrabold'> <CountUp
-        end={quizDetails?.questions?.length}
-        separator=','
+          <h1 className='font-extrabold'> <CountUp  
+    end={quizDetails?.questions?.length || 0}  
+          separator=','
         suffix='+'
         duration={5}
         enableScrollSpy={true}

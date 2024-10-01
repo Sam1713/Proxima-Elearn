@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import courseImage from '../../assets/images/OIP (34).jpeg';
 import { FaUniversalAccess, FaArrowCircleRight, FaArrowCircleLeft } from "react-icons/fa";
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,17 +11,16 @@ import { clearFeed } from '../../redux/feed/feedSlice';
 import api from '../API/Api'
 import { setLoadingClose,setLoading, signout } from '../../redux/student/studentSlice';
 import CourseDetailShimmer from '../shimmers/CourseDetailShimmer';
-import CourseShimmer from '../shimmers/CourseShimmer';
 import { motion } from "framer-motion";
-import { SlideLeft, SlideRight, SlideUp } from '../../animation/animation';
+import { SlideLeft,  SlideUp } from '../../animation/animation';
+import { isAxiosError } from 'axios';
 
-function SingleCourseDetail() {
+const SingleCourseDetail:React.FC=()=> {
     useScrollRestoration()
     const {id}=useParams()
     const dispatch=useDispatch()
     const singleCourse=useSelector((state:RootState)=>state.course.singleCourse)
-    const courseDetails=useSelector((state:RootState)=>state.course.courses)
-  const [animatePing, setAnimatePing] = useState(false);
+    
   const [currentPage, setCurrentPage] = useState(0);
   const[open,setOpen]=useState<boolean>(true)
   const[openLesson,setOpenLesson]=useState<boolean>(false)
@@ -49,23 +47,23 @@ function SingleCourseDetail() {
       console.log('res',response)
       dispatch(setLoadingClose())
       dispatch(setSingleCourse(response.data.data));
-    } catch (error) {
-        if (error instanceof Error && (error as any).response) {
-          const { status, data } = (error as any).response;
-          
-          if (status === 403 && data.error === 'UserBlocked') {
-            console.log('User is blocked');
-            dispatch(signout());
-            dispatch(clearFeed());
-            localStorage.removeItem('access_token');
-            navigate('/signin');
-          } else {
-            console.error('An error occurred:', error);
-          }
+    } catch (error: unknown) {
+      if (isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+    
+        if (status === 403 && data.error === 'UserBlocked') {
+          console.log('User is blocked');
+          dispatch(signout());
+          dispatch(clearFeed());
+          localStorage.removeItem('access_token');
+          navigate('/signin');
         } else {
           console.error('An error occurred:', error);
         }
-      } 
+      } else {
+        console.error('An unknown error occurred:', error);
+      }
+    }
       
   };
 
@@ -101,7 +99,7 @@ function SingleCourseDetail() {
     }
   };
 
-  const truncatedBio=singleCourse?.tutorDetails?.bio.slice(0,120)
+  const truncatedBio = singleCourse?.tutorDetails?.bio?.slice(0, 120) || '';
  
   const toggleBio = () => {
     setIsExpanded(!isExpanded);

@@ -41,15 +41,16 @@ const BioModal: React.FC<BioTypes> = ({ isOpen, onClose, isEditable }) => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setLoading(true);
-        const tutorAccessToken = localStorage.getItem('tutor_access_token');
-        const response = await axios.put('/backend/tutor/updateBio', {
-          bio: values.bio,
-        }, {
-          headers: {
-            'Authorization': `Bearer ${tutorAccessToken}`,
-          },
-          withCredentials: true,
-        });
+        const response = await axios.put('/backend/tutor/updateBio', 
+          {
+            bio: values.bio,
+          }, 
+          {
+            headers: {
+              'X-Token-Type': 'tutor', 
+            },
+          }
+        );
         console.log('Bio updated successfully:', response.data);
         dispatch(updateBio(response.data));
         setIsEditing(false);

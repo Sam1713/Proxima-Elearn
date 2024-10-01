@@ -1,4 +1,7 @@
-export const SlideRight=(delay:unknown)=>{
+import { Variants } from 'framer-motion';
+
+
+export const SlideRight=(delay:number):Variants=>{
     return{
         hidden:{
             opacity:0, 
@@ -15,7 +18,7 @@ export const SlideRight=(delay:unknown)=>{
     }
 }
 
-export const SlideLeft=(delay:unknown)=>{
+export const SlideLeft=(delay:number):Variants=>{ 
     return{
         hidden:{
             opacity:0,
@@ -32,7 +35,7 @@ export const SlideLeft=(delay:unknown)=>{
     }
 }
 
-export const SlideUp=(delay:unknown)=>{
+export const SlideUp=(delay:number)=>{
     return{
         hidden:{
             opacity:0,

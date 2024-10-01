@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FaUser } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { validationSchema } from '../../utils/tutorValidation/ValidationSignin';
 import { useFormik } from 'formik';
 import { TutorSigninType } from '../../types/TutorTypes';
-import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { signinFailure, signinStart, signinSuccess } from '../../redux/tutor/tutorSlice';
 import { AppDispatch } from '../../redux/store';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,7 +16,7 @@ const initialValues: TutorSigninType = {
   password: '',
 };
 
-function TutorSignin() {
+const TutorSignin:React.FC=()=> {
     const navigate=useNavigate()
     const dispatch=useDispatch<AppDispatch>()
   const formik = useFormik<TutorSigninType>({
@@ -44,11 +43,21 @@ function TutorSignin() {
 
 
       console.log('res',response)
-    }catch(error){
-        toast.error(error)
-        signinFailure(error)
-        console.log(error)
-    }},
+    }catch (error: unknown) {
+      let errorMessage: string;
+    
+      if (error instanceof Error) {
+        errorMessage = error.message; 
+      } else if (typeof error === 'string') {
+        errorMessage = error; 
+      } else {
+        errorMessage = 'An unknown error occurred';
+      }
+    
+      toast.error(errorMessage);
+      signinFailure(errorMessage);
+      console.log(error);
+    }}
   });
 
   return (

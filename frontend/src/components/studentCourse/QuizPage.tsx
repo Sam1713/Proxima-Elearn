@@ -4,10 +4,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import QuizOpenModal from '../../modals/quizModal/QuizOpenModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import generateCertificate from './Certificate'; 
 import api from '../../components/API/Api'
-const QuizPage = () => {
-  const getResult = useSelector((state: RootState) => state.student.quizResult);
+const QuizPage:React.FC = () => {
   const dispatch=useDispatch()
 
   useEffect(()=>{
@@ -29,8 +27,7 @@ const QuizPage = () => {
         console.warn('No result or data found for this quiz.');
         return;
     }
-       const result=response.data.result
-       const totalMarks=response.data.totalMarks
+       
     }catch(error){
       console.log('err',error)
     }
@@ -40,10 +37,8 @@ const QuizPage = () => {
   const location = useLocation();
   const { quizDetails, orderedCourseDetail } = location.state || {};
   const navigate = useNavigate();
-  const currentUser=useSelector((state:RootState)=>state.student.currentStudent)
   console.log('order', orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname);
-  const tutorName = orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname;
-  const courseName = orderedCourseDetail?.courseDetail?.title;
+
   const resultVal=useSelector((state:RootState)=>state.student.resultQuiz)
   const handleModal = () => {
     setQuizOpen(true);

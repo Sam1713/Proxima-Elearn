@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FaRupeeSign } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import api from '../API/Api'
 const Checkout: React.FC = () => {
   const location = useLocation();
   const navigate=useNavigate()
-  const { order, student, title, amount } = location.state as any;
+  const { order, student, title, amount } = location.state;
   console.log('stude',student);
   console.log('fsdf',amount);
   
@@ -34,7 +33,7 @@ console.log('cor',title);
           description: 'Course Enrollment',
           image: 'YOUR_LOGO_URL', 
           order_id: order.id, 
-          handler: async function (response: any) {
+          handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string; }) {
             try {
               await api.post('/backend/enroll/verifyPayment', {
                 razorpay_order_id: response.razorpay_order_id,
@@ -69,6 +68,7 @@ console.log('cor',title);
           },
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const rzp = new (window as any).Razorpay(options);
         rzp.open();
       }

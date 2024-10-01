@@ -16,9 +16,7 @@ import {motion} from 'framer-motion'
 
 function AllCourses() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedSort, setSelectedSort] = useState<string>('Price: Low to High');
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
-  const [searchValue, setSearchValue] = useState<string>('');
   const [page,setPage]=useState<number>(1)
   const [totalPages,setTotalPages]=useState<number>(1)
   const limit:number=8
@@ -26,7 +24,6 @@ function AllCourses() {
   const navigate=useNavigate()
   const loading=useSelector((state:RootState)=>state.student.loading)
   const allCourses = useSelector((state: RootState) => state.student.courses);
-  const [category,setCategory]=useState<string>('')
   const categories = useSelector((state: RootState) => state.student.categories);
   const searchRef = useRef<HTMLInputElement>(null);
   console.log('cat',categories)
@@ -173,10 +170,6 @@ console.log('res',response.data)
   const uniqueCategories: string[] = ['All', ...new Set(categories?.map(category => category.categoryName))];
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-    setSearch(e.target.value)
-  };
 
   const handleNavigate=(id:string)=>{
     navigate(`/singleCourseDetail/${id}`)
@@ -204,7 +197,6 @@ console.log('res',response.data)
         <div className=" md:absolute  md:mx-16 md:pl-[68%] flex mb-8">
           <input 
           ref={searchRef}
-            onChange={(e)=>handleChange(e)} 
   className='md:relative  px-6 p-3 bg-custom-gradient text-white w-[100%]  rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ring-2 ring-blue-500'            type="text" 
             placeholder="Search courses..." 
           />
@@ -224,10 +216,9 @@ console.log('res',response.data)
   <IoMdArrowDropdown className='absolute md:right-2 right-1 top-1/2 transform -translate-y-1/2 text-gray-100' />
 </div>
         
-        <div className='relative '>
+        {/* <div className='relative '>
           <select 
             value={selectedSort}
-            onChange={handleDropdownChange(setSelectedSort)}
             className='bg-black w text-white  border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             <option value="Price: Low to High">Price: Low to High</option>
@@ -236,7 +227,7 @@ console.log('res',response.data)
             <option value="Newest First">Newest First</option>
           </select>
           <IoMdArrowDropdown className='absolute md:right-2 right-1  top-1/2 transform -translate-y-1/2 text-gray-100' />
-        </div>
+        </div> */}
         
         <div className='relative'>
           <select 
@@ -261,8 +252,8 @@ console.log('res',response.data)
         <motion.div
    initial={{  y: -100, opacity: 0.2 }}
    whileInView={{ skew: 0, y: 0, opacity: 1 }}
-   transition={{ duration: 0.5, ease: "easeInOut" }}
    variants={SlideUp(0.5)}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
 
         className='bg-white bg-opacity-10 rounded-lg p-4  md:w-[90%] w-full md:mx-auto'>
           
@@ -286,7 +277,6 @@ console.log('res',response.data)
                       <FaRupeeSign className='text-white' />
                     </div>
                     </div>
-                                        <p className='text-xs text-gray-500'>{course.popularity} <span className='text-gray-400'>stars</span></p>
                   </div>
                 </div>
               ))}
@@ -329,7 +319,4 @@ console.log('res',response.data)
 }
 
 export default AllCourses;
-function setSearch(value: string) {
-  throw new Error('Function not implemented.');
-}
 

@@ -207,7 +207,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
 
         export const getOrderedCourseDetail=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
           console.log('sfdfsds')
-          const CourseId=req.params.id
+          const CourseId=req.params.id as string
           const courseId=new mongoose.Types.ObjectId(CourseId)
           const UserId=req.userId
           const userId=new mongoose.Types.ObjectId(UserId)
@@ -263,7 +263,7 @@ export const verifyPayment=async(req:Request,res:Response)=>{
               }
             },  
             { $limit: 1 }
-          ]) 
+          ])  
           const courseDetail = enrolledCourseDetail.length > 0 ? enrolledCourseDetail[0] : {};
 
           console.log('enrolled',courseDetail)

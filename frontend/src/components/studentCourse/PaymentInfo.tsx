@@ -6,7 +6,7 @@ import { RootState } from '../../redux/store';
 import { setLoading, setLoadingClose } from '../../redux/student/studentSlice';
 import LoadingSpinner from '../../utils/LoadingSpinner';
 
-function PaymentInfo() {
+const PaymentInfo:React.FC=()=> {
     const dispatch = useDispatch();
     const studentPayment = useSelector((state: RootState) => state.course.studentPaymentDetailsArray);
     const loading=useSelector((state:RootState)=>state.student.loading)

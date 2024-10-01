@@ -24,9 +24,9 @@ const TutorProfile:React.FC=()=> {
     const handleProof=()=>{
        setOpenProof(true)
     }
-    const handleCloseProof=()=>{
-      setOpenProof(false)
-    }
+    // const handleCloseProof=()=>{
+    //   setOpenProof(false)
+    // }
     console.log('bev',currentTutor)
     return (
         <>
@@ -86,7 +86,7 @@ const TutorProfile:React.FC=()=> {
           <FileModal isOpenFile={openfile} onCloseFile={closeFile}/> */}
           <EditDetailModal isOpen={open} onClose={handleEditTutorClose}/>
           <BioModal isOpen={openBio} onClose={handleCloseBio} isEditable={true}/>
-          <FileModal isOpen={openProof} onClose={handleCloseBio} isEditable={true}/>
+          <FileModal isOpen={openProof} onCloseFile={handleCloseBio} isEditable={true}/>
 
         </div>
         

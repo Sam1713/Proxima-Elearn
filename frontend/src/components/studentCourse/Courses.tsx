@@ -1,20 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import courseVideo from '../../assets/images/LeetCode_Sharing.png';
 import tutorImage from '../../assets/images/OIP (28).jpeg';
-import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
-import tutorImage1 from '../../assets/images/OIP (34).jpeg';
-import courseVideo1 from '../../assets/images/certificate-vector.jpg';
-import courseVideo2 from '../../assets/images/1175458.jpg';
+
 import { FaLaptop } from "react-icons/fa";
 import api from '../API/Api'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCourses } from '../../redux/courses/courseSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import useScrollRestoration from '../customHooks/useScrollRestoration';
 import { setCategories, setFullCourses, signout } from '../../redux/student/studentSlice';
 import { clearFeed } from '../../redux/feed/feedSlice';
-import { Button } from '@material-tailwind/react';
+import { AxiosError } from 'axios';
 
 const Courses:React.FC=()=> {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,10 +21,9 @@ console.log('add',allCategories)
   
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages,setTotalPages]=useState<number>(1);
-  const coursesPerPage:number = 4;
   const catLimit:number=4
   const [showAll, setShowAll] = useState<boolean>(false);
-  const videoRef=useRef(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(()=>{
     const video=videoRef.current
@@ -50,45 +44,46 @@ console.log('add',allCategories)
   useEffect(()=>{
     fetchAllCategories(currentPage,catLimit)
   },[currentPage,catLimit])
-  const fetchAllCategories=async(currentPage:number,catLimit:number)=>{
-    const response=await api.get('/backend/auth/getAllCategories',{
-      headers:{
-        'X-Token-Type':'student'
-      },
-      params:{
-        page:currentPage,
-        limit:catLimit
-      }
-    })
-    console.log('response',response.data)
+  const fetchAllCategories = async (currentPage: number, catLimit: number) => {
+    try {
+      const response = await api.get('/backend/auth/getAllCategories', {
+        headers: {
+          'X-Token-Type': 'student',
+        },
+        params: {
+          page: currentPage,
+          limit: catLimit,
+        },
+      });
 
-    dispatch(setCategories(response.data.getAllCategories))
-    console.log('page',response.data.totalPages)
-    setTotalPages(response.data.totalPages)
-    
-  }
-  
+      console.log('response', response.data);
+      dispatch(setCategories(response.data.getAllCategories));
+      console.log('page', response.data.totalPages);
+      setTotalPages(response.data.totalPages);
+      
+    } catch (error) {
+      handleFetchError(error as AxiosError | Error);
+        }
+  };
 
-  
-
-  const handleFetchError = (error: any) => {
-    if (error.response) {
-      const { status, data } = error.response;
-      if (status === 403 && data.error === 'UserBlocked') {
+  const handleFetchError = (error: AxiosError | Error) => {
+    if ((error as AxiosError).response) {
+      const { status, data } = (error as AxiosError).response!;
+      
+      if (status === 403 && (data as { error: string }).error === 'UserBlocked') {
         dispatch(signout());
         dispatch(clearFeed());
-        alert(data.message);
+        alert((data as { message: string }).message); // Cast data to expected structure
         localStorage.removeItem('access_token');
         navigate('/signin');
       } else {
-        console.error('An error occurred:', error);
+        console.error('An error occurred:', (data as { message: string }).message || error.message);
       }
     } else {
-      console.error('An error occurred:', error);
+      console.error('An error occurred:', error.message);
     }
   };
-
-
+  
   useEffect(()=>{
     fetchAllCourses()
   },[])
@@ -102,38 +97,15 @@ console.log('add',allCategories)
     console.log('rs',response)
   }
 
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const startIndex = (currentPage - 1) * coursesPerPage;
+ 
   const currentCourses = showAll ? coursesArray : coursesArray.slice(0, 4);
 
   const handleNavigate = (id: string) => {
     navigate(`/singleCourseDetail/${id}`);
   };
 
-  const scrollRef = useRef(null);
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-    }
-  };
+  
 
   const handleBackword=()=>{
     setCurrentPage((prev)=>prev-1)
@@ -144,7 +116,6 @@ console.log('add',allCategories)
   }
   return (
       <div className="relative min-h-screen text-white">
-        {/* Full-width video */}
         <video
                 ref={videoRef}
 
@@ -153,7 +124,6 @@ console.log('add',allCategories)
           muted
           loop
         >
-          {/* Sample demo video */}
           <source
             src="https://www.w3schools.com/html/mov_bbb.mp4"
             type="video/mp4"
