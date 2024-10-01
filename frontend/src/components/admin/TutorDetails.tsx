@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import  React, { useState } from 'react';
 import tutorimage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
 import BioModal from '../../modals/adminTutorModal/BioModal';
 import certificateImg from '../../assets/images/certificate-vector.jpg';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import FileModal from '../../modals/adminTutorModal/FileModal';
 import Swal from 'sweetalert2';
-import { signinSuccess } from '../../redux/tutor/tutorSlice';
 import { tutorApproved } from '../../redux/admin/adminSlice';
-
-function TutorDetails() {
+import api from '../API/Api'
+const  TutorDetails:React.FC=()=> {
   const [open, setOpen] = useState<boolean>(false);
   const [openfile,setOpenFile]=useState<boolean>(false)
  const singleTutor=useSelector((state:RootState)=>state.admin.singleTutor)
@@ -39,7 +37,7 @@ const approveTutor = async () => {
     // Check user's response
     if (result.isConfirmed) {
       try {
-        const response=await axios.post(`/backend/admin/approvetutor/${id}`);
+        const response=await api.post(`/backend/admin/approvetutor/${id}`);
         console.log('res',response)
         dispatch(tutorApproved(response.data.isApproved))
         Swal.fire({
@@ -77,7 +75,7 @@ const approveTutor = async () => {
     // Check user's response
     if (result.isConfirmed) {
       try {
-        const response=await axios.post(`/backend/admin/rejecttutor/${id}`);
+        const response=await api.post(`/backend/admin/rejecttutor/${id}`);
         console.log('res',response)
         dispatch(tutorApproved(response.data.isApproved))
         Swal.fire({
@@ -87,7 +85,6 @@ const approveTutor = async () => {
           confirmButtonText: 'OK'
         });
       
-        // Optionally, dispatch any required actions here
       } catch (error) {
         console.error('Error approving tutor:', error);
         Swal.fire({
