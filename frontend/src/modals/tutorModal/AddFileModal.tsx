@@ -4,15 +4,19 @@ import * as Yup from 'yup';
 import { EditTutor } from '../../types/modalTypes/EditModat';
 import { IoIosCloseCircle } from 'react-icons/io';
 import Swal from 'sweetalert2';
-import api from '../../components/API/Api'
+import api from '../../components/API/Api';
 import { updateFiles } from '../../redux/tutor/tutorSlice';
 import { useDispatch } from 'react-redux';
+
+interface FormValues {
+  files: File[];
+}
 
 const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
-  const formik = useFormik({
+  const formik = useFormik<FormValues>({
     initialValues: {
       files: [] as File[],
     },
@@ -23,7 +27,7 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
             'file',
             'Images and PDFs are allowed',
             (file: File | undefined) => {
-              if (!file) return false; 
+              if (!file) return false;
               return /\.(jpeg|jpg|gif|png|pdf|webp)$/i.test(file.name);
             }
           )
@@ -31,7 +35,6 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         .min(1, 'Please upload at least one file')
         .required('Please upload at least one file'),
     }),
-    
     onSubmit: async (values) => {
       console.log('Files to be uploaded:', values.files);
 
@@ -52,12 +55,12 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
 
           try {
             const response = await api.post('/backend/tutor/updateFiles', formData, {
-             headers:{
-              'X-Token-Type':'tutor'
-             }
+              headers: {
+                'X-Token-Type': 'tutor'
+              }
             });
             dispatch(updateFiles(response.data.rest));
-            onClose(); 
+            onClose();
           } catch (error) {
             console.error('Error uploading files:', error);
           }
@@ -77,7 +80,7 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
 
     return () => {
       objectUrls.forEach((url) => {
-        URL.revokeObjectURL(url); 
+        URL.revokeObjectURL(url);
       });
     };
   }, [formik.values.files]);
@@ -104,17 +107,17 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
               }}
               multiple
             />
+
+            {/* Error Handling */}
             {formik.errors.files && formik.touched.files ? (
-  Array.isArray(formik.errors.files) ? (
-    <div className='text-red-500 mt-2'>
-      {formik.errors.files.map((error, index) => (
-        <div key={index}>Something wrong</div>
-      ))}
-    </div>
-  ) : (
-    <div className='text-red-500 mt-2'>{formik.errors.files}</div>
-  )
-) : null}
+              <div className='text-red-500 mt-2'>
+                {/* Check if errors.files is an array or string */}
+                {Array.isArray(formik.errors.files)
+                  ? formik.errors.files.map((error, index) => (
+<div key={index}>{error as string}</div>                    ))
+                  : <div>{formik.errors.files}</div>}
+              </div>
+            ) : null}
 
             <div className='mt-4 flex gap-4 p-4 rounded-lg shadow-inner max-w-full overflow-auto'>
               {formik.values.files.map((file, index) => (
@@ -134,9 +137,7 @@ const AddFileModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                       className='relative rounded-lg border border-gray-300'
                       style={{ overflow: 'auto', backgroundColor: '#f5f5f5' }}
                     >
-                      <p className='text-gray-700 text-sm'>
-                        PDF Preview Unavailable
-                      </p>
+                      <p className='text-gray-700 text-sm'>PDF Preview Unavailable</p>
                     </object>
                   )}
                   <p className='absolute font-extrabold text-red-700 rounded-2xl'>
