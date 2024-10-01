@@ -23,7 +23,6 @@ const TutorChat = () => {
     const chatContainerRef = useRef<HTMLDivElement>(null); // Reference to the chat message container
     const [studentChats, setStudentChats] = useState<{ [key: string]: any[] }>({});
      const [loading,setLoading]=useState<boolean>(false)
-    const sort=useSelector((state:RootState)=>state.tutor.studentChat)
     const currentTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
     const {id}=useParams()
     const myTutor=useSelector((state:RootState)=>state.tutor.currentTutor)

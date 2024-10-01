@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TutorSigninType } from "../../types/TutorTypes";
+// import { TutorSigninType } from "../../types/TutorTypes";
 export interface TutorState {
     currentTutor: Tutor | null;
     tutorApproval:boolean;
@@ -14,15 +14,15 @@ export interface TutorState {
     walletInfo:WalletDetailsTypes|null,
     quizDetails:StudentQuiz|null,
     allCategories:CategoryTypes|[],
-    studentChat:[],
-    sortedStudents: Student[],
+    studentChat: Record<string, StudentChatType[]>; // Use Record for dynamic keys
+    sortedStudents: Student[];
     newBio?:UpdatedBio|null,
     loading: boolean;
     error: string | null;
 }
 
 export interface Student {
-    id: string;
+    _id: string;
     name: string;
     // Add other properties of Student as needed
 }
@@ -130,10 +130,10 @@ interface Stud {
     questions: QuizQuestions[];
   }
 
-interface studentChatType{
+interface StudentChatType{
     sender:string;
     receiver:string
-    createedAt:Date;
+    createdAt:Date;
     senderType:string
 }
 
@@ -154,7 +154,7 @@ const initialState:TutorState={
     walletInfo:null,
     quizDetails:null,
     allCategories:[],
-    studentChat:[],
+    studentChat:{},
     categoryDetails:[],
     purchased:[],
     sortedStudents: [],
@@ -224,12 +224,9 @@ const tutorSlice=createSlice({
         setWalletInfo:(state,action:PayloadAction<WalletDetailsTypes>)=>{
             state.walletInfo=action.payload
         },
-        setStudetnChat:(state,action:PayloadAction<StudentChatTyppe[]>)=>{
-            state.studentChat=action.payload
-        },
+    
         setStudentChat(state, action: PayloadAction<{ studentId: string, chats: StudentChatType[] }>) {
             const { studentId, chats } = action.payload;
-            const lastMessage = chats[chats.length - 1];
             
             // Update student chat data
             const updatedChats = {
