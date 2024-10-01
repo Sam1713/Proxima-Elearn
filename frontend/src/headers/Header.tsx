@@ -8,7 +8,6 @@ import { AppDispatch, RootState } from '../redux/store';
 import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
 import Notifications from '../components/studentNotification/Notification';
-import NotificationBadge from 'react-notification-badge'; // Import NotificationBadge
 import { FaMessage } from "react-icons/fa6";
 
 import api from '../components/API/Api'
@@ -131,9 +130,11 @@ const StudentHeader:React.FC=()=> {
     </li>
           <li className="mx-5 relative text-white">
   <div className="relative">
-    <NotificationBadge count={studentNotification.length} className="absolute top-0 right-0">
-      {/* Apply any additional styling for the badge if needed */}
-    </NotificationBadge>
+  {studentNotification.length > 0 && (
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+            {studentNotification.length}
+          </span>
+        )}
     
   </div>
   <Notifications />
