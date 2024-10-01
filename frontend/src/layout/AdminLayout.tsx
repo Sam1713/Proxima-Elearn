@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/admin/AdminHeader';
 import AdminSidebar from './AdminSidebar';
 
-function AdminLayout() {
+const AdminLayout:React.FC=()=> {
   const location = useLocation();
 
   const showSidebar = !location.pathname.startsWith('/admin/tutorCourseDetail/');

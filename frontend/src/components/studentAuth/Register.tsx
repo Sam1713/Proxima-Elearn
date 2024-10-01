@@ -10,7 +10,7 @@ import { GoogleAuth } from "../../firebase/GoogleAuth";
 import { Button, Input } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import {motion} from 'framer-motion'
-
+import api from '../API/Api'
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<FormDataType>({
     username: '',
@@ -32,7 +32,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post('/backend/auth/signup', formData);
+      const response = await api.post('/backend/auth/signup', formData);
       toast.success(response.data.message);
       setTimeout(() => {
         navigate('/signin');

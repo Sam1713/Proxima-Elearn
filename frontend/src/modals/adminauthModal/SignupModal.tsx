@@ -8,13 +8,11 @@ import { useFormik } from 'formik';
 import { validationSchema } from '../../utils/adminValidation/AdminValidation';
 import { AdminSignupType } from '../../types/adminTypes/AdminType';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { adminSignInStart, adminSignInSuccess } from '../../redux/admin/adminSlice';
+import { useDispatch} from 'react-redux';
+import { adminSignInSuccess } from '../../redux/admin/adminSlice';
 import { useNavigate } from 'react-router-dom';
-
+import api from '../../components/API/Api'
 interface SignupModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -27,64 +25,66 @@ interface ErrorResponse {
     message: string;
 }
 
-const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, formType, showToast, onSwitchFormType }) => {
+const SignupModal: React.FC<SignupModalProps> = ({ isOpen, formType, showToast, onSwitchFormType }) => {
     const dispatch=useDispatch()
     console.log('SignupModal props:', { isOpen, formType });
 const navigate=useNavigate()
-    const formik = useFormik<AdminSignupType>({
-        initialValues: {
-            username: formType === 'signup' ? '' : '',
-            email: '',
-            password: ''
-        },
-        validationSchema: validationSchema(formType), // Pass formType here
-        enableReinitialize: true,
-        onSubmit: async (values, { resetForm }) => {
-            console.log('Submitting form:', values);
+const formik = useFormik<AdminSignupType>({
+    initialValues: {
+        username: formType === 'signup' ? '' : '',
+        email: '',
+        password: ''
+    },
+    validationSchema: validationSchema(formType),
+    enableReinitialize: true,
+    onSubmit: async (values, { resetForm }) => {
+        console.log('Submitting form:', values);
 
-            const formData = new FormData();
-            for (const key in values) {
-                formData.append(key, String(values[key as keyof AdminSignupType]));
-            }
-
-            try {
-                console.log('s')
-                const endpoint = formType === 'signup' ? '/backend/admin/adminSignup' : '/backend/admin/adminSignin';
-                const response = await axios.post(endpoint, formData,{
-                    withCredentials: true,
-                    credentials:'include'
-      });
-      localStorage.setItem('admin_access_token', response.data.token);
-      console.log('Token saved:', localStorage.getItem('admin_access_token'));
-
-                showToast(response.data.message, 'success');
-                
-                resetForm();
-
-                if (formType === 'signup') {
-                    onSwitchFormType('signin');
-                } else {
-                    console.log('res',response.data.rest)
-                    dispatch(adminSignInSuccess(response.data.rest))
-                    navigate('/admin/tutorlist')
-                    console.log('Signin successful');
-                }
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response && error.response.data) {
-                    const errResponse = error.response.data as ErrorResponse;
-                    showToast(errResponse.message, 'error');
-                } else {
-                    showToast('An unexpected error occurred.', 'error');
-                }
-                console.error('Error:', error);
-            }
+        const formData = new FormData();
+        for (const key in values) {
+            formData.append(key, String(values[key as keyof AdminSignupType]));
         }
-    });
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log('Handle submit triggered');
-        formik.handleSubmit();
-    };
+
+        try {
+            const endpoint = formType === 'signup' ? '/backend/admin/adminSignup' : '/backend/admin/adminSignin';
+
+            // Set the headers including X-Token-Type
+            const headers = {
+                'X-Token-Type': 'admin',
+            };
+
+            const response = await api.post(endpoint, formData, { headers });
+
+            localStorage.setItem('admin_access_token', response.data.token);
+            console.log('Token saved:', localStorage.getItem('admin_access_token'));
+
+            showToast(response.data.message, 'success');
+            resetForm();
+
+            if (formType === 'signup') {
+                onSwitchFormType('signin');
+            } else {
+                dispatch(adminSignInSuccess(response.data.rest));
+                navigate('/admin/tutorlist');
+                console.log('Signin successful');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response && error.response.data) {
+                const errResponse = error.response.data as ErrorResponse;
+                showToast(errResponse.message, 'error');
+            } else {
+                showToast('An unexpected error occurred.', 'error');
+            }
+            console.error('Error:', error);
+        }
+    }
+});
+
+    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     console.log('Handle submit triggered');
+    //     formik.handleSubmit();
+    // };
     
     if (!isOpen) return null;
 
