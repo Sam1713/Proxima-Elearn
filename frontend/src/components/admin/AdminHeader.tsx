@@ -1,8 +1,6 @@
-import React from 'react';
 import image from '../../assets/images/OIP (28).jpeg'; // Adjusted path
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { Link } from 'react-router-dom';
 import api from '../API/Api'
 import { adminSignout } from '../../redux/admin/adminSlice';
 function AdminHeader() {

@@ -45,7 +45,7 @@ function AdminSidebar() {
   const tutorlist=useSelector((state:RootState)=>state.admin.singleTutor)
 
   return (
-    <div className='md:fixed pt-10 w-[18%] md:pt-0  flex md:flex-col md:my-[6%] md:mx-3 flex-row justify-between items-center'>
+    <div className='md:fixed pt-10  md:pt-0  flex md:flex-col md:my-[6%] md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'

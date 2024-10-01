@@ -12,9 +12,9 @@ export interface StudentState {
     quizResult:QuizResultType|null;
     categories:Category[]
     resultQuiz:ResultTypes|null;
-    messageCount:number|null;
+    messageCount:number;
     unreadMessages: UnreadMessagesState; // Map of unread message statuses
-    receiverId:String|null;
+    receiverId:string|null;
     loading: boolean;
     error: string | null;
 }
@@ -125,7 +125,7 @@ const initialState: StudentState = {
     receiverId:null,
     quizResult:null,
     resultQuiz:null,
-    messageCount:null,
+    messageCount:0,
     Notifications:[],
     // messageNotification:0,
     error: null,

@@ -32,9 +32,11 @@ interface AdminDetails{
     error:string|null
 }
 interface AdminUserListing{
+  _id:string
     username:string,
     email:string,
-    profilePic?:string
+    profilePic?:string,
+    isBlocked?:boolean
 }
 
 interface Category {

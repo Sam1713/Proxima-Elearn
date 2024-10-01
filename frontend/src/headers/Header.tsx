@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import image from '../assets/images/OIP (28).jpeg'; // Adjusted path
 import { Bars3Icon, ChevronDownIcon, Cog6ToothIcon, InboxArrowDownIcon, LifebuoyIcon, PowerIcon, UserCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -13,7 +13,6 @@ import { FaMessage } from "react-icons/fa6";
 import api from '../components/API/Api'
 import { FaChalkboardTeacher, FaHome } from 'react-icons/fa';
 import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Tooltip, Typography } from '@material-tailwind/react';
-import MessageNotification from '../components/studentNotification/MessageNotification';
 const profileMenuItems = [
   {
     label: "My Profile",
@@ -45,7 +44,6 @@ const StudentHeader:React.FC=()=> {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
   const dispatch = useDispatch<AppDispatch>();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const unreadMessagesCountRef = useRef(0);
   const closeMenu = () => setIsMenuOpen(false);
   const location=useLocation()
   const messageCount=useSelector((state:RootState)=>state.student.messageCount)
@@ -200,8 +198,8 @@ const StudentHeader:React.FC=()=> {
             </Typography>
           </MenuItem>
         ) : (
-          <Link to={route} key={label}>
-            <MenuItem
+<Link to={route||'defaultRoute'} key={label}>
+<MenuItem
                 onClick={closeMenu}
                 className="flex items-center gap-2 rounded" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            >
               {React.createElement(icon, {
