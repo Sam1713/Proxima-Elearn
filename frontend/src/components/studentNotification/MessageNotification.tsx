@@ -1,10 +1,13 @@
-import React from 'react';
 import { FaEnvelope } from 'react-icons/fa'; // Import the envelope icon
 
-const MessageNotification = ({ unreadMessagesCount }) => {
+interface MessageNotificationProps {
+  unreadMessagesCount: number; 
+}
+
+const MessageNotification :React.FC<MessageNotificationProps> = ({ unreadMessagesCount }) => {
     console.log('coint',unreadMessagesCount)
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center">   
       {/* Envelope Icon */}
       <FaEnvelope className="text-white" size={20} />
       <div>
