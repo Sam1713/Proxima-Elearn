@@ -4,14 +4,12 @@ import { FaUsers } from 'react-icons/fa';
 import { GiTeacher } from 'react-icons/gi';
 import { BiSolidVideos, BiSolidPurchaseTagAlt } from 'react-icons/bi';
 import { AiOutlineDown, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-import TutorListing from '../components/admin/TutorListing';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+
 import { Link } from 'react-router-dom';
 
 // Define the types for SidebarItem props
 interface SidebarItemProps {
-  icon: React.ComponentType;
+  icon: React.ComponentType <{ className?: string }>;
   text: string;
   onClick: () => void;
   isActive: boolean;
