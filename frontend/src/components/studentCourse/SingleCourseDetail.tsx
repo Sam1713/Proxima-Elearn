@@ -50,22 +50,23 @@ function SingleCourseDetail() {
       dispatch(setLoadingClose())
       dispatch(setSingleCourse(response.data.data));
     } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
- 
-        if (status === 403 && data.error === 'UserBlocked') {
-          console.log('sdfsd')
-          dispatch(signout());
-          dispatch(clearFeed());
-          localStorage.removeItem('access_token'); 
+        if (error instanceof Error && (error as any).response) {
+          const { status, data } = (error as any).response;
+          
+          if (status === 403 && data.error === 'UserBlocked') {
+            console.log('User is blocked');
+            dispatch(signout());
+            dispatch(clearFeed());
+            localStorage.removeItem('access_token');
+            navigate('/signin');
+          } else {
+            console.error('An error occurred:', error);
+          }
         } else {
           console.error('An error occurred:', error);
         }
-      } else {
-        console.error('An error occurred:', error);
-      }
-    } finally {
-    }
+      } 
+      
   };
 
   fetchCourseDetails();
@@ -92,7 +93,7 @@ function SingleCourseDetail() {
   }
 
   const itemsPerPage = 4;
-  const totalItems = 5;  // This should be dynamic
+  const totalItems = 5; 
 
   const handleNext = () => {
     if (currentPage < Math.ceil(totalItems / itemsPerPage) - 1) {
@@ -111,21 +112,13 @@ function SingleCourseDetail() {
     }
   };
 
-  // Sample data for recommended courses
   const recommendedCourses = Array(5).fill(null).map((_, index) => ({
     id: index,
     title: 'AWS Certified Solutions Architect',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
     image: courseImage
   }));
-//   const useScrollRestoration = () => {
-//     useEffect(() => {
-//       window.scrollTo(0, 0);
-//     }, []);
-//   };
-  
-//     useScrollRestoration();
-  // Paginate the courses
+
   const paginatedCourses = recommendedCourses.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
@@ -293,10 +286,8 @@ function SingleCourseDetail() {
 <div className='w-[100%] flex justify-center  md:items-start'>
       <h1 className='mt-20  text-2xl md:text-3xl underline font-extralight text-white'>Recommended Courses</h1>
       </div>
-      {/* Navigation Buttons for Courses */}
      
 
-      {/* Related Courses */}
       <div className='flex flex-wrap items-start gap-10 m w-[100%] px-14 mx- mt-10'>
         {paginatedCourses.map(course => (
           <div key={course.id} className='bg-white w-full sm:w-[48%] md:w-[23%] lg:w-[22%] rounded-lg overflow-hidden p-4 shadow-2xl transition-transform transform hover:scale-105' style={{ boxShadow: '0 4px 8px rgba(150, 150, 150, 0.9)' }}>

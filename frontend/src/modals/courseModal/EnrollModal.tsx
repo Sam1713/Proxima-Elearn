@@ -5,33 +5,32 @@ import { RootState } from '../../redux/store'
 import { FaRupeeSign } from "react-icons/fa";
 import { FaCheckCircle } from 'react-icons/fa';
 import { IoCloseOutline } from "react-icons/io5";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { FaSpinner } from 'react-icons/fa'; // Import spinner icon
-
+import { useNavigate } from 'react-router-dom'; 
+import { FaSpinner } from 'react-icons/fa'; 
+import api from '../../components/API/Api'
 
 const EnrollModal:React.FC<EditTutor>=({isOpen,onClose})=>{
-    const navigate = useNavigate(); // Import useHistory from react-router-dom
+    const navigate = useNavigate(); 
     const [loading,setLoading]=useState<boolean>(false)
 
   const singleCourse=useSelector((state:RootState)=>state.course.singleCourse)
   const id=singleCourse?._id
   const handleCheckout=async()=>{
-    const token=localStorage.getItem('access_token')
 
       try{
         setLoading(true)
-          const response=await axios.post('/backend/enroll/checkout',{courseId:id},{
+          const response=await api.post('/backend/enroll/checkout',{courseId:id},{
             headers: {
-                'Authorization': `Bearer ${token}`
-              },
-              withCredentials: true,
+                'X-Token-Type': 'student'
+              }
           })
           console.log('res',response)
           setLoading(false)
           if (response.data.success) {
     
     const { student, order, title } = response.data;
+    console.log('sa',title);
+    
       navigate('/checkout', { state: { course: singleCourse, student, order, title } });
 
           } else {

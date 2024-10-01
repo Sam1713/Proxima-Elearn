@@ -12,58 +12,22 @@ import { useNavigate } from 'react-router-dom';
 import PostModal from '../../modals/PostModal';
 
 
-function RecentFeed({fetchFeeds}) {
-  const dispatch = useDispatch();
-  const navigate=useNavigate()
-  // useEffect(() => {
-  //   const fetchFeeds = async () => {
-      
-    
-  //     try {
-  //       const response = await api.get('/backend/feed/getFeed',{
-  //         headers: {
-  //           'X-Token-Type': 'student',
-  //         },
-  //       });
-  //       dispatch(setFeeds(response.data))
-        
-  //       console.log('Feeds response:', response.data);
-  //       // Handle response
-  //     } catch (error) {
-  //         if (error.response) {
-  //           const { status, data } = error.response;
-     
-  //           // Check if the error is due to the user being blocked
-  //           if (status === 403 && data.error === 'UserBlocked') {
-  //             dispatch(signout());
-  //             dispatch(clearFeed());
-  //             // Handle blocked user scenario
-  //             alert(data.message); // Display message to user
-  //             localStorage.removeItem('access_token'); // Clear access token from local storage
-  //             navigate('/signin'); // Redirect to sign-in page
-  //           } else {
-  //             // Handle other errors
-  //             console.error('An error occurred:', error);
-  //           }
-  //         } else {
-  //           console.error('An error occurred:', error);
-  //         }
-        
-  //     }
-  //   }    
-    
-    
-  //   fetchFeeds();
-  // }, [dispatch]);
-  // useEffect(() => {
-  //   // fetchFeeds();
-  // }, [fetchFeeds]);
+const RecentFeed:React.FC=()=> {
+ 
 
   const { feeds } = useSelector((state:RootState) => state.feed);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number>(0);
   const [selectedMediaType, setSelectedMediaType] = useState('image'); // 'image' or 'video'
-  const [selectedFeedIndex, setSelectedFeedIndex] = useState(0);
+  const [selectedFeedIndex, setSelectedFeedIndex] = useState<number>(0);
+
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const maxLength:number = 350; 
+
+  const handleToggle = () => { 
+    setIsExpanded(prev => !prev);
+  };
+
 
   const handleMediaClick = (feedIndex:number, index:number) => {
     setSelectedFeedIndex(feedIndex);
@@ -88,11 +52,11 @@ function RecentFeed({fetchFeeds}) {
     setSelectedMediaType(mediaType);
   };
 
-  const determineMediaType = (file:unknown)=> {
-    // Determine the media type based on the file object
+  const determineMediaType = (file:any)=> {
+    console.log('did',file)
     return file.fileType === 'video' ? 'video' : 'image';
   };
-
+console.log('fe',feeds)
   return (
     <div className='flex  flex-col border border-transparent   rounded-lg shadow-2xl  items-center justify-center my-10 w-full px-4'
     
@@ -107,8 +71,7 @@ function RecentFeed({fetchFeeds}) {
           ? 'md:w-1/4 w-1/3 h-48'
           :mediaCount===4
           ?'w-1/3 h-60  object-cover'
-          : 'w-1/16 flex-wrap h-32'; // Adjust the default class for more than 3 items
-
+          : 'w-1/16 flex-wrap h-32';
         return (
           <div key={feedIndex} className='md:w-[100%] mt-5 max-w-4xl bg-black rounded-xl p-4 flex flex-col md:flex-row  items-start'>
             <div className='flex-shrink-0 mb-4 md:mb-0 md:mr-4'>
@@ -117,14 +80,14 @@ function RecentFeed({fetchFeeds}) {
               </div>
             </div>
             <div className='flex-grow  md:w-1/2'>
-              <p className='text-white text-lg font-semibold '>
+              <p className='text-white text-lg font-semibold font-protest '>
                 {feed?.userDetails?.username}
               </p>
               <p className='font-mono text-white text-sm opacity-80 mb-2'>
   {(() => {
     const date = new Date(feed.createdAt);
     const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -134,9 +97,16 @@ function RecentFeed({fetchFeeds}) {
   })()}
 </p>
  
-              <p className='my-7 font-serif text-white md:w-auto'>
-                {feed.content}
-              </p>
+<p className='my-7 font-serif text-white md:w-auto'>
+        {isExpanded || feed.content.length <= maxLength
+          ? feed.content
+          : `${feed.content.substring(0, maxLength)}...`}
+      </p>
+      {feed.content.length > maxLength && (
+        <button onClick={handleToggle} className='text-blue-500'>
+          {isExpanded ? 'See less' : 'See more'}
+        </button>
+      )}
               <div  className='flex flex-wrap gap-4 max-w-prose md:max-w-screen-md'>
                 {feed.files.map((item, index) => (
                   <div key={index} className={`flex-grow ${mediaClass} rounded-lg cursor-pointer`} onClick={() => handleMediaClick(feedIndex, index)}>
@@ -144,8 +114,8 @@ function RecentFeed({fetchFeeds}) {
                       <img className='w-full h-full object-cover rounded-lg' src={item.url} alt={`Media ${index + 1}`} />
                     ) : (
                       <div className='relative w-full h-full'>
-                        <FaRegPlayCircle className='absolute inset-0 flex justify-center items-center text-4xl text-white transition-transform' />
-                        <video className='w-full h-full  rounded-lg'>
+  <FaRegPlayCircle className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center text-4xl text-white transition-transform' />
+  <video className='w-full h-full  rounded-lg'>
                           <source src={item.url} />
                           Your browser does not support the video tag.
                         </video>
@@ -157,11 +127,10 @@ function RecentFeed({fetchFeeds}) {
               <div className='flex justify-between mt-3 w-full md:w-1/2'>
                 <div className='flex items-center cursor-pointer text-white text-opacity-80'>
                   <AiFillLike className='mr-1' />
-                  {feed.likes}
                 </div>
                 <div className='flex items-center cursor-pointer text-white text-opacity-80'>
                   <FaComments className='mr-1' />
-                  {feed.comments}
+                  
                 </div>
               </div>
             </div>
@@ -172,7 +141,7 @@ function RecentFeed({fetchFeeds}) {
       {modalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80'>
           <div className='relative max-w-3xl p-4 bg-white rounded-lg'>
-            <button className='absolute top-2 right-2 text-black' onClick={closeModal}>
+            <button className='absolute top-0 right-2 text-black' onClick={closeModal}>
               Close
             </button>
             <div className='flex justify-between items-center mb-4'>
@@ -196,15 +165,13 @@ function RecentFeed({fetchFeeds}) {
             )}
             <div className='mt-4 text-black'>
               <h2>{feeds[selectedFeedIndex].username}</h2>
-              <p>{feeds[selectedFeedIndex].content}</p>
+              <p className="h-[20vh] overflow-y-scroll">{feeds[selectedFeedIndex].content}</p>
             </div>
           </div>
-          {/* <RecentFeed fetchFeeds={fetchFeeds}/> */}
 
         </div>
         
       )}
-      {/* <PostModal fetchFeeds={fetchFeeds}/> */}
 
     </div>
   );

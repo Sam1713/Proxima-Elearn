@@ -4,70 +4,108 @@ import Chat from "../../models/chatModel";
 import Student from "../../models/studentModel";
 import mongoose from "mongoose";
 
+// export const getTutorList = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+//     try {
+//         const tutors = await TutorModel.aggregate([
+//             {
+//                 $lookup: {
+//                     from: 'chats',  
+//                     let: { tutorId: '$_id' },  
+//                     pipeline: [
+//                         {
+//                             $match: {
+//                                 $expr: {
+//                                     $or: [
+//                                         { $eq: ['$receiver', '$$tutorId'] },  
+//                                         { $eq: ['$sender', '$$tutorId'] }  
+//                                     ]
+//                                 }
+//                             }
+//                         },
+//                         { $sort: { createdAt: -1 } },  // Sort by createdAt (most recent first)
+//                         { $limit: 1 }  // Get the latest message
+//                     ],
+//                     as: 'latestChat'  // Store the latest chat in this field
+//                 }
+//             },
+//             {
+//                 $unwind: { 
+//                     path: '$latestChat', 
+//                     preserveNullAndEmptyArrays: true  // Keep tutors without any chats
+//                 }
+//             },
+//             {
+//                 $addFields: {
+//                     latestCreatedAt: { $ifNull: ['$latestChat.createdAt', new Date(0)] } 
+//                 }
+//             },
+//             {
+//                 $sort: { latestCreatedAt: -1 }  
+//             },
+//             {
+//                 $project: {
+//                     _id: 1, 
+//                     tutorname: 1,  
+//                     latestMessage: { $ifNull: ['$latestChat.message', 'No messages yet'] },  
+//                     createdAt: {
+//                         $dateToString: {
+//                             format: "%Y-%m-%d %H:%M",  // Format date as YYYY-MM-DD HH:mm
+//                             date: { $ifNull: ['$latestChat.createdAt', new Date(0)] },  // Use a default date if none
+//                             timezone: "Asia/Kolkata"  // Adjust timezone as per your needs
+//                         }
+//                     }
+//                 }
+//             }
+//         ]);
+
+//         if (!tutors || tutors.length === 0) {
+//             return res.status(404).json({ message: 'Tutors not found' });
+//         }
+
+//         console.log('tutors', tutors);
+//         res.json(tutors);
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
 export const getTutorList = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
     try {
-        const tutors = await TutorModel.aggregate([
-            {
-                $lookup: {
-                    from: 'chats',  // Join with the chat collection
-                    let: { tutorId: '$_id' },  // Capture tutor's _id
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $or: [
-                                        { $eq: ['$receiver', '$$tutorId'] },  // Match if tutor is the receiver
-                                        { $eq: ['$sender', '$$tutorId'] }  // Match if tutor is the sender
-                                    ]
-                                }
-                            }
-                        },
-                        { $sort: { createdAt: -1 } },  // Sort by createdAt (most recent first)
-                        { $limit: 1 }  // Get the latest message
-                    ],
-                    as: 'latestChat'  // Store the latest chat in this field
-                }
-            },
-            {
-                $unwind: { 
-                    path: '$latestChat', 
-                    preserveNullAndEmptyArrays: true  // Keep tutors without any chats
-                }
-            },
-            {
-                $addFields: {
-                    latestCreatedAt: { $ifNull: ['$latestChat.createdAt', new Date(0)] }  // Default date for sorting
-                }
-            },
-            {
-                $sort: { latestCreatedAt: -1 }  // Sort tutors based on the latest message timestamp
-            },
-            {
-                $project: {
-                    _id: 1,  // Include the tutor's _id
-                    tutorname: 1,  // Show tutor's name
-                    latestMessage: { $ifNull: ['$latestChat.message', 'No messages yet'] },  // Get the latest message, or a default message if none
-                    createdAt: {
-                        $dateToString: {
-                            format: "%Y-%m-%d %H:%M",  // Format date as YYYY-MM-DD HH:mm
-                            date: { $ifNull: ['$latestChat.createdAt', new Date(0)] },  // Use a default date if none
-                            timezone: "Asia/Kolkata"  // Adjust timezone as per your needs
-                        }
-                    }
-                }
-            }
-        ]);
+        // Step 1: Fetch all tutors from the TutorModel
+        const tutors = await TutorModel.find({}, '_id tutorname'); // Only fetch _id and tutorname
 
         if (!tutors || tutors.length === 0) {
             return res.status(404).json({ message: 'Tutors not found' });
         }
 
-        console.log('tutors', tutors);
-        res.json(tutors);
+        const tutorList = await Promise.all(tutors.map(async (tutor) => {
+            const latestChat = await Chat.findOne({
+                $or: [
+                    { receiver: tutor._id }, 
+                    { sender: tutor._id }    
+                ]
+            })
+            .sort({ createdAt: -1 }) 
+            .limit(1); 
+
+            return {
+                _id: tutor._id,
+                tutorname: tutor.tutorname,
+                latestMessage: latestChat ? latestChat.message : 'No messages yet', // Check if there's a message
+                createdAt: latestChat ? latestChat.createdAt : new Date(0) // Return the date or a default old date
+            };
+        }));
+
+       
+tutorList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+        res.json(tutorList);
     } catch (error) {
         next(error);
     }
 };
+
+
 
 
 
@@ -91,32 +129,121 @@ export const postStudentMessage = async (req: Request, res: Response, next: Next
   };
 
   
-  export const getStudentDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      try {
-        console.log('fsdsfsdfsd')
-          const page = parseInt(req.query.page as string) || 1; // Default to page 1 if not provided
-          const limit = parseInt(req.query.limit as string) || 6; // Default to 6 students per page
-          const skip = (page - 1) * limit; // Calculate how many records to skip
+//   export const getStudentDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//       try {
+//         console.log('fsdsfsdfsd')
+//           const page = parseInt(req.query.page as string) || 1; // Default to page 1 if not provided
+//           const limit = parseInt(req.query.limit as string) || 6; // Default to 6 students per page
+//           const skip = (page - 1) * limit; // Calculate how many records to skip
   
-          // Fetch students with pagination
-          const students = await Student.find().select("_id username")
-              .skip(skip) // Skip records
-              .limit(limit) // Limit the number of results
-              .exec(); // Execute the query
+//           // Fetch students with pagination
+//           const students = await Student.find().select("_id username")
+//               .skip(skip) // Skip records
+//               .limit(limit) // Limit the number of results
+//               .exec(); // Execute the query
   
-          // Fetch total number of students for additional pagination info (optional)
-          const totalStudents = await Student.countDocuments();
-           console.log('st',students)
-          res.status(200).json({
-              students, // List of students for the current page
-              currentPage: page,
-              totalPages: Math.ceil(totalStudents / limit), // Total pages based on limit
-              hasMore: page * limit < totalStudents // Boolean to indicate if more students are available
-          });
-      } catch (error) {
-          next(error); // Pass error to error handler middleware
-      }
-  };
+//           // Fetch total number of students for additional pagination info (optional)
+//           const totalStudents = await Student.countDocuments();
+//            console.log('st',students)
+//           res.status(200).json({
+//               students, // List of students for the current page
+//               currentPage: page,
+//               totalPages: Math.ceil(totalStudents / limit), // Total pages based on limit
+//               hasMore: page * limit < totalStudents // Boolean to indicate if more students are available
+//           });
+//       } catch (error) {
+//           next(error); // Pass error to error handler middleware
+//       }
+//   };
+
+export const getStudentDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const tutorId = new mongoose.Types.ObjectId(req.userId);
+        console.log('Fetching student details...');
+        
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 6;
+        const skip = (page - 1) * limit;
+
+        // Aggregation to fetch students sorted by their latest chat message
+        const studentsWithChats = await Student.aggregate([
+            {
+                $lookup: {
+                    from: 'chats',
+                    let: { studentId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        { 
+                                            $and: [
+                                                { $eq: ['$receiver', '$$studentId'] },
+                                                { $eq: ['$sender', tutorId] }
+                                            ] 
+                                        },
+                                        { 
+                                            $and: [
+                                                { $eq: ['$sender', '$$studentId'] },
+                                                { $eq: ['$receiver', tutorId] }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        { $sort: { createdAt: -1 } }, // Sort by most recent message
+                        { $limit: 1 } // Only take the latest message
+                    ],
+                    as: 'latestChat'
+                }
+            },
+            {
+                $unwind: { 
+                    path: '$latestChat', 
+                    preserveNullAndEmptyArrays: true // Keep students even if no chat
+                }
+            },
+            {
+                $addFields: {
+                    latestMessage: {
+                        $cond: {
+                            if: { $gt: ['$latestChat', null] },
+                            then: '$latestChat.message',
+                            else: 'No messages yet'
+                        }
+                    },
+                    createdAt: {
+                        $cond: {
+                            if: { $gt: ['$latestChat', null] },
+                            then: '$latestChat.createdAt', 
+                            else: new Date(0)
+                        }
+                    }
+                }
+            },
+            { $sort: { createdAt: -1 } }, // Sort by latest message date
+            { $skip: skip }, // Pagination
+            { $limit: limit }, // Limit results
+            { $project: { _id: 1, username: 1, latestMessage: 1, createdAt: 1 } } // Select relevant fields
+        ]);
+
+        // Fetch total number of students for pagination
+        const totalStudents = await Student.countDocuments();
+
+        // Respond with formatted student details
+        res.status(200).json({
+            students: studentsWithChats,
+            currentPage: page,
+            totalPages: Math.ceil(totalStudents / limit),
+            hasMore: page * limit < totalStudents 
+        });
+    } catch (error) {
+        next(error); // Pass the error to error-handling middleware
+    }
+};
+
+
   
   export const getStudentChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

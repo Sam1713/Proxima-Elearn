@@ -12,8 +12,8 @@ function Room() {
 
   return (
     <ContextProvider>
-      <div className='pt-20'>
-        <Typography>Video Chat</Typography>
+      <div className='pt-20'> 
+        <Typography  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Video Chat</Typography>
         <VideoPlayer />
         <Options tutorId={id}>
           <Notification />

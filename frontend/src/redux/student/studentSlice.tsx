@@ -12,13 +12,16 @@ export interface StudentState {
     bookingId:getBookingId|null;
     quizResult:QuizResultType|null;
     categories:Category[]
-    resultQuiz:ResultTypes|null
+    resultQuiz:ResultTypes|null;
+    messageCount:number|null;
+    unreadMessages: UnreadMessagesState; // Map of unread message statuses
+    receiverId:String|null;
     loading: boolean;
     error: string | null;
 }
 
 export interface Student {
-    id: string;
+    _id: string;
     username: string;
     email:string;
     profilePic?:string
@@ -105,6 +108,11 @@ interface Stud {
   interface ResultTypes{
     result:number,totalMarks:number
   }
+  interface UnreadMessagesState {
+    [tutorId: string]: boolean; // true if there are unread messages from the tutor, false otherwise
+  }
+  
+  
 const initialState: StudentState = {
     currentStudent: null,
     loading: false,
@@ -114,9 +122,13 @@ const initialState: StudentState = {
     fullCourses:[],
     StudentQuizDetails:null,
     categories:[],
+    unreadMessages:{},
+    receiverId:null,
     quizResult:null,
     resultQuiz:null,
+    messageCount:null,
     Notifications:[],
+    // messageNotification:0,
     error: null,
 };
 
@@ -132,9 +144,8 @@ const studentSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
-        signInFailure: (state, action: PayloadAction<string>) => {
+        signInFailure: (state) => {
             state.loading = false;
-            state.error = action.payload;
         },
         signout:(state)=>{
             state.currentStudent=null;
@@ -192,12 +203,37 @@ const studentSlice = createSlice({
           },
           setResult:(state,action:PayloadAction<ResultTypes>)=>{
             state.resultQuiz=action.payload
+          },
+          setMessageNotification(state, action: PayloadAction<number>) {
+            // Increment the message count by the payload
+            console.log('sadas',state.messageCount)
+            state.messageCount = action.payload; 
+            console.log('After removal:', state.messageCount);
+
+          },
+          resetMessageNotification(state) {
+            state.messageCount = 0; // Reset to zero
+          },
+          setUnreadMessagesRedux: (state, action: PayloadAction<{ tutorId: string; isUnread: boolean }>) => {
+            const { tutorId, isUnread } = action.payload;
+            console.log('Setting unread status:', { tutorId, isUnread });
+          
+            // Ensure the unreadMessages object exists
+            if (!state.unreadMessages) {
+              state.unreadMessages = {}; // Initialize if it's undefined
+            }
+          
+            // Set the unread status for the tutor
+            state.unreadMessages[tutorId] = isUnread;
+          },
+          setRecieverIds:(state,action:PayloadAction<string>)=>{
+            state.receiverId=action.payload
           }
           
         
     },
 });
 
-export const { signInStart, signInSuccess, signInFailure,signout,setLoading,setLoadingClose,updateStart,updateSuccess,setStudentCourses,setFullCourses,setCallDetails,setCategories,setStudentNotifications,setRemoveNotification,setBookingId,setStudentQuizDetails,setQuizResult,setRemoveQuiz,setResult } = studentSlice.actions;
+export const { signInStart, signInSuccess, signInFailure,signout,setLoading,setLoadingClose,updateStart,updateSuccess,setStudentCourses,setFullCourses,setCallDetails,setCategories,setStudentNotifications,setRemoveNotification,setBookingId,setStudentQuizDetails,setQuizResult,setRemoveQuiz,setResult,setMessageNotification,setUnreadMessagesRedux,setRecieverIds,resetMessageNotification } = studentSlice.actions;
 
 export default studentSlice.reducer;

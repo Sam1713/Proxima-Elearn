@@ -12,7 +12,7 @@ const TutorLayout: React.FC = () => {
   const showSidebar = sidebarPaths.includes(location.pathname);
 
   return (
-    <div className='bg-custom-gradient '>
+    <div className='bg-custom-gradient min-h-screen '>
       <TutorHeader />
       <div className='md:flex'>
         {showSidebar && <TutorSidebar />} {/* Conditionally render the sidebar */}

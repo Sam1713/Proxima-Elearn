@@ -30,7 +30,7 @@ function OrdersList() {
   const [page,setPage]=useState<number>(1)
   const [totalPages,setTotalPages]=useState<number>(1)
   const limit:number=3
-
+  const [searchVal,setSearchVal]=useState<string>('')
 
   useEffect(() => {
     fetchOrdersList(page, limit);
@@ -59,20 +59,50 @@ function OrdersList() {
   const handleDecPage = () => {
     setPage(prevPage => Math.max(prevPage - 1, 1)); // Ensure page doesn't go below 1
   };
+
+  const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    console.log('ta',e.target.value)
+    if(e.target.value==''){
+      fetchOrdersList(1,limit)
+    }
+     setSearchVal(e.target.value)
+  }
+
+  const handleSearch=async()=>{
+    try{
+      console.log('sa',searchVal);
+      
+      const response=await api.get('/backend/admin/getOrderSearchVal',{
+        headers:{
+          'X-Token-Type':'admin'
+        },
+        params:{
+          searchVal:searchVal
+        }
+      })
+      console.log('sea',searchVal)
+      dispatch(setOrdersList(response.data.ordersList));
+      // setTotalPages(response.data.totalPages)
+    }catch(error){
+      console.log(error);
+      
+    }
+  }
   return (
-    <div className="mt-5 mx-10 w-full md:w-[120%]">
-      <Card className="bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+    <div className="mt-5 md:mx-10 w-[90%] mx-auto md:mx-0 rounded-xl bg-black md:w-auto">
+      <Card className="bg-black shadow-lg rounded-lg overflow-hidden">
         <h1 className="text-2xl pt-4 mx-5 text-gray-100 font-extrabold underline">Orders List</h1>
         <CardHeader
           floated={false}
           shadow={false}
-          className="mb-4 rounded-none p-2 bg-gray-700"
+          className="mb-4 rounded-none p-2 bg-gray-70"
         >
           <div className="w-full md:w-96 text-white">
   <div className="relative">
     <Input
+    onChange={(e)=>handleChange(e)}
       label={<span className="text-white">Search</span>} // Apply custom class here
-      icon={<MagnifyingGlassIcon className="h-5 w-5 text-gray-100" />}
+      icon={<MagnifyingGlassIcon onClick={handleSearch} className="h-5 w-5 cursor-pointer text-gray-100" />}
       className="bg-gray-900 text-gray-100 placeholder-white"
     />
   </div>
@@ -83,9 +113,9 @@ function OrdersList() {
         <div className="overflow-x-auto w-full ">
           <table className=" table-auto min-w-full text-left w-full">
             <thead>
-              <tr className="bg-gray-700 text-gray-100">
+              <tr className="bg-gray-900 text-gray-100">
                 {TABLE_HEAD.map(({ head }, index) => (
-                  <th key={index} className="border-b border-gray-600 p-4">
+                  <th key={index} className="border-b border-gray-100 p-4">
                     <Typography variant="small" className="font-bold">
                       {head}
                     </Typography>
@@ -99,7 +129,7 @@ function OrdersList() {
                   const { number, username, email, title, price, createdAt } = order;
                   const isLast = index === OrdersList.length - 1;
                   const classes = `p-4 w-[17%]  ${isLast ? '' : 'border-b border-gray-600'}`;
-                  const pageIndex = (page - 1) * limit + index + 1;
+                  const pageIndex =index+1;
 
                   return (
                     <tr key={number} className="hover:bg-gray-700">
@@ -151,7 +181,8 @@ function OrdersList() {
           </table>
         </div>
         {/* Pagination Controls */}
-        <div className="flex flex-col items-center p-4 bg-gray-700 mt-4 rounded-lg shadow-md">
+        {OrdersList.length>=0 &&
+        <div className="flex flex-col items-center p-4 bg-gray-900 mt-4 rounded-lg shadow-md">
   <div className="flex items-center gap-4 mb-2">
     <button
       onClick={handleDecPage}
@@ -176,7 +207,7 @@ function OrdersList() {
     <span className="text-gray-400 text-sm">Use the buttons to navigate through pages.</span>
   </div>
 </div>
-
+}
       </Card>
     </div>
   );

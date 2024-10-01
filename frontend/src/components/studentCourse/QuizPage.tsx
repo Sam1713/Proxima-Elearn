@@ -4,40 +4,37 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import QuizOpenModal from '../../modals/quizModal/QuizOpenModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import generateCertificate from './Certificate'; // Import the function correctly
-import { setRemoveQuiz, setResult } from '../../redux/student/studentSlice';
+import generateCertificate from './Certificate'; 
 import api from '../../components/API/Api'
 const QuizPage = () => {
   const getResult = useSelector((state: RootState) => state.student.quizResult);
   const dispatch=useDispatch()
 
-  // useEffect(()=>{
-  //   fetchQuizResult()
-  // },[dispatch])
+  useEffect(()=>{
+    fetchQuizResult()
+  },[dispatch])
 
-  // const fetchQuizResult=async()=>{
-  //   try{
-  //      const response=await api.get('/backend/quiz/getQuizResult',{
-  //       headers:{
-  //         'X-Token-Type':'student'
-  //       },
-  //          params:{
-  //           courseId:id
-  //          }
-  //      })
-  //      console.log('res',response)
-  //      if (!response.data) {
-  //       console.warn('No result or data found for this quiz.');
-  //       dispatch(setResult({ result: null, totalMarks: 0 }));  // Set default values if result is null
-  //       return;
-  //   }
-  //      const result=response.data.result
-  //      const totalMarks=response.data.totalMarks
-  //      dispatch(setResult({result,totalMarks}))
-  //   }catch(error){
-  //     console.log('err',error)
-  //   }
-  // }
+  const fetchQuizResult=async()=>{
+    try{
+       const response=await api.get('/backend/quiz/getQuizResult',{
+        headers:{
+          'X-Token-Type':'student'
+        },
+           params:{
+            courseId:id
+           }
+       })
+       console.log('res',response)
+       if (!response.data) {
+        console.warn('No result or data found for this quiz.');
+        return;
+    }
+       const result=response.data.result
+       const totalMarks=response.data.totalMarks
+    }catch(error){
+      console.log('err',error)
+    }
+  }
   const [quizOpen, setQuizOpen] = useState<boolean>(false);
   const { id } = useParams();
   const location = useLocation();
@@ -58,24 +55,7 @@ const QuizPage = () => {
 
   
   console.log('resVal',resultVal?.result)
-  // const percentage: number = parseFloat(((resultVal?.result / resultVal?.totalMarks) * 100).toFixed(2));
-  // console.log('p',percentage)
-  // console.log('resultValTot',resultVal?.totalMarks)
 
- 
-
-  // useEffect(()=>{
-  // fetchQuiz()
-  // },[])
-
-  // const fetchQuiz=async()=>{
-  //   const response=await api.get('/backend/quiz/getQuiz',{
-  //     headers:{
-  //       'X-Token-Type':'student'
-  //     }
-  //   })
-  //   console.log('res',response)
-  // }
   console.log('resu',resultVal)
   return (
     <div className="bg-custom-gradient min-h-screen flex items-center justify-center">
@@ -84,10 +64,10 @@ const QuizPage = () => {
             Do you wanna start the Quiz?
           </h1>
           <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate(`/courseDetail/${id}`)} className="bg-custom-gradient">
+            <Button onClick={() => navigate(`/courseDetail/${id}`)} className="bg-custom-gradient"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               No
             </Button>
-            <Button onClick={handleModal} className="bg-custom-gradient">
+            <Button onClick={handleModal} className="bg-custom-gradient"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               YES
             </Button>
           </div>

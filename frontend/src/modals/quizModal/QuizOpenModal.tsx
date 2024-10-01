@@ -9,8 +9,7 @@ import {
 } from "@material-tailwind/react";
 
 import { FaTrophy, FaFrown } from 'react-icons/fa'; // Import win/lose icons
-import { useDispatch, useSelector } from "react-redux";
-import { setQuizResult } from "../../redux/student/studentSlice";
+import { useSelector } from "react-redux";
 import generateCertificate from '../../components/studentCourse/Certificate'; // Import the function correctly
 
 import Swal from "sweetalert2";
@@ -44,13 +43,13 @@ interface OptionState {
 }
 
 const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fetchQuizResult }) => {
-  const [isSecondModalOpen, setIsSecondModalOpen] = useState(false); // Control for the second modal
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Index for current question
-  const [selectedOptions, setSelectedOptions] = useState<OptionState[]>([]); // Store selected options
-  const [score, setScore] = useState<number | null>(null); // To store the calculated score
+  const [isSecondModalOpen, setIsSecondModalOpen] = useState<boolean>(false); 
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); 
+  const [selectedOptions, setSelectedOptions] = useState<OptionState[]>([]); 
+  const [score, setScore] = useState<number | null>(null); 
   const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [percentage, setPercentage] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  const [showResult, setShowResult] = useState<boolean>(false);
   const currentUser=useSelector((state:RootState)=>state.student.currentStudent)
 
   const location = useLocation();
@@ -60,44 +59,39 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
 
   const tutorName = orderedCourseDetail?.courseDetail?.tutorDetails?.tutorname;
   const courseName = orderedCourseDetail?.courseDetail?.title;
-  const dispatch=useDispatch()
   useEffect(() => {
     const selectedForCurrentQuestion = selectedOptions.find(
       (opt) => opt.index === currentQuestionIndex
     );
-    setIsOptionSelected(!!selectedForCurrentQuestion); // Check if an option is already selected
+    setIsOptionSelected(!!selectedForCurrentQuestion); 
   }, [currentQuestionIndex, selectedOptions]);
-  // Handle opening of the second modal
   const handleQuizAccept = () => {
     onClose();
-    setIsSecondModalOpen(true); // Open the second modal
-    setCurrentQuestionIndex(0); // Reset to the first question
-    setSelectedOptions([]); // Clear previous selections
-    setScore(null); // Clear previous score
+    setIsSecondModalOpen(true);
+    setCurrentQuestionIndex(0); 
+    setSelectedOptions([]); 
+    setScore(null); 
     setIsOptionSelected(false); 
   };
 
-  // Handle closing both modals
+
   const handleQuizClose = () => {
-    setIsSecondModalOpen(false); // Close the second modal
-    setCurrentQuestionIndex(0); // Reset question index
+    setIsSecondModalOpen(false); 
+    setCurrentQuestionIndex(0); 
   };
 
-  // Handle going to the next question
   const handleNext = () => {
     if (currentQuestionIndex < quizDetails.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  // Handle going to the previous question
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
-  // Handle option selection
   const handleOptions = (e: React.ChangeEvent<HTMLInputElement>, optionIndex: number) => {
     console.log('io',e.target.value)
     const selectedOption = optionIndex;
@@ -111,31 +105,11 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
 
   const handleSubmit = async() => {
 
-  //   let correctCount = 0;
-  //   // let percentage=0
-  //   quizDetails.questions.forEach((question, index) => {
-  //     if (selectedOptions[index]?.option === question.correctAnswer.toString()) {
-  //       correctCount += question.totalMarks;
-  //     }
-  //   });
-  //   const totalMarks = quizDetails.questions.reduce((acc, q) => acc + q.totalMarks, 0);
-  //   console.log('tot',totalMarks)
-  //   const percentage = (correctCount / totalMarks) * 100
-  //   console.log('per',percentage)
-  // //  percentage=(totalMarks/correctCount)*100
-  // setPercentage(percentage)
-  // setShowResult(true); // Show result dialog
-
-
-    // setScore(correctCount); // Store the score after validation
-    // dispatch(setQuizResult({ correctCount:correctCount, percentage: percentage }));
-
-    // setIsSecondModalOpen(false); // Close the quiz modal
-    // alert(`Quiz submitted! Your score: ${correctCount}`);
+ 
    
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to accept the license agreement?",
+      text: "Do you want to Submit the Quiz?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -157,13 +131,11 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
      const totalMarks=response.data.totalMarks
      const percentage=(correctCount/totalMarks)*100
      const courseId=response.data.courseId
-      setScore(correctCount); // Store the score after validation
-    // dispatch(setQuizResult({ correctCount:correctCount, percentage: percentage,courseId }));
+      setScore(correctCount); 
       setPercentage(percentage)
-  setShowResult(true); // Show result dialog
-    // fetchQuizResult()
+  setShowResult(true);
 
-    setIsSecondModalOpen(false); // Close the quiz modal
+    setIsSecondModalOpen(false);
     }catch(error){
       console.log('err',error)
     }
@@ -177,21 +149,23 @@ const username=currentUser?.username||'user'
     }
   };
 
-  // Get the current question
   const currentQuestion = quizDetails?.questions[currentQuestionIndex];
 
   return (
     <>
-      {/* First Modal (Quiz Instructions Modal) */}
       <Dialog
         open={isOpen}
         handler={onClose}
-        className="w-[800px] h-auto bg-custom-gradient shadow-lg rounded-lg border-t-4 border-green-400"
-      >
-        <DialogHeader className="text-3xl underline font-protest text-center text-green-500">
+        className="w-[800px] h-auto bg-custom-gradient shadow-lg rounded-lg border-t-4 border-green-400" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
+        <DialogHeader className="text-3xl underline font-protest text-center text-green-500"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           Quiz Instructions
         </DialogHeader>
-        <DialogBody className="text-white px-8 py-6">
+
+        <DialogBody className="text-white px-8 py-6"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+        <p className="font-poppins text-sm  mb-6 text-black bg-yellow-100 border-l-4 border-yellow-500 p-3 rounded-lg shadow-md">
+  <span className="font-bold">Note: </span>If you successfully completed the quiz once, then no need to attend again.
+</p>
+
           <p className="text-xl font-poppins font-semibold mb-4 text-gray-100">
             Welcome to the quiz! Here are the instructions:
           </p>
@@ -211,37 +185,33 @@ const username=currentUser?.username||'user'
             Are you ready to begin the quiz?
           </p>
         </DialogBody>
-        <DialogFooter className="justify-center">
+        <DialogFooter className="justify-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <Button
             variant="outlined"
             color="red"
             onClick={onClose}
-            className="mr-2 px-6 py-2 text-sm font-bold border-2 border-red-500 hover:bg-red-500 hover:text-white transition duration-300"
-          >
+            className="mr-2 px-6 py-2 text-sm font-bold border-2 border-red-500 hover:bg-red-500 hover:text-white transition duration-300" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Cancel
           </Button>
           <Button
             variant="gradient"
             color="green"
             onClick={handleQuizAccept}
-            className="px-6 py-2 text-sm font-bold bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 transition duration-300"
-          >
+            className="px-6 py-2 text-sm font-bold bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 transition duration-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Accept
           </Button>
         </DialogFooter>
       </Dialog>
 
-      {/* Second Modal (Quiz Questions Modal) */}
       <Dialog
         open={isSecondModalOpen}
         handler={handleQuizClose}
         size="xxl"
-        className="bg-custom-gradient flex flex-col justify-center items-center w-[900px] h-[600px] p-8"
-      >
-        <DialogHeader className="text-3xl py-10 font-bold text-center mb-4">
+        className="bg-custom-gradient flex flex-col justify-center items-center w-[900px] h-[600px] p-8"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
+        <DialogHeader className="text-3xl py-10 font-bold text-center mb-4"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           Quiz Question {currentQuestionIndex + 1}
         </DialogHeader>
-        <DialogBody className="w-[60%] flex flex-col justify-between flex-grow p-8 bg-gray-800 rounded-lg">
+        <DialogBody className="w-[60%] flex flex-col justify-between flex-grow p-8 bg-gray-800 rounded-lg"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           {currentQuestion && (
             <div className="flex flex-col gap-6">
               <p className="text-2xl text-center font-poppins font-semibold mb-6 text-white">
@@ -256,11 +226,11 @@ const username=currentUser?.username||'user'
                     <Radio
                       id={`q${currentQuestionIndex}a${index}`}
                       name={`q${currentQuestionIndex}`}
-                      value={(index + 1).toString()}                   
-                         onChange={(e) => handleOptions(e, index+1)}
+                      value={(index + 1).toString()}
+                      onChange={(e) => handleOptions(e, index + 1)}
                       className="text-lg font-poppins text-red-500"
-                      checked={selectedOptions[currentQuestionIndex]?.option === (index + 1).toString()} // Adjust checked condition
-
+                      checked={selectedOptions[currentQuestionIndex]?.option === (index + 1).toString()} 
+                      onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}
                     />
                     <span className="ml-2 text-white font-poppins">
                       Option {String.fromCharCode(65 + index)}: {option}
@@ -273,13 +243,12 @@ const username=currentUser?.username||'user'
           )}
         </DialogBody>
 
-        <DialogFooter className="flex justify-between mt-6">
+        <DialogFooter className="flex justify-between mt-6" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <Button
             variant="outlined"
             color="red"
             onClick={handleQuizClose}
-            className="mr-2 px-6 py-2"
-          >
+            className="mr-2 px-6 py-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Cancel
           </Button>
           <Button
@@ -287,28 +256,25 @@ const username=currentUser?.username||'user'
             color="green"
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
-            className="mr-2 px-6 py-2"
-          >
+            className="mr-2 px-6 py-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Previous
           </Button>
         
           {currentQuestionIndex === quizDetails.questions.length - 1 ?(
           <Button
-            variant="gradient"
-            color="green"
-            onClick={handleSubmit} // Submit and validate answers
-            className="px-6 py-2"
-          >
+              variant="gradient"
+              color="green"
+              onClick={handleSubmit} 
+              className="px-6 py-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Submit
           </Button>
           ):(
             <Button
-            variant="gradient"
-            color="green"
-            onClick={handleNext}
-            disabled={!isOptionSelected}
-            className="mr-2 px-6 py-2"
-          >
+                variant="gradient"
+                color="green"
+                onClick={handleNext}
+                disabled={!isOptionSelected}
+                className="mr-2 px-6 py-2" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Next
           </Button>
           )}
@@ -316,16 +282,16 @@ const username=currentUser?.username||'user'
       </Dialog>
 
       {showResult && (
-        <Dialog open={true} handler={() => setShowResult(false)}>
-          <DialogHeader className="text-2xl font-bold text-center">
+        <Dialog open={true} handler={() => setShowResult(false)} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+          <DialogHeader className="text-2xl font-bold text-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
   {percentage && percentage >= 70 ? (
     <div className="flex items-center justify-center text-green-500">
       <FaTrophy className="text-4xl mr-2" />
       <span>Congratulations! You have passed</span>
       <Button
-        onClick={handleDownloadCertificate}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ml-4" // Added margin-left for spacing
-      >
+                  onClick={handleDownloadCertificate}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ml-4" // Added margin-left for spacing
+                 placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
         Download Certificate
       </Button>
     </div>
@@ -336,7 +302,7 @@ const username=currentUser?.username||'user'
     </div>
   )}
 </DialogHeader>
-<DialogBody className="text-center">
+<DialogBody className="text-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
   <p className="text-xl mb-2">
     Your score is <strong>{score}</strong> out of <strong>{quizDetails.questions.reduce((acc, q) => acc + q.totalMarks, 0)}</strong>.
   </p>
@@ -344,13 +310,12 @@ const username=currentUser?.username||'user'
     Your percentage is <strong>{percentage?.toFixed(2)}%</strong>.
   </p>
 </DialogBody>
-<DialogFooter className="flex justify-center mt-4">
+<DialogFooter className="flex justify-center mt-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
   <Button
-    variant="gradient"
-    color={percentage && percentage >= 70 ? "green" : "red"}
-    onClick={() => setShowResult(false)}
-    className="px-6 py-2"
-  >
+              variant="gradient"
+              color={percentage && percentage >= 70 ? "green" : "red"}
+              onClick={() => setShowResult(false)}
+              className="px-6 py-2" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}  >
     Close
   </Button>
 </DialogFooter>

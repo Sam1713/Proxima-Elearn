@@ -3,19 +3,17 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaRupeeSign } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-
+import api from '../API/Api'
 const Checkout: React.FC = () => {
   const location = useLocation();
   const navigate=useNavigate()
-  const { order, student, courseTitle, amount } = location.state as any;
+  const { order, student, title, amount } = location.state as any;
+  console.log('stude',student);
+  console.log('fsdf',amount);
+  
+  
+console.log('cor',title);
 
-//   useEffect(() => {
-//     if (!order || !student || !courseTitle || !amount) {
-    
-//         navigate('/courses'); // Redirect to the courses page or another appropriate page
-    
-//     }
-//   }, [order, student, courseTitle, amount, navigate]);
   const handlePayment = () => {
     Swal.fire({
       title: 'Confirm Payment',
@@ -29,17 +27,16 @@ const Checkout: React.FC = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         const options = {
-          key: import.meta.env.VITE_RAZORPAY_API_KEY, // Access environment variable
-          amount: amount * 100, // Amount is in currency subunits. Default currency is INR.
+          key: import.meta.env.VITE_RAZORPAY_API_KEY, 
+          amount: amount * 100, 
           currency: 'INR',
-          name: courseTitle,
+          name: title,
           description: 'Course Enrollment',
-          image: 'YOUR_LOGO_URL', // Replace with your logo URL
-          order_id: order.id, // Order ID created from Razorpay
+          image: 'YOUR_LOGO_URL', 
+          order_id: order.id, 
           handler: async function (response: any) {
-            // Verify payment 
             try {
-              await axios.post('/backend/enroll/verifyPayment', {
+              await api.post('/backend/enroll/verifyPayment', {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
@@ -83,7 +80,6 @@ const Checkout: React.FC = () => {
       <div className="w-full max-w-4xl p-8 bg-black bg-opacity-30 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-white mb-8 text-center">Checkout</h1>
 
-        {/* User Information Card */}
         <div className="mb-8 bg-custom-gradient bg-opacity-80 p-6 text-white rounded-lg shadow-md animate-pulse" style={{ boxShadow: '0 4px 15px rgba(255, 0, 0, 10)' }}>
           <h2 className="text-3xl mb-4 text-white font-extralight">Customer Information</h2>
           <div className="mb-4">
@@ -93,7 +89,7 @@ const Checkout: React.FC = () => {
             <p className="text-lg"><strong>Email:</strong> {student.email}</p>
           </div>
           <div className="mb-4">
-            <p className="text-lg"><strong>Course Title:</strong> {courseTitle}</p>
+            <p className="text-lg"><strong>Course Title:</strong> {title}</p>
           </div>
         </div>
 

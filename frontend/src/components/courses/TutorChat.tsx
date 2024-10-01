@@ -26,6 +26,12 @@ const TutorChat = () => {
     const sort=useSelector((state:RootState)=>state.tutor.studentChat)
     const currentTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
     const {id}=useParams()
+    const myTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
+    const myTutorId=myTutor._id
+    const [tempChat,setTempChat]=useState<string>('')
+    const [unreadMessages, setUnreadMessages] = useState<{ [tutorId: string]: boolean }>({});
+    const [show,setShow]=useState<boolean>(false)
+   const [recId,setRecId]=useState<string>('')
     // Function to fetch chat messages for the selected student
     const fetchChatMessages = async (studentId: string) => {
       console.log('st',studentId)
@@ -64,52 +70,104 @@ console.log('tut',id)
         scrollToBottom();
     }, [chat]);
     useEffect(() => {
-      console.log('started')
-      socket.on('connect', () => {
-          console.log('Connected to socket server');
-      });
-  
-      socket.on('receiveMessage', (message) => {
-        console.log('ms',selectedStudentId)
-          console.log('Received message:', message); // Add this to see incoming messages
-          if (message.recieverId === selectedStudentId) {
-            console.log('msgid',message.studetId)
-              setChat((prevChat) => [...prevChat, message]);
+        console.log('started');
+      
+        const handleReceiveMessage = (newMessage) => {
+          console.log('Received message:', newMessage);
+      
+          // Check if the message is from the selected tutor
+            
+      if (newMessage.receiverId === myTutorId) {
+        if (newMessage.senderId === selectedStudentId) {
+
+            console.log('Message from tutor:', newMessage);
+            setChat((prevMessages) => [...prevMessages, newMessage]);
+            setUnreadMessages((prev) => ({
+                ...prev,
+                [newMessage.senderId]: false, 
+            }));
+        }else{
+            setRecId(newMessage.receiverId)
+        setUnreadMessages((prev) => ({
+            ...prev,
+            [newMessage.senderId]: true, 
+            
+        }));
+    }
           }
-      });
-  
-      return () => {
-          socket.off('receiveMessage');
-      };
-  }, [socket, selectedStudentId]);
+        };
+
+      
+        socket.on('connect', () => {
+          console.log('Connected to socket server');
+        });
+      
+        socket.on('receiveMessage', handleReceiveMessage);
+      
+        // Cleanup function to remove event listeners
+        return () => {
+          socket.off('receiveMessage', handleReceiveMessage);
+        };
+      }, [socket, selectedStudentId]);
+      
     // Sending a new message (from tutor)
-    const sendMessage = (selectedStudentId:string) => {
+    const sendMessage = async (selectedStudentId: string) => {
         if (!selectedStudentId) {
             alert('Please select a student to chat with.');
             return;
         }
-        console.log('seke',selectedStudentId)
-
-        const newMessage = { senderId: currentTutor?._id,
+        
+        const newMessage = { 
+            senderId: currentTutor?._id,
             receiverId: selectedStudentId,
             message,
             createdAt: new Date().toISOString(),
-            senderType: 'tutor'};
+            senderType: 'tutor'
+        };
+    
         socket.emit('sendMessage', newMessage); // Emit message to WebSocket
-        api.post('/backend/chat/sendMessageToStudent', newMessage, {
-            headers: {
-              'X-Token-Type': 'tutor',
-            },
-            params: { studentId: selectedStudentId },
-          })
-            .then(() => { 
-              setChat((prevMessages) => [...prevMessages, newMessage]);
-              setMessage('');
-             
-    });
+    
+        try {
+            await api.post('/backend/chat/sendMessageToStudent', newMessage, {
+                headers: {
+                    'X-Token-Type': 'tutor',
+                },
+                params: { studentId: selectedStudentId },
+            });
+    
+            // Update the chat
+            setChat((prevMessages) => [...prevMessages, newMessage]);
+    
+            // Update students list
+            setStudents((prevStudents) => {
+                // Find the index of the student who received the message
+                const studentIndex = prevStudents.findIndex(student => student._id === selectedStudentId);
+                if (studentIndex !== -1) {
+                    const updatedStudent = {
+                        ...prevStudents[studentIndex],
+                        latestMessage: newMessage.message,
+                        createdAt: new Date(newMessage.createdAt) // Ensure this is a Date object
+                    };
+            
+                    // Remove the student from their current position and move to the top
+                    const updatedStudents = [
+                        updatedStudent,
+                        ...prevStudents.filter((_, index) => index !== studentIndex)
+                    ];
+            
+                    // Sort the updated student list by latest message date
+                    return updatedStudents.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                }
+                return prevStudents; // If not found, return unchanged list
+            });
+            
+    
+            setMessage('');
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
     };
-   
- 
+     
 console.log('cha',chat)
     // Fetch students using pagination
     const fetchStudentDetails = async (page: number) => {
@@ -122,7 +180,7 @@ console.log('cha',chat)
                 console.log('re',response.data)
 
                 setStudents((prevStudents) => [...prevStudents, ...response.data.students]);
-                setHasMore(response.data.students.length > 0); // If no more students, stop fetching
+                setHasMore(response.data.students.length > 0); 
             }
         } catch (error) {
             console.error('Error fetching student details:', error);
@@ -171,41 +229,66 @@ console.log('cha',chat)
     const handleGetChats = (studentId: string) => {
         setSelectedStudentId(studentId);
         fetchChatMessages(studentId);
+        setUnreadMessages((prev) => ({
+            ...prev,
+            [studentId]: false, 
+        }));
+        setShow(true)
     };
 
     return (
         <div className="bg-gray-100 pt-20 w-full flex">
             {/* Sidebar for chat participants */}
             <div
-                className="w-[25%] bg-white shadow-lg p-4 rounded-lg h-[600px] overflow-y-auto" // Ensure container has defined height and allows scrolling
+                className={`md:w-[25%] ${show?'hidden':'block'} md:block hidde w-full bg-white shadow-lg p-4 rounded-lg h-[600px] overflow-y-auto`} // Ensure container has defined height and allows scrolling
                 ref={studentListRef} // Reference for the scrollable div
             >
                 <h1 className="text-gray-900 text-lg font-semibold mb-4">Participants</h1>
-                <ul className="text-gray-900 bg-gray-900 rounded-xl ">
-    {students.map((student, index) => (
-        <li
-            onClick={() => handleGetChats(student._id)}
-            key={index}
-            className="mb-3 hover:bg-indigo-400 hover:text-black text-white  cursor-pointer hover:bg-gray-200 p-2 rounded-lg"
-        >
-            <div className="flex justify-between font-protest items-center">
-                <span>{student.username}</span>
-                <span className="text-sm text-gray-400">
-                    {student.lastMessage ? new Date(student.lastMessage.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    }) : 'No messages'}
-                </span>
-            </div>
+                <ul className="text-gray-900 bg-gray-900 rounded-xl">
+    {students
+        .sort((a, b) => {
+            // Sort by unread messages (move students with unread messages to the top)
+            const aIsUnread = unreadMessages[a._id] === true;
+            const bIsUnread = unreadMessages[b._id] === true;
             
-            <p className="text-gray-300 font-poppins text-sm">
-                {student.lastMessage ? student?.lastMessage?.message
-                 : 'No messages'}
-            </p>
-            <hr />
-        </li>
-    ))}
+            if (aIsUnread && !bIsUnread) return -1; // a comes before b
+            if (!aIsUnread && bIsUnread) return 1;  // b comes before a
+            return 0; // Keep the original order if both are same
+        })
+        .map((student, index) => {
+            const isUnread = unreadMessages[student._id] === true; // Check for unread message for the student
+
+            return (
+                <li
+                    onClick={() => handleGetChats(student._id)}
+                    key={index}
+                    className="mb-3 hover:bg-indigo-400 hover:text-black text-white cursor-pointer hover:bg-gray-200 p-2 rounded-lg"
+                >
+                    <div className="flex justify-between font-protest items-center">
+                        <span>{student.username}</span>
+                        <span className="text-sm text-gray-400">
+                            {student.latestMessage ? new Date(student.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            }) : 'No messages'}
+                        </span>
+                    </div>
+                    <p className="text-gray-300 font-poppins text-sm">
+                        {isUnread && recId == myTutorId
+                            ? <span style={{ color: 'red', fontWeight: 'bold' }}>
+                                🔔 You have an unread message!
+                              </span>
+                            : student?.latestMessage
+                                ? student.latestMessage
+                                : 'No messages'
+                        }
+                    </p>
+                    <hr />
+                </li>
+            );
+        })}
 </ul>
+
 
                 {isFetching && (
                     <div className="flex justify-center items-center py-4">
@@ -220,7 +303,7 @@ console.log('cha',chat)
             </div>
 
             {/* Main chat area */}
-             <div className="w-[80%] h-[600px] mx-4 bg-gray-900 shadow-lg rounded-lg flex flex-col">
+             <div className={`md:w-[80%] w-full h-[600px] mx-4 bg-gray-900 shadow-lg rounded-lg flex flex-col ${show?'block':'hidden'}`}>
                 {selectedStudentId ? (
                     <>
                         {/* Chat header */}

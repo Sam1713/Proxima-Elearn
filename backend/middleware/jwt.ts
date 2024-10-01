@@ -119,38 +119,80 @@ declare module 'express-serve-static-core' {
 // export default authMiddleware;
 
 
+// const authMiddleware = (userType: 'student' | 'admin' | 'tutor') => (req: Request, res: Response, next: NextFunction) => {
+//   const token = req.header('Authorization')?.replace('Bearer ', '');
+//   console.log('token',token)
+//   if (!token) {
+//     return res.status(401).json({ message: 'Authentication required' });
+//   }
+
+//   try {
+//     let secret: string | undefined;
+
+//     switch (userType) {
+//       case 'student':
+//         secret = process.env.STUDENT_JWT_SECRET as string;
+//         break;
+//       case 'admin':
+//         secret = process.env.ADMIN_JWT_KEY as string;
+//         break;
+//       case 'tutor':
+//         secret = process.env.TUTOR_SECRET_KEY as string;
+//         break;
+//       default:
+//         return res.status(400).json({ message: 'Invalid user type' });
+//     }
+//   console.log('secret',secret)
+//     if (!secret) {
+//       throw new Error('JWT secret is not defined in environment variables');
+//     }
+
+//     const decoded:any = jwt.verify(token, secret);
+    
+//     console.log('decode',decoded)
+//     req.userId = (decoded as any).id; // Attach user ID to request
+//     next();
+//   } catch (error) {
+//     console.error('Token verification error:', error);
+//     if (error instanceof jwt.TokenExpiredError) {
+//       return res.status(401).json({ message: 'Token has expired' });
+//     }
+//     if (error instanceof jwt.JsonWebTokenError) {
+//       return res.status(401).json({ message: 'Invalid token' });
+//     }
+//     return res.status(401).json({ message: 'Authentication error' });
+//   }
+// };
+
+// export default authMiddleware;
+
+
+
 const authMiddleware = (userType: 'student' | 'admin' | 'tutor') => (req: Request, res: Response, next: NextFunction) => {
+  console.log('usetu',userType)
   const token = req.header('Authorization')?.replace('Bearer ', '');
-  console.log('token',token)
+  console.log('token', token);
   if (!token) {
     return res.status(401).json({ message: 'Authentication required' });
   }
 
   try {
-    let secret: string | undefined;
-
-    switch (userType) {
-      case 'student':
-        secret = process.env.STUDENT_JWT_SECRET as string;
-        break;
-      case 'admin':
-        secret = process.env.ADMIN_JWT_KEY as string;
-        break;
-      case 'tutor':
-        secret = process.env.TUTOR_SECRET_KEY as string;
-        break;
-      default:
-        return res.status(400).json({ message: 'Invalid user type' });
-    }
-  console.log('secret',secret)
+    const secret = process.env.STUDENT_JWT_SECRET as string; 
     if (!secret) {
       throw new Error('JWT secret is not defined in environment variables');
     }
 
-    const decoded:any = jwt.verify(token, secret);
+    const decoded: any = jwt.verify(token, secret);
     
-    console.log('decode',decoded)
-    req.userId = (decoded as any).id; // Attach user ID to request
+    console.log('decode', decoded);
+    
+    // Check if the user type matches
+    if (decoded.userType !== userType) {
+      console.log('Invalid userType')
+      return res.status(403).json({ message: 'Forbidden: Invalid user type' });
+    }
+
+    req.userId = decoded.id; // Attach user ID to request
     next();
   } catch (error) {
     console.error('Token verification error:', error);

@@ -1,14 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import StudentChatTutors from './StudentChatTutors';
 import { Button } from '@material-tailwind/react';
 import { IoSend } from 'react-icons/io5';
 import api from '../API/Api';
+import { resetMessageNotification, setMessageNotification, setRecieverIds, setUnreadMessagesRedux } from '../../redux/student/studentSlice';
+import MessageNotification from '../studentNotification/MessageNotification';
+import { RootState } from '../../redux/store';
 
 const socket = io('http://localhost:3000');  // Replace with your server URL
-
+interface ChatMessage {
+  senderId: string;
+  receiverId: string;
+  message: string;
+  createdAt: string;
+  senderType: string;
+}
 const StudentChat: React.FC = () => {
   const [tutorList, setTutorList] = useState<[]>([]);
   const [filteredTutors, setFilteredTutors] = useState<[]>([]);
@@ -20,11 +29,19 @@ const StudentChat: React.FC = () => {
   const studentId = currentStudent?._id;
   const [selectedTutorId, setSelectedTutorId] = useState<string>('');
   const [message, setMessage] = useState<string>('');
-  const [chatMessages, setChatMessages] = useState<[]>([]);
-  const [skip, setSkip] = useState<number>(0);  // Tracks how many messages to skip for pagination
-  const limit = 12;  // Number of messages to fetch per call
-  const [loading, setLoading] = useState<boolean>(false);  // To track the loading state for pagination
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+
+  const [skip, setSkip] = useState<number>(0);  
+  const limit:number = 12; 
+  const [loading, setLoading] = useState<boolean>(false);  
   const [unreadMessages, setUnreadMessages] = useState<{ [tutorId: string]: boolean }>({});
+  const [receiverId,setReceiverId]=useState<string>('')
+  const [instantMessage,setInstatnMessage]=useState<string>('')
+  const unreadMessagesCountRef = useRef<number>(0); 
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); 
+
+
+  const dispatch=useDispatch()
   useEffect(() => {
     fetchTutorList();
   }, []);
@@ -86,10 +103,10 @@ const StudentChat: React.FC = () => {
         params: { tutorId: tutorId },
       })
         .then(() => {
-          setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+          setChatMessages((prevMessages) => [...prevMessages , newMessage]); 
           setMessage('');
           setUnreadMessages({
-            [newMessage.receiverId]: true
+            [newMessage.receiverId]: false
           });
           fetchTutorList()
         })
@@ -97,55 +114,86 @@ const StudentChat: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
-    console.log('dsfsdfs')
-    socket.on('receiveMessage', (newMessage) => {
-      if (newMessage.senderId === selectedTutorId) {  // Check if the message is from the selected tutor
-        console.log('Message from tutor:', newMessage);
+    console.log('Listening for incoming messages...');
+  
 
-        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-        setUnreadMessages({
-          [newMessage.senderId]: true  // Only store the current senderId with true
-        });
-                fetchTutorList()
+    const handleReceiveMessage = (newMessage: { receiverId: React.SetStateAction<string>; senderId: string; message: React.SetStateAction<string>; }) => {
+      console.log('Received message:', newMessage);
+      
+      if (newMessage.receiverId === studentId) {
+          if (newMessage.senderId === selectedTutorId) {
+            setUnreadMessagesCount(unreadMessagesCountRef.current); // Sync UI
 
+              console.log('Message from tutor:', newMessage);
+              setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+              setUnreadMessages((prev) => ({
+                  ...prev,
+                  [newMessage.senderId]: false, 
+              }));
+              dispatch(setUnreadMessagesRedux({ tutorId: newMessage.senderId, isUnread: false }));
+
+          } else {
+            let count=0
+            setUnreadMessagesCount(unreadMessagesCountRef.current); // Sync UI
+
+              setInstatnMessage(newMessage.message)
+              dispatch(setMessageNotification(1))
+              setReceiverId(newMessage.receiverId)
+              setUnreadMessages((prev) => ({
+                  ...prev,
+                  [newMessage.senderId]: true, 
+              }));
+              dispatch(setRecieverIds(newMessage.receiverId))
+              dispatch(setUnreadMessagesRedux({ tutorId: newMessage.senderId, isUnread: true }));
+            }
+      } else {
+                  console.log('Message not for the selected student.');
       }
-    });
+  };
+  
+    socket.on('receiveMessage', handleReceiveMessage);
   
     return () => {
-      socket.off('receiveMessage');
+      socket.off('receiveMessage', handleReceiveMessage);
     };
-  }, [selectedTutorId]);  // Add selectedTutorId as a dependency
+  }, [selectedTutorId, studentId]);
+  
+  
+  const handleTutorSelection = (tutorId: string) => {
+    setSelectedTutorId(tutorId);
+    unreadMessagesCountRef.current = 0; 
+  };
+
   
 
-  // Detect scrolling to the top to load more messages
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop } = e.currentTarget;
     if (scrollTop === 0 && !loading) {
-      // If scrolled to the top, load more messages
-      setSkip((prevSkip) => prevSkip + limit);  // Increase skip to load older messages
+      setSkip((prevSkip) => prevSkip + limit);  
     }
   };
 
   const handlePass = (tutorId: string) => {
     setSelectedTutorId(tutorId);
-    setSkip(0);  // Reset skip when switching tutors
-    setChatMessages([]);  // Clear previous chat history when switching tutors
-    fetchOldChats(tutorId, 0);  // Use tutorId directly
+    setSkip(0); 
+    setChatMessages([]);  
 
     setUnreadMessages({tutorId:false})
-  };
-  
+    dispatch(setUnreadMessagesRedux({ tutorId, isUnread: false }))  };
 
   return (
     <div className='bg-custom-gradient pt-[5%] flex w-full'>
+
       <StudentChatTutors
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         filteredTutors={filteredTutors}
         handlePass={handlePass}
-        unreadMessages={unreadMessages}      />
+        unreadMessages={unreadMessages}  
+        receiverId={receiverId}
+        instantMessage={instantMessage}
+        />
       <div className='flex-grow mx-2 mt-2 h-[89vh] flex flex-col shadow-2xl rounded-lg'>
         <div className='flex items-center justify-between p-5 bg-white bg-opacity-20 shadow-2xl text-white rounded-t-lg shadow-md'>
           <h1 className='text-lg font-bold'>Chat with Tutor</h1>

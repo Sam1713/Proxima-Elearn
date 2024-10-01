@@ -1,36 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { FaChevronLeft, FaChevronRight, FaRupeeSign } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { setCourses } from '../../redux/courses/courseSlice';
+import { AppDispatch, RootState } from '../../redux/store';
 import api from '../API/Api';
 import { IoIosSearch } from "react-icons/io";
 import AnimatedText from '../../animation/AnimatedText';
 import notFound from '../../assets/images/49342678_9214777.jpg';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { setLoading, setLoadingClose, setStudentCourses } from '../../redux/student/studentSlice';
+import { setCategories, setLoading, setLoadingClose, setStudentCourses } from '../../redux/student/studentSlice';
 import { useNavigate } from 'react-router-dom';
-import { Button, CardBody, CardFooter, CardHeader, Typography } from "@material-tailwind/react";
-import { Card } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
 import CourseShimmer from '../shimmers/CourseShimmer';
-import { SlideRight, SlideUp } from '../../animation/animation';
+import {  SlideUp } from '../../animation/animation';
 import {motion} from 'framer-motion'
 
 function AllCourses() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedSort, setSelectedSort] = useState('Price: Low to High');
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedSort, setSelectedSort] = useState<string>('Price: Low to High');
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
   const [searchValue, setSearchValue] = useState<string>('');
   const [page,setPage]=useState<number>(1)
   const [totalPages,setTotalPages]=useState<number>(1)
-  const limit=4
-  const dispatch = useDispatch();
+  const limit:number=8
+  const dispatch = useDispatch<AppDispatch>();
   const navigate=useNavigate()
   const loading=useSelector((state:RootState)=>state.student.loading)
   const allCourses = useSelector((state: RootState) => state.student.courses);
-  const categories = useSelector((state: RootState) => state.admin.viewAllCategory);
-  
+  const [category,setCategory]=useState<string>('')
+  const categories = useSelector((state: RootState) => state.student.categories);
+  const searchRef = useRef<HTMLInputElement>(null);
   console.log('cat',categories)
   useEffect(() => {
     fetchAllCourses(page,limit);
@@ -51,6 +49,7 @@ function AllCourses() {
 console.log('res',response.data)
        dispatch(setLoadingClose())
         dispatch(setStudentCourses(response.data.courses));
+        dispatch(setCategories(response.data.categories))
         setTotalPages(response.data.totalPages)
       
     } catch (error) {
@@ -60,46 +59,123 @@ console.log('res',response.data)
     }
   };
 
-  const handleDropdownChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setter(event.target.value);
+
+  
+  const fetchSearchResults=async()=>{
+    const search = searchRef.current?.value || ''; 
+
+    dispatch(setLoading())
+    console.log('dsdfsdf')
+    const response=await api.get('/backend/course/getSearchCourse',{
+      headers:{
+        'X-Token-Type':'student'
+      },
+      params: { q: search }
+    })
+    console.log('resp',response)
+    dispatch(setLoadingClose())
+    dispatch(setStudentCourses(response.data));
+
+  }
+
+  const fetchCategorySort=async(categoryValue:string)=>{
+    console.log('ca',categoryValue)
+    try{
+      dispatch(setLoading())
+       const response=await api.get('/backend/course/getCategorySort',{
+        headers:{
+          'X-Token-Type':'student'
+        },
+        params:{
+          category:categoryValue
+        }
+       })
+       dispatch(setStudentCourses(response.data))
+       dispatch(setLoadingClose())
+       console.log('resqa',response);
+       
+    }catch(error){
+      console.log('er',error)
+    }
+  }
+
+  
+ 
+   const fetchCOurseBasedOnPrice=async(minPrice:number,maxPrice:number)=>{
+    dispatch(setLoading())
+     const response=await api.get('/backend/course/getPricedCourses',{
+       headers:{
+         'X-Token-Type':'student'
+       },
+       params:{
+         minPrice:minPrice,
+         maxPrice:maxPrice
+       }
+     })
+     console.log('responsa',response)
+     dispatch(setStudentCourses(response.data))
+     dispatch(setLoadingClose())
+   }
+ 
+  const handleDropdownChange = (type:'category'|'price',setter: React.Dispatch<React.SetStateAction<string>>) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+    
+    const value = event.target.value;
+    setter(value);
+    
+    let minPrice:number = 0;
+    let maxPrice = Infinity;
+    if (type === 'price') {
+      setSelectedCategory('All')
+    switch (value) {
+      case 'Under $1000':
+        maxPrice = 1000;
+        break;
+      case '$1000-$2000':
+        minPrice = 1000;
+        maxPrice = 2000;
+        break;
+      case '$2000-$4000':
+        minPrice = 2000;
+        maxPrice = 4000;
+        break;
+      case 'Over $4000':
+        minPrice = 4000;
+        break;
+      default:
+        break;
+    }
+    if(value=='All'){
+      fetchAllCourses(1,limit)
+      setSelectedFilter('All')
+      setSelectedCategory('All')
+
+
+    }
+    fetchCOurseBasedOnPrice(minPrice, maxPrice);
+
+  }else if (type === 'category') {
+    setSelectedFilter('All')
+    const categoryValue:string = value;
+    
+    if (categoryValue === 'All') {
+      setSelectedCategory('All')
+
+      fetchAllCourses(1,limit)
+      setSelectedFilter('All')
+    } else {
+      fetchCategorySort(categoryValue);
+      
+    }
+  }
+
   };
 
-  const uniqueCategories = ['All', ...new Set(categories?.map(category => category.categoryName))];
+  const uniqueCategories: string[] = ['All', ...new Set(categories?.map(category => category.categoryName))];
 
-  const filteredCourses = allCourses?.filter(course => {
-    // Check category
-    const matchesCategory = selectedCategory === "All" || course?.category === selectedCategory;
-
-    // Check price filter
-    const price = course?.price || 0;
-    let matchesPriceRange = true;
-    if (selectedFilter === "Under $1000" && price >= 1000) matchesPriceRange = false;
-    if (selectedFilter === "$1000-$2000" && (price < 1000 || price > 2000)) matchesPriceRange = false;
-    if (selectedFilter === "$2000-$4000" && (price < 2000 || price > 4000)) matchesPriceRange = false;
-    if (selectedFilter === "Over $4000" && price <= 4000) matchesPriceRange = false;
-
-    const lowercasedSearchValue = searchValue.toLowerCase();
-    const matchesSearch = (course?.title?.toLowerCase().includes(lowercasedSearchValue) ||
-                           course?.category?.toLowerCase().includes(lowercasedSearchValue));
-  
-    return matchesCategory && matchesPriceRange && matchesSearch;
-  });
-
-  const sortedCourses = filteredCourses?.sort((a, b) => {
-    if (selectedSort === 'Price: Low to High') {
-      return a.price - b.price;
-    } else if (selectedSort === 'Price: High to Low') {
-      return b.price - a.price;
-    } else if (selectedSort === 'Most Popular') {
-      return b.popularity - a.popularity; 
-    } else if (selectedSort === 'Newest First') {
-      return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-    }
-    return 0;
-  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
+    setSearch(e.target.value)
   };
 
   const handleNavigate=(id:string)=>{
@@ -122,33 +198,32 @@ console.log('res',response.data)
   }
   
   return (
-    <div className='bg-custom-gradient min-h-screen p-8'>
-      <h1 className='text-white text-3xl mb-8'>All Courses</h1>
+    <div className='bg-custom-gradient min-h-screen p-8 py-24'>
       
       <div className='relative md:flex    gap-4 md:px-20 mb-8 md:w-full '>
         <div className=" md:absolute  md:mx-16 md:pl-[68%] flex mb-8">
           <input 
-            onChange={handleChange} 
+          ref={searchRef}
+            onChange={(e)=>handleChange(e)} 
   className='md:relative  px-6 p-3 bg-custom-gradient text-white w-[100%]  rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ring-2 ring-blue-500'            type="text" 
             placeholder="Search courses..." 
           />
-          <IoIosSearch className='absolute text-gray-100 md:top-1/4 top-3  text-2xl' />
+          <IoIosSearch onClick={()=>fetchSearchResults()} className='absolute text-gray-100 md:top-1/4 top-3 right-2 cursor-pointer  text-2xl' />
         </div>
         <div className='grid grid-cols-2 md:flex gap-4 w-[100%] mx-auto'>
-        <div className='relative     '>
-          <select 
-            value={selectedCategory}
-            onChange={handleDropdownChange(setSelectedCategory)}
-            className='bg-black  md:w-full  text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
-          >
-            {uniqueCategories.map((category) => (
-              <option className='font-thin' key={category} value={category}>{category}</option>
-            ))}
-          </select>
-          <IoMdArrowDropdown className='absolute  md:right-2 right-1 top-1/2 transform -translate-y-1/2 text-gray-100' />
-        </div>
+        <div className='relative'>
+  <select 
+    value={selectedCategory}
+    onChange={handleDropdownChange('category', setSelectedCategory)}
+    className='bg-black md:w-full text-white border border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+  >
+    {uniqueCategories.map((category) => (
+      <option className='font-thin' key={category} value={category}>{category}</option>
+    ))}
+  </select>
+  <IoMdArrowDropdown className='absolute md:right-2 right-1 top-1/2 transform -translate-y-1/2 text-gray-100' />
+</div>
         
-        {/* Sort Dropdown */}
         <div className='relative '>
           <select 
             value={selectedSort}
@@ -163,26 +238,25 @@ console.log('res',response.data)
           <IoMdArrowDropdown className='absolute md:right-2 right-1  top-1/2 transform -translate-y-1/2 text-gray-100' />
         </div>
         
-        {/* Filter Dropdown */}
         <div className='relative'>
           <select 
             value={selectedFilter}
-            onChange={handleDropdownChange(setSelectedFilter)}
+            onChange={handleDropdownChange('price',setSelectedFilter)}
             className='bg-black  text-white border  border-gray-300 rounded-lg py-2 px-4 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             <option value="All">All</option>
-            <option value="Under $1000">Under $1000</option>
-            <option value="$1000-$2000">$1000-$2000</option>
-            <option value="$2000-$4000">$2000-$4000</option>
-            <option value="Over $4000">Over $4000</option>
+            <option value="Under $1000">Under 1000</option>
+            <option value="$1000-$2000">1000-2000</option>
+            <option value="$2000-$4000">2000-4000</option>
+            <option value="Over $4000">Over 4000</option>
           </select>
           <IoMdArrowDropdown className='absolute md:right-2 right-10  top-1/2 transform -translate-y-1/2 text-gray-100' />
         </div>
       </div>
       
 </div>
-      
-      {/* Course Listings */}
+<h1 className='text-white text-3xl mb-8  font-protest text-center md:hidden underline '>All Courses</h1>
+
       
         <motion.div
    initial={{  y: -100, opacity: 0.2 }}
@@ -191,9 +265,11 @@ console.log('res',response.data)
    variants={SlideUp(0.5)}
 
         className='bg-white bg-opacity-10 rounded-lg p-4  md:w-[90%] w-full md:mx-auto'>
-          {sortedCourses && sortedCourses.length > 0 ? (
-            <div className='md:grid md:grid-cols-1 grid-cols-2 lg:grid-cols-4 gap-6 '>
-              {sortedCourses.map((course) => (
+          
+          {allCourses && allCourses.length > 0 ? (
+            
+            <div className='md:grid md:grid-cols md:grid-cols-2 lg:grid-cols-4 gap-6 '>
+              {allCourses.map((course) => (
                 <div 
                 onClick={()=>handleNavigate(course._id)}
                   key={course._id} 
@@ -223,14 +299,13 @@ console.log('res',response.data)
           )}
         </motion.div>
         ;
-
+{allCourses.length>0&&allCourses.length>=limit &&
 <div className="flex justify-center items-center space-x-4 py-4">
   <Button
-  onClick={handlePrev}
-  disabled={page==1}
-    variant="gradient"
-    className="flex  items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out"
-  >
+            onClick={handlePrev}
+            disabled={page == 1}
+            variant="gradient"
+            className="flex  items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}  >
     <FaChevronLeft className="mr-2" />
     Prev
   </Button>
@@ -240,17 +315,21 @@ console.log('res',response.data)
   </span>
 
   <Button
-  onClick={handleNext}
-  disabled={page==totalPages}
-    variant="gradient"
-    className="flex items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out"
-  >
+            onClick={handleNext}
+            disabled={page == totalPages}
+            variant="gradient"
+            className="flex items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}  >
     Next
     <FaChevronRight className="ml-2" />
   </Button>
 </div>
+}
     </div>
   );
 }
 
 export default AllCourses;
+function setSearch(value: string) {
+  throw new Error('Function not implemented.');
+}
+

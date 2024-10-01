@@ -4,20 +4,18 @@ import { useDispatch } from 'react-redux'
 import { isTutorApproved } from '../../redux/tutor/tutorSlice'
 import tutorhome from '../../assets/images/teacher-is-a-work-of-heart-2_452-430-min.png'
 import { FaChalkboardTeacher } from "react-icons/fa";
-
-function TutorHome() {
+import api from '../API/Api'
+const TutorHome:React.FC=()=> {
   const dispatch = useDispatch()
 
   useEffect(() => {
     const fetchHome = async () => {
-      const tutor_access_token = localStorage.getItem('tutor_access_token')
-      console.log('acrsf', tutor_access_token)
+     
       try {
-        const response = await axios.get('/backend/tutor/tutorhome', {
+        const response = await api.get('/backend/tutor/tutorhome', {
           headers: {
-            'Authorization': `Bearer ${tutor_access_token}`
-          },
-          withCredentials: true,
+            'X-Token-Type':'tutor'
+          }
         })
         console.log('res', response)
         dispatch(isTutorApproved(response.data))

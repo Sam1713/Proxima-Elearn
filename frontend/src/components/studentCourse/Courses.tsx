@@ -9,27 +9,26 @@ import { FaLaptop } from "react-icons/fa";
 import api from '../API/Api'
 import { useDispatch, useSelector } from 'react-redux';
 import { setCourses } from '../../redux/courses/courseSlice';
-import { RootState } from '../../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import useScrollRestoration from '../customHooks/useScrollRestoration';
 import { setCategories, setFullCourses, signout } from '../../redux/student/studentSlice';
 import { clearFeed } from '../../redux/feed/feedSlice';
 import { Button } from '@material-tailwind/react';
 
-function Courses() {
-  const dispatch = useDispatch();
+const Courses:React.FC=()=> {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   useScrollRestoration();
   const coursesArray = useSelector((state: RootState) => state.student.fullCourses);
   const allCategories = useSelector((state: RootState) => state.student.categories);
-  // const allCourses = useSelector((state: RootState) => state.student.fullCourses);
 console.log('add',allCategories)
   
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages,setTotalPages]=useState<number>(1);
-  const coursesPerPage = 4;
-  const catLimit=4
-  const [showAll, setShowAll] = useState(false);
+  const coursesPerPage:number = 4;
+  const catLimit:number=4
+  const [showAll, setShowAll] = useState<boolean>(false);
   const videoRef=useRef(null)
 
   useEffect(()=>{
@@ -70,22 +69,7 @@ console.log('add',allCategories)
   }
   
 
-  // const fetchCourses = async () => {
-  //   console.log('dsfs')
-  //   try {
-  //     const response = await api.get('/backend/auth/getAllCourses', {
-  //       headers: { 'X-Token-Type': 'student' },
-  //     });
-  //     console.log('res',response.data)
-  //     dispatch(setCourses(response.data.courses));
-  //   } catch (error) {
-  //     handleFetchError(error);
-  //   }
-  // };  
-
-  // useEffect(() => {
-  //   fetchCourses();
-  // }, []);
+  
 
   const handleFetchError = (error: any) => {
     if (error.response) {
@@ -178,9 +162,9 @@ console.log('add',allCategories)
         </video>
     
         {/* Overlay for the gradient and content */}
-        <div className="relative min-h-screen text-white bg-gradient-to-b from-black via-transparent to-black p-16">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-light mx-10 tracking-wide mt-10 font-protest text-white">
+        <div className="relative min-h-screen text-white bg-gradient-to-b from-black via-transparent to-black md:p-16 py-10">
+          <div className="md:flex md:justify-between md:items-center mb-8 md:ml-0 ml-10">
+            <h1 className="text-3xl font-light  md:mx-10  tracking-wide mt-10 font-protest  text-white">
               Welcome back,This is your Sample course Page
             </h1>
           </div>
@@ -188,7 +172,7 @@ console.log('add',allCategories)
           {/* Courses List */}
           <button
             onClick={() => navigate('/allCourses')}
-            className="text-center float-end p-3 mt-3 rounded-xl font-thin bg-custom-gradient hover:bg-blue-500 transition duration-300 ease-in-out transform hover:scale-105 text-white shadow-lg"
+            className="text-center md:float-end p-3 mt-3 w-[60%] mx-[20%] md:mx-0  md:w-auto md:mb-auto rounded-xl font-thin bg-gray-700  hover:bg-blue-500 transition duration-300 ease-in-out transform hover:scale-105 text-white shadow-lg"
           >
             Go to All Courses
           </button>
@@ -199,7 +183,7 @@ console.log('add',allCategories)
               Choose your favorite course from top categories
             </h1>
            
-            <div className="flex flex-wrap justify-center gap-8">
+            <div className="flex flex-wrap justify-center p-8 md:p-0 gap-8">
               {allCategories.map((category, index) => (
                 <div
                   key={index}

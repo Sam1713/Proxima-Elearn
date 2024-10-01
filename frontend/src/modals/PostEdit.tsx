@@ -2,32 +2,24 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import {  ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSuccess } from '../redux/student/studentSlice';
 import { RootState } from '../redux/store';
 import { MoonLoader } from "react-spinners";
-import { css } from '@emotion/react';
-
+import api from '../components/API/Api'
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
   id: string;
   showToast: (type: 'success' | 'error', message: string) => void;  // Callback for toast
 }
-
-const spinnerStyle = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-  animation: spin 1s linear infinite;
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
+interface FormValues {
+  username: string;
+  email: string;
+  profilePic?: File; // Optional
+}
 
 const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) => {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
@@ -45,7 +37,8 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
       email: Yup.string().email('Invalid email address').required('Email is required'),
       profilePic: Yup.mixed().optional(),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values: FormValues) => {
+      console.log('ca', values);
       const token = localStorage.getItem('access_token');
       console.log('Fetched token:', token);
     
@@ -57,9 +50,18 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, submit it!'
+        confirmButtonText: 'Yes, submit it!',
       }).then(async (result) => {
         if (result.isConfirmed) {
+          const loadingSwal = Swal.fire({
+            title: 'Submitting...',
+            text: 'Please wait while we submit your Details.',
+            icon: 'info',
+            showCancelButton: false,
+            showConfirmButton: false,
+            allowOutsideClick: false, 
+          });
+    
           try {
             const formData = new FormData();
             for (const key in values) {
@@ -70,20 +72,23 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
                 formData.append(key, String(value));
               }
             }
-            const response = await axios.put(
+    
+            const response = await api.put(
               `/backend/auth/updateStudentDetails/${id}`,
-              formData,{
-                withCredentials: true,
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
+              formData,
+              {
+                headers: {
+                  'X-Token-Type': 'student',
+                },
               }
-              
-              
             );
-console.log('res',response)
+    
+            console.log('res', response);
+    
             dispatch(updateSuccess(response.data.student));
             showToast('success', response.data.message);
+            
+            // Close the modal and reset loading state here
             setLoading(false);
             onClose();
           } catch (error) {
@@ -91,11 +96,14 @@ console.log('res',response)
             showToast('error', errorMessage);
             setLoading(false);
           }
+          
+          loadingSwal.close();
         } else {
           setLoading(false);
         }
       });
     }
+    
   });
 
   if (!isOpen) return null;
@@ -106,13 +114,14 @@ console.log('res',response)
       {loading ? (
         <div className="flex items-center justify-center min-h-screen bg-gray-800">
           <MoonLoader
-            color="#fff"
-            loading={loading}
-            css={spinnerStyle}
-            size={60}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
+  color="#fff"
+  loading={loading}
+  size={60}
+  aria-label="Loading Spinner"
+  data-testid="loader"
+  style={{ display: 'block', margin: '0 auto', borderColor: 'red' }} // Use inline styles
+/>
+
         </div>
       ) : (
         <div className='inset-0 bg-white bg-opacity-10 fixed flex justify-center items-center'>

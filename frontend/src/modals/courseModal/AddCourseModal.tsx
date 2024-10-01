@@ -8,6 +8,7 @@ import { response } from 'express';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import api from '../../components/API/Api'
 
 // Define the type for SubVideo
 interface SubVideo {
@@ -42,7 +43,7 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
     transform: isOpen ? 'translateY(0)' : 'translateY(0px)',
     config: { duration: 300 },
   });
-  const category=useSelector((state:RootState)=>state.admin.viewAllCategory)
+  const category=useSelector((state:RootState)=>state.tutor.allCategories)
   console.log('cat',category)
 
   const formik = useFormik({
@@ -68,15 +69,24 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         confirmButtonText: 'Yes, submit it!',
         cancelButtonText: 'No, cancel!',
       });
-
+    
       // If the user cancels, exit the function
       if (result.isDismissed) {
         return;
       }
-      setLoading(true)
-      // Proceed with form submission if confirmed
-      const tutor_access_token = localStorage.getItem('tutor_access_token');
-
+    
+      // Show a loading message
+      const loadingSwal = Swal.fire({
+        title: 'Submitting...',
+        text: 'Please wait while we submit your course.',
+        icon: 'info',
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false, // Prevent closing the dialog
+      });
+    
+      setLoading(true);
+    
       const formData = new FormData();
       formData.append('title', values.title);
       formData.append('category', values.category);
@@ -84,53 +94,61 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
       formData.append('AboutCourse', values.AboutCourse);
       formData.append('lessons', values.lessons);
       formData.append('price', values.price.toString());
-
+    
       if (values.coverImage) {
         formData.append('coverImage', values.coverImage);
       }
-
+    
       if (values.coverVideo) {
         formData.append('coverVideo', values.coverVideo);
       }
-
+    
       values.videos.forEach((video, index) => {
         if (video.file) {
           formData.append('videos', video.file);
           formData.append('videoDescriptions[]', video.description);
-
         }
       });
-
+    
       try {
-        const response = await axios.post('/backend/course/uploadCourse', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${tutor_access_token}`,
-          },
+        const response = await api.post('/backend/course/uploadCourse', formData, {
+         headers:{
+          'X-Token-Type':'tutor'
+         }
         });
         console.log('Response:', response);
-       setLoading(false)
+    
+        // Close the loading message
+        Swal.close(); 
+    
+        setLoading(false);
         Swal.fire({
           title: 'Success!',
           text: 'Course uploaded successfully!',
           icon: 'success',
           confirmButtonText: 'OK',
         });
-   
+    
         resetForm();
-        onClose(); 
+        onClose();
       } catch (error) {
-        setLoading(false)
-        console.error('Error uploading course:', error);
+        setLoading(false);
+        console.error('Error uploading course:', error.response.data.message);
+    
+        // Close the loading message
+        Swal.close(); 
+    
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to upload course. Please try again.';
 
         Swal.fire({
           title: 'Error!',
-          text: 'Failed to upload course. Please try again.',
+          text: errorMessage,  
           icon: 'error',
           confirmButtonText: 'OK',
         });
       }
     },
+    
   });
   
   const [imageUrl, setImageUrl] = useState('');
@@ -215,7 +233,7 @@ console.log({...subVideos})
           left: '50%',
           transform: 'translate(-50%, -50%)',
         }}
-        className="bg-custom-gradient p-6 rounded-lg shadow-lg h-[80vh] w-[80%] overflow-scroll"
+        className="bg-black p-6 rounded-xl shadow-lg h-[70vh] w-[80%] overflow-y-scroll"
       >
         <button
           onClick={onClose}
@@ -233,8 +251,8 @@ console.log({...subVideos})
         </button>
         <h2 className='text-lg font-bold mb-4 white'>Add a New Course</h2>
         <form onSubmit={formik.handleSubmit}>
-          <div className='flex md:flex-row flex-col text-black w-full md:w-[90%] mx-auto gap-5'>
-            <div className='flex justify-between items-center md:w-1/2'>
+          <div className='flex md:flex-row flex-col text-black w-full md:w-[90%] mx-auto gap-5 mb-5'>
+            <div className='flex justify-between items-center md:w-1/2 relative'>
               <input 
                 type="text" 
                 placeholder='Title' 
@@ -245,10 +263,10 @@ console.log({...subVideos})
                 onBlur={formik.handleBlur}
               />
               {formik.touched.title && formik.errors.title ? (
-                <div className='text-red-500'>{formik.errors.title}</div>
+                <div className='text-red-500 absolute top-12'>{formik.errors.title}</div>
               ) : null}
             </div>
-            <div className='flex justify-between items-center md:w-1/2'>
+            <div className='flex justify-between items-center md:w-1/2 relative'>
   <select
     name="category"
     className='w-full md:p-3 p-2 border text-black border-gray-300 rounded-md'
@@ -264,7 +282,7 @@ console.log({...subVideos})
     ))}
   </select>
   {formik.touched.category && formik.errors.category ? (
-    <div className='text-red-500'>{formik.errors.category}</div>
+    <div className='text-red-500 absolute top-12'>{formik.errors.category}</div>
   ) : null}
 </div>
 
@@ -281,7 +299,7 @@ console.log({...subVideos})
   onBlur={formik.handleBlur}
 />
 {formik.touched.price && formik.errors.price ? (
-  <div className='text-red-500'>{formik.errors.price}</div>
+  <div className='text-red-500 mx-14'>{formik.errors.price}</div>
 ) : null}
 
           <div className='mx-14 mt-3'>

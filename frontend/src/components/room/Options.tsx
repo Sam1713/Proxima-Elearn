@@ -6,7 +6,7 @@ import { SocketContext } from '../context/RoomContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import api from '../API/Api'
-import Swal from 'sweetalert2'; // Import Swal from SweetAlert2
+import Swal from 'sweetalert2'; 
 import { setBookingDetails } from '../../redux/tutor/tutorSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,7 +72,7 @@ const Options = ({ children, tutorId }) => {
     const handleLeaveStudent=()=>{
         navigate('/feedHome')
         leaveCall()
-    }
+    } 
 
 
     useEffect(() => {

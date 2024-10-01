@@ -8,7 +8,6 @@ import { override,color } from "../../utils/ClipLoader";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuth } from "../../firebase/GoogleAuth";
 import { Button, Input } from "@material-tailwind/react";
-import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import {motion} from 'framer-motion'
 
@@ -62,13 +61,12 @@ const Register: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col">
           <Input
-          onChange={handleChange}
-          type="text"
-          id="username"
-           color="white"
-           label="Username" 
-           required
-           />
+              onChange={handleChange}
+              type="text"
+              id="username"
+              color="white"
+              label="Username"
+              required crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}           />
            
            {errors.username && <p className="text-red-600 text-sm">{errors.username}</p>}
 
@@ -81,8 +79,7 @@ const Register: React.FC = () => {
               id="email"
               type="email"
               className="p-2 border border-gray-300 "
-              required
-            />
+              required crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            />
             {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
           </div>
           <div className="flex flex-col">
@@ -93,8 +90,7 @@ const Register: React.FC = () => {
               id="password"
               type="password"
               className="p-2 border border-gray-300 "
-              required
-            />
+              required crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            />
             {errors.password && <p className="text-red-600 text-sm">{errors.password}</p>}
           </div>
           <div className="flex flex-col">
@@ -105,14 +101,12 @@ const Register: React.FC = () => {
               id="confirmPassword"
               type="password"
               className="p-2 border border-gray-300 rounded"
-              required
-            />
+              required crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            />
             {errors.confirmPassword && <p className="text-red-600 text-sm">{errors.confirmPassword}</p>}
           </div>
           <Button
             type="submit"
-            className="w-full  bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center"
-          >
+            className="w-full  bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             {loading ? (
               <ClipLoader
                 color={color}

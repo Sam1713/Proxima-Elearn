@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosStar } from "react-icons/io";
-import courseImage from '../../assets/images/OIP__29_-removebg-preview.png';
 import { GrCertificate } from "react-icons/gr";
 import { FaLaptop, FaWpbeginner, FaPlus } from "react-icons/fa";
-import { GiLifeBar } from "react-icons/gi";
 import tutorImage from '../../assets/images/OIP (30).jpeg'
 import AnimatedText from '../../animation/AnimatedText';
-import { animated, useSpring } from '@react-spring/web';
-import useScrollRestoration from '../customHooks/useScrollRestoration';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import {  useSpring } from '@react-spring/web';
+import {  useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { setOrderedCourseDetails } from '../../redux/courses/courseSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import ReactPlayer from 'react-player';
 import VideoPlayer from '../../utils/VideoPlayer';
 import { setLoading, setLoadingClose, setStudentQuizDetails } from '../../redux/student/studentSlice';
 import OrderCOurseShimmer from '../shimmers/OrderCOurseShimmer';
 import {motion,useScroll} from 'framer-motion'
 import { SlideLeft, SlideRight, SlideUp } from '../../animation/animation';
 import CountUp from 'react-countup';
+import api from '../API/Api'
 
-function CourseDetails() {
+const CourseDetails:React.FC=()=> {
   const {id}=useParams() 
-  // useScrollRestoration()
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
   console.log('ors',orderedCourseDetail)
-  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
-  const [isOverviewTwoOpen, setIsOverviewTwoOpen] = useState(false);
-  const [currentIndex,setCurrentIndex]=useState('0')
+  const [isOverviewOpen, setIsOverviewOpen] = useState<boolean>(false);
+  const [isOverviewTwoOpen, setIsOverviewTwoOpen] = useState<boolean>(false);
+  const [currentIndex,setCurrentIndex]=useState<number>('0')
   const [courseOpen,setCourseOpen]=useState<boolean>(false)
   const navigate=useNavigate()
   const handleOpen=()=>{
@@ -51,17 +47,14 @@ const loading=useSelector((state:RootState)=>state.student.loading)
     config: { duration: 3000 },
   });
 
-  const { scrollYProgress } = useScroll();
   const videoLength=orderedCourseDetail?.courseDetail?.videos?.length
   useEffect(()=>{
       dispatch(setLoading())
-    const token=localStorage.getItem('access_token')
      const getOrderedCourseDetail=async()=>{
-        const response=await axios.get(`/backend/enroll/getOrderedCourseDetail/${id}`,{
+        const response=await api.get(`/backend/enroll/getOrderedCourseDetail/${id}`,{
           headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          withCredentials: true,
+            'X-Token-Type':'student'
+          }
         })
         console.log('res',response)
         dispatch(setLoadingClose())
@@ -78,15 +71,14 @@ dispatch(setStudentQuizDetails(studentquiz))
      getOrderedCourseDetail()
      
   },[dispatch,id])
-  const sections=['overview','content','middlr','start','end','finish']
-  console.log('cover',orderedCourseDetail?.courseDetail?.coverImageUrl)
+  const sections = orderedCourseDetail?.courseDetail?.videos?.map((_, index) => `video${index + 1}`) || [];
+    console.log('cover',orderedCourseDetail?.courseDetail?.coverImageUrl)
   console.log('single',orderedCourseDetail?.courseDetail?.category
   )
   console.log('otherCourses',orderedCourseDetail?.otherCourses[0]?.title)
-  const [openSection, setOpenSection] = useState(null);
+  const [openSection, setOpenSection] = useState<number | null>(null);
 
-  // Function to toggle the open section
-  const toggleSection = (index) => {
+  const toggleSection = (index:number|null) => {
     setOpenSection(openSection === index ? null : index);
   };
   const handleNavigate=(id:string)=>{

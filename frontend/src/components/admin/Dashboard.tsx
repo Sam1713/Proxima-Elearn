@@ -104,15 +104,15 @@ const Dashboard: React.FC = () => {
         console.log('res',response.data)
     }
   return (
-    <div className=" py-6 p-4 md:w-[100%] md:mx-4 bg-custom-gradient min-h-screen font-serif">
-      <div className="flex flex-w gap-4 mb-6">
+    <div className=" py-6 my-6 md:my-0 p-6 md:w-auto md:mx-10 bg-black rounded-xl  min-h-screen font-serif">
+      <div className="md:flex flex-w md:gap-4   md:mb-6">
         {/* Ratings Card 1 */}
         <motion.div
-          className="bg-gradient-to-r from-blue-500 to-teal-400 w-full md:w-1/2 lg:w-1/3 flex items-center p-2 rounded-lg shadow-lg relative overflow-hidden"
+          className="bg-gradient-to-r from-blue-500 to-teal-400 w-full md:w-1/2 lg:w-1/3 flex items-center p-2 mb-3 md:mb-aut rounded-lg shadow-lg relative overflow-hidden"
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="flex-1 text-left">
+          <div className="md:flex-1 w-full md:w-auto text-left ">
             <h1 className="text-3xl font-bold text-white mb-4">Ratings</h1>
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-semibold text-white">13K</h1>
@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
               Year of 2021
             </button>
           </div>
-          <div className="flex-shrink-0 ml-6">
+          <div className="md:flex-shrink-0 ml-6 ">
             <div className="relative w-32 h-32">
               <img
                 className="w-full h-full object-cover rounded-full shadow-md"
@@ -141,11 +141,11 @@ const Dashboard: React.FC = () => {
         
         {/* Ratings Card 2 */}
         <motion.div
-          className="bg-gradient-to-r from-blue-500 to-teal-400 w-full md:w-1/2 lg:w-1/3 flex items-center p-4 rounded-lg shadow-lg relative overflow-hidden"
+          className="bg-gradient-to-r from-blue-500 to-teal-400 w-full md:w-1/2 lg:w-1/3 flex items-center p-4 mb-3  md:mb-auto rounded-lg shadow-lg relative overflow-hidden"
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="flex-1 text-left">
+          <div className="md:flex-1 text-left">
             <h1 className="text-3xl font-bold text-white mb-4">Ratings</h1>
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-semibold text-white">13K</h1>

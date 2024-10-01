@@ -46,7 +46,7 @@ interface Course {
   title?: string;
   description?: string;
   coverImageUrl?: string;
-  Tutors?: Tutor[];
+  Tutors?: Tutor;
 }
 
 interface PurchasedCourse {

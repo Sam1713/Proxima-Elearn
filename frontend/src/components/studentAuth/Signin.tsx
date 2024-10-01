@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from "react";
-import oipImage from "../../assets/images/1175458.jpg";
 import { SigninType } from "../../types/Register";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { override, color } from "../../utils/ClipLoader";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../../redux/student/studentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import api from '../API/Api';
 import { Button, Input, Typography } from "@material-tailwind/react";
-import { FaGoogle } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import {motion} from 'framer-motion'
 const Signin: React.FC = () => {
   const [form, setForm] = useState<SigninType>({ email: "", password: "" });
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: any) => state.student);
+  // const { loading, error } = useSelector((state: RootState) => state.student);
+  const [loading,setLoading]=useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation(); // Get the location object
  const currentStudent=useSelector((state:RootState)=>state.student.currentStudent)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
@@ -32,29 +30,33 @@ console.log('currentStudent?.isBlocked',currentStudent)
  }
    
  },[currentStudent?.isBlocked])
+ console.log('s',loading)
+
+ 
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
+      setLoading(true)
       dispatch(signInStart());
       const response = await api.post("/backend/auth/signin", form);
       localStorage.setItem('access_token', response.data.token);
       console.log('Token saved:', localStorage.getItem('access_token'));
-      
+      setLoading(false)
       dispatch(signInSuccess(response.data.rest));
       toast.success(response.data.message);
       navigate('/feedHome');
     } catch (error: unknown) {
-      console.error('Error caught:', error);
-      dispatch(signInFailure(error));
+      setLoading(false)
+      dispatch(signInFailure())
       if (axios.isAxiosError(error) && error.response) {
-        const { status, data } = error.response;
-
+        const { status, data } = error.response as { status: number; data: { error: string } };
         if (status === 403 && data.error === 'UserBlocked') {
-          toast.error("Your accounas been blocked. Please sign in again.");
+          toast.error("Your account has been blocked. Please sign in again.");
           localStorage.removeItem('access_token');
           navigate('/signin');
-        } 
+        }
       } else {
         toast.error('An unexpected error occurred. Please try again.');
       }
@@ -67,8 +69,8 @@ console.log('currentStudent?.isBlocked',currentStudent)
       <div className="flex flex-col md:flex-row shadow-lg rounded-lg overflow-hidden w-full max-w-4xl">
         
         <motion.div className="flex-1 flex items-center justify-center p-4 mx-[-11%]"
-        initial={{ opacity: 0, y: 200 }}  // Initial state before animation
-  animate={{ opacity: 1, y: 0 }}    // Final state after animation
+        initial={{ opacity: 0, y: 200 }} 
+  animate={{ opacity: 1, y: 0 }}    
   transition={{ duration: 0.8, ease: "easeOut" }} >
           <form onSubmit={handleSubmit}
                 className="w-full max-w-sm p-8 bg-gray-900 rounded-lg shadow-lg">
@@ -76,34 +78,32 @@ console.log('currentStudent?.isBlocked',currentStudent)
             <div className="mb-6">
 
             <Input
-  onChange={handleChange}
-  color="white"
-  type="email"
-  id="email"
-  name="email"
-  className="w-full px-3 py-2 border border-gray-300 rounded  focus:border-blue-500 "
-  size="md"
-  label="Username"
-  labelProps={{
-    className: "text-white", // Change the label color here
-  }}
-/>
+                onChange={handleChange}
+                color="white"
+                type="email"
+                id="email"
+                name="email"
+                className="w-full px-3 py-2 border border-gray-300 rounded  focus:border-blue-500 "
+                size="md"
+                label="Username"
+                labelProps={{
+                  className: "text-white", // Change the label color here
+                }} crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>
 
 
             </div>
             <div className="mb-6">
 
             <Input
-             onChange={handleChange}
-             color="white"
-             id="password"
-             name="password"
-            type="password" label="Password" />
+                onChange={handleChange}
+                color="white"
+                id="password"
+                name="password"
+                type="password" label="Password" crossOrigin={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
       <Typography
-        variant="small"
-        color="gray"
-        className="mt-2 flex items-center gap-1 font-normal"
-      >
+                variant="small"
+                color="gray"
+                className="mt-2 flex items-center gap-1 font-normal"placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -122,7 +122,7 @@ console.log('currentStudent?.isBlocked',currentStudent)
             </div>
             <Button
               type="submit"
-              className="w-full mb-2 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">
+              className="w-full mb-2 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               {loading ? (
                 <ClipLoader
                   color={color}
@@ -136,7 +136,7 @@ console.log('currentStudent?.isBlocked',currentStudent)
                 "Sign in"
               )}
             </Button>
-            <Button className="w-full flex items-center justify-center bg-green-400 py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors">
+            <Button className="w-full flex items-center justify-center bg-green-400 py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
   <span className="mr-2">
     <FcGoogle className="w-6 h-6" />
   </span>

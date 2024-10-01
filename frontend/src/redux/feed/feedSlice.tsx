@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Feed {
+  username: ReactNode;
   title: string;
   content: string;
-  files: string[];
+  files: FileType[];
   createdAt:Date;
   userDetails:{
     username:string;
@@ -11,7 +12,12 @@ export interface Feed {
     profilePic:string
   }
 }
+interface FileType{
+  _id:string;
+  fileType:string;
+  url:string;
 
+}
 interface FeedDetails {
   feeds:Feed[]
   feed:Feed|null

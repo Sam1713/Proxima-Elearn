@@ -72,7 +72,7 @@ export const tutorSignin = async (req: Request<{}, {}, TutorSigninType>, res: Re
       return res.status(401).json({ message: "Invalid credentials" });
     }
     console.log(validUser)
-    const token = jwt.sign({ id: validUser.id }, process.env.TUTOR_SECRET_KEY as string);
+    const token = jwt.sign({ id: validUser.id,userType:'tutor' }, process.env.STUDENT_JWT_SECRET as string);
 console.log('tok',token)
     const { password: _, ...rest } = validUser.toObject(); 
 

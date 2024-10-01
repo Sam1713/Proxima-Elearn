@@ -70,7 +70,7 @@ console.log('va',val)
           <li className="mx-10">
           <Link 
   to={val ? '/coursepage' : '#'}
-  onClick={!val ? handleLicense : undefined}
+  onClick={!val&&myTutor ? handleLicense : undefined}
   className="hover:text-blue-300 transition-colors duration-300"
 >
   <FaChalkboardTeacher size={30}/>

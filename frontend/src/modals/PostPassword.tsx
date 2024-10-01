@@ -226,7 +226,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                   type='email'
                   placeholder='Enter your email'
                   value={currentStudent?.email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e:React.ChangeEvent<HTMLInputElement> ) => setEmail(e.target.value)}
                   className='w-full p-2 border border-gray-400 rounded mb-4 focus:outline-blue-600'
                 />
               </div>

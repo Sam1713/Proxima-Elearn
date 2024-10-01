@@ -134,14 +134,14 @@ const AdminCategory: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-5 w-full md:w-[130%] md:mx-5">
-      <div className="container mx-auto bg-custom-gradient shadow-lg rounded-lg p-6">
+    <div className=" pl-10 p-4 w-full md:w-[100%] ">
+      <div className="container mx-auto bg-black w-full  shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">Manage Categories</h1>
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="md:flex md:items-center w-full md:w-auto md:justify-between mb-4">
           <button
             onClick={handleCategoryOpen}
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition"
+            className="bg-blue-500 w-full md:w-auto mb-4 md:mb-0 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Add Category
           </button>
@@ -152,12 +152,12 @@ const AdminCategory: React.FC = () => {
               placeholder="Search categories..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="p-2 rounded border border-gray-300 shadow-sm"
+              className="p-2 rounded border border-gray-300 shadow-sm "
             />
             <select
               value={sortOrder}
               onChange={handleSortChange}
-              className="p-2 rounded border border-gray-300 shadow-sm"
+              className="p-2 rounded border border-gray-300 shadow-sm w-[40%] md:w-auto"
             >
               <option value="asc">Sort Ascending</option>
               <option value="desc">Sort Descending</option>
@@ -165,7 +165,7 @@ const AdminCategory: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-custom-gradient mt-4 p-4 rounded-lg shadow-md">
+        <div className="bg-custom-gradient  mt-4 p-4 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Existing Categories</h2>
           <ul>
             {filteredCategories.length > 0 ? (

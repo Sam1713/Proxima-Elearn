@@ -5,24 +5,39 @@ import mongoose from 'mongoose';
 import Enrollment from '../../models/enrollementModel';
 import CategoryeModel from '../../models/categoryModel';
 import Payment from '../../models/paymentModel';
-
 export const uploadCourse = async (req: Request, res: Response) => {
   try {
-    console.log('sdfsdf')
     const tutorId = req.userId;
     if (!tutorId) {
       return res.status(400).json({ message: 'Tutor ID is required' });
     }
+
+    // Extract category ID from the request body
+    const categoryId = req.body.category; // Assuming this is the category ID coming from the frontend
+    console.log('Category ID:', categoryId);
+
+    // Check if the category exists and is not deleted
+    const existingCategory = await CategoryeModel.findOne({ 
+      _id: categoryId,
+      isDelete: false, // Ensure the category is not deleted
+    });
+    console.log('Existing Category:', existingCategory);
+
+    // If the category does not exist, return an error
+    if (!existingCategory) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
     console.log('Tutor ID:', tutorId);
 
     const coverImage = req.files && (req.files as any)['coverImage'] ? (req.files as any)['coverImage'][0] : null;
     const coverVideo = req.files && (req.files as any)['coverVideo'] ? (req.files as any)['coverVideo'][0] : null;
-    
+
     const videos = req.files && (req.files as any)['videos'] ? (req.files as any)['videos'] : [];
-    const videoDescriptions = Array.isArray(req.body.videoDescriptions) 
-      ? req.body.videoDescriptions 
-      : [req.body.videoDescriptions]; 
-    
+    const videoDescriptions = Array.isArray(req.body.videoDescriptions)
+      ? req.body.videoDescriptions
+      : [req.body.videoDescriptions];
+
     let coverImageUrl = '';
     if (coverImage) {
       try {
@@ -33,7 +48,8 @@ export const uploadCourse = async (req: Request, res: Response) => {
         return res.status(500).json({ message: 'Failed to upload cover image' });
       }
     }
-console.log('imageurl',coverImageUrl)
+    console.log('Cover Image URL:', coverImageUrl);
+
     let coverVideoUrl = '';
     if (coverVideo) {
       try {
@@ -44,7 +60,8 @@ console.log('imageurl',coverImageUrl)
         return res.status(500).json({ message: 'Failed to upload cover video' });
       }
     }
-console.log('urlVideo',coverVideoUrl)
+    console.log('Cover Video URL:', coverVideoUrl);
+
     const videoUploads = [];
     try {
       for (const video of videos) {
@@ -55,15 +72,17 @@ console.log('urlVideo',coverVideoUrl)
       console.error('Error uploading videos:', error);
       return res.status(500).json({ message: 'Failed to upload videos' });
     }
-  console.log('videoUp',videoUploads)
+    console.log('Video Uploads:', videoUploads);
+
     const videosWithDescriptions = videoUploads.map((url, index) => ({
       fileUrl: url,
-      description: videoDescriptions[index] || '' 
+      description: videoDescriptions[index] || ''
     }));
- console.log('fefe',videoDescriptions)
+    console.log('Video Descriptions:', videoDescriptions);
+
     const course = new CourseModel({
       title: req.body.title,
-      category: req.body.category,
+      category: existingCategory.categoryName, // Use the found category's ID
       description: req.body.description,
       AboutCourse: req.body.AboutCourse,
       lessons: req.body.lessons,
@@ -76,7 +95,7 @@ console.log('urlVideo',coverVideoUrl)
 
     await course.save();
     console.log('Course saved:', course);
-    
+
     res.status(200).json({ message: 'Course uploaded and saved successfully' });
   } catch (error) {
     console.error('Error uploading course:', error);
@@ -313,6 +332,10 @@ export const getAllPurchasedStudents = async (req: Request, res: Response, next:
   try {
     console.log('gail');
     const TutorId=req.userId
+    const page=parseInt(req.query.page as string)||1
+    const limit=parseInt(req.query.limit as string)||10
+    const totalDoc=await Enrollment.countDocuments()
+    const skip=(page-1)*limit
     const tutorId=new mongoose.Types.ObjectId(TutorId)
     const studentDetails = await Enrollment.aggregate([
       {
@@ -352,12 +375,26 @@ export const getAllPurchasedStudents = async (req: Request, res: Response, next:
           "email": "$Student.email",        
           "profilePic": "$Student.profilePic" 
         }
+      },
+      {
+        $sort:{
+          createdAt:-1
+        }
+      },
+      {
+        $skip:skip
+      },
+      {
+        $limit:limit
       }
     ]);
 
+    const totalPages=Math.ceil(totalDoc/limit)
+    console.log('tot',totalPages)
+
     console.log('cour', studentDetails);
 
-    res.status(200).json(studentDetails);
+    res.status(200).json({studentDetails,totalPages});
 
   } catch (error) {
     console.error('Error fetching purchased students:', error);
@@ -543,7 +580,7 @@ export const getWalletDetails = async (req: Request, res: Response, next: NextFu
         $count: 'totalDocs'
       }
     ]);
-
+console.log('s',walletDetails)
     const totalDoc = totalDocResult[0]?.totalDocs || 0;
     console.log('totalDoc:', totalDoc);
     const totalPages = Math.ceil(totalDoc / limit);
@@ -554,3 +591,84 @@ export const getWalletDetails = async (req: Request, res: Response, next: NextFu
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const getAllCategoryTutor=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('gai')
+  try{
+   const categories=await CategoryeModel.find({isDelete:false})
+   if(!categories){
+    res.json('No categories found')
+   }
+   res.json(categories)
+   console.log('ca',categories)
+  }catch(error){
+    console.log('er',error)
+  }
+
+}
+
+export const getSearchResultsCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const searchValue = req.query.q as string;
+
+    // Check if a search term is provided
+    if (!searchValue) {
+      res.status(400).json({ message: 'Search query is required' });
+      return;
+    }
+
+    console.log('Search Term:', searchValue);
+
+    const searchResults = await CourseModel.find({
+      title: { $regex: searchValue, $options: 'i' }, 
+      isDelete:false
+    });
+    console.log('searchResults',searchResults)
+
+    // Send the search results back to the client
+    res.status(200).json(searchResults);
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+export const getPriceBasedCourse=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('reached..khk')
+  const minPrice = parseFloat(req.query.minPrice as string) || 0; 
+  const maxPrice = parseFloat(req.query.maxPrice as string) || Infinity; 
+
+  console.log('min',minPrice)
+  console.log('max',maxPrice)
+
+  const courses=await CourseModel.find({
+      price: { $gte: minPrice, $lte: maxPrice },
+      isDelete:false    
+  })
+  console.log('cor',courses)
+  if(!courses){
+    res.json('No Courses found')
+  }
+  res.json(courses)
+  console.log('cour',courses)
+
+}
+
+
+export const getCategorySort=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  try{
+  const catValue=req.query.category as string
+  console.log('ca',catValue)
+  const cat=await CourseModel.find({
+    isDelete:false,
+    category:{ $regex: catValue, $options: 'i' }
+  })
+  if(!cat){
+    res.json('No course Found')
+  }
+  console.log('ca',cat)
+  res.json(cat)
+  }catch(error){
+    console.log('er',error)
+  }
+}

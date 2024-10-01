@@ -15,9 +15,9 @@ const GlobalFilterComponent = ({ globalFilter, setGlobalFilter }: any) => (
     value={globalFilter || ''}
     onChange={e => setGlobalFilter(e.target.value || undefined)}
     placeholder={'Search...'}
-    className='relative border p-2 px-6 rounded-xl bg-custom-gradient text-white'
+    className='relative border p-2 px-6 w-full md:w-auto  rounded-xl bg-custom-gradient text-white'
   />
-   <FaSearch className='md:absolute absolute  ml-1 md:top-1/4  text-white' />
+   <FaSearch  className='md:absolute absolute text-2xl md:text-sm  ml-1 md:top-1/4 right-5 top-0  md:right-auto  text-white' />
   </span>
   
 );
@@ -158,7 +158,7 @@ const TutorListing = () => {
   );
 
   return (
-    <div className='md:w-[110%] w-[90%] mx-10 md:mt-[1%]   flex flex-col md:h-[85vh] mt-[10%] bg-custom-gradient rounded-xl p-5 shadow-lg'>
+    <div className='md:w-auto w-[100%] md:mx-10 md:mt-[1%]   flex flex-col  mt-[10%] bg-black rounded-xl p-5 shadow-lg'>
       <div className='font-serif text-2xl mb-4 text-center'>
         <h1 className='text-gray-100 font-bold'>Welcome to Tutor's Page</h1>
       </div>

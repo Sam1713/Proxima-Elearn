@@ -3,13 +3,16 @@ import api from '../API/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStudentPayment } from '../../redux/courses/courseSlice';
 import { RootState } from '../../redux/store';
+import { setLoading, setLoadingClose } from '../../redux/student/studentSlice';
+import LoadingSpinner from '../../utils/LoadingSpinner';
 
 function PaymentInfo() {
     const dispatch = useDispatch();
     const studentPayment = useSelector((state: RootState) => state.course.studentPaymentDetailsArray);
-
+    const loading=useSelector((state:RootState)=>state.student.loading)
     useEffect(() => {
         const fetchPaymentDetails = async () => {
+            dispatch(setLoading())
             try {
                 const response = await api.get('/backend/enroll/getPaymentDetails', {
                     headers: {
@@ -17,8 +20,10 @@ function PaymentInfo() {
                     },
                 });
                 console.log('Response:', response.data);
+                dispatch(setLoadingClose())
                 dispatch(setStudentPayment(response.data.data));
             } catch (error) {
+                dispatch(setLoadingClose())
                 console.error('Failed to fetch payment details:', error);
             }
         };
@@ -27,7 +32,6 @@ function PaymentInfo() {
 
     console.log('Student Payment Details:', studentPayment);
 
-    // Function to format the created_at timestamp
     const formatCreatedAt = (createdAt: string): string => {
         const date = new Date(createdAt);
         const day = date.getDate();
@@ -35,7 +39,13 @@ function PaymentInfo() {
         const year = date.getFullYear();
         return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
     };
-
+   if(loading){
+    return(
+        <>
+        <LoadingSpinner/>
+        </>
+    )
+   }
     return (
         <div className="w-full mt-10 md:w-[90%] h-[80vh] overflow-y-scroll mx-auto p-6 bg-white bg-opacity-20 shadow-2xl rounded-lg">
             <h1 className="font-bold text-gray-100 text-2xl underline text-center mb-6">Your Payment History</h1>
@@ -68,7 +78,7 @@ function PaymentInfo() {
                     );
                 })
             ) : (
-                <p className="text-center text-gray-500">No payment details found.</p>
+                <p className="text-center text-gray-500 font-protest text-md">No payment details found.</p>
             )}
         </div>
     );

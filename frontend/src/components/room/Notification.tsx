@@ -12,12 +12,11 @@ const Notification = () => {
           <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-sm mx-auto transform transition-transform duration-500 ease-in-out animate-slide-in">
             <h1 className="text-xl font-semibold mb-4 animate-pulse">{call.name} is calling</h1>
             <Button 
-              variant="gradient" 
-              color="light-blue" 
+              variant="gradient"
+              color="light-blue"
               size="lg"
               className="w-full animate-bounce"
-              onClick={answerCall}
-            >
+              onClick={answerCall}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            >
               Answer
             </Button>
           </div>

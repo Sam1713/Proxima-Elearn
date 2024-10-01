@@ -16,9 +16,16 @@ interface PostModalProps {
   fetchFeeds: () => void;
 }
 
+interface PostData {
+  title: string;
+  content: string;
+  files: File[];
+}
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, fetchFeeds }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state: RootState) => state.student.loading);
+// Assuming you are in a file input change event handler
+
 
 
   const formik = useFormik<FeedDetails>({
@@ -28,7 +35,8 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, fetchFeeds }) =>
       files: []
     },
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values: PostData) => {
+      console.log('va', values);
       
       Swal.fire({
         title: 'Are you sure?',
@@ -39,45 +47,55 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, fetchFeeds }) =>
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, submit it!'
       }).then(async (result) => {
+        console.log('res',result)
+        if (result.isDismissed) {
+          return; 
+        }
+  
         dispatch(setLoading());
-        if (result.isConfirmed) {
-          const formData = new FormData();
-          for (const key in values) {
-            if (key !== 'files') {
-              const value = values[key as keyof FeedDetails];
-              formData.append(key, String(value));
-            }
-          }
-          values.files.forEach(file => formData.append('files', file));
-          try {
-            const response = await api.post('/backend/feed/feedPost', formData, {
-              headers: {
-                'X-Token-Type': 'student'
-              }
-            });
-            dispatch(setCurrentFeed(response.data.data));
-            fetchFeeds();
-           
-            Swal.fire('Success!', 'Your post has been submitted successfully.', 'success').then(() => {
-              dispatch(setLoadingClose());
-              onClose(); 
-            });          
-          } catch (error) {
-            dispatch(setLoadingClose());
-          
-            console.log(error);
-            Swal.fire('Error!', 'There was a problem submitting your post. Check your file format.', 'error').then(() => {
-              dispatch(setLoadingClose());
-            });          
+        const loadingSwal = Swal.fire({
+          title: 'Submitting...',
+          text: 'Please wait while we submit your Post.',
+          icon: 'info',
+          showCancelButton: false,
+          showConfirmButton: false,
+          allowOutsideClick: false, 
+        });
+  
+        const formData = new FormData();
+        for (const key in values) {
+          if (key !== 'files') {
+            const value = values[key as keyof FeedDetails];
+            formData.append(key, String(value));
           }
         }
-      });
-
-      
+        values.files.forEach(file => formData.append('files', file));
+  
+        try {
+          const response = await api.post('/backend/feed/feedPost', formData, {
+            headers: {
+              'X-Token-Type': 'student'
+            }
+          });
+          dispatch(setCurrentFeed(response.data.data));
+          fetchFeeds();
+          
+          Swal.fire('Success!', 'Your post has been submitted successfully.', 'success').then(() => {
+            dispatch(setLoadingClose());
+            onClose(); 
+          });          
+        } catch (error) {
+          dispatch(setLoadingClose());
+          console.log(error);
+          Swal.fire('Error!', 'There was a problem submitting your post. Check your file format.(png,jpg or jpeg or mp4) are allowed', 'error').then(() => {
+            dispatch(setLoadingClose());
+          });          
+        }
+        loadingSwal.close();
+            });
     }
-    
-    
   });
+  
   if (!isOpen) return null;
 if(loading){
   return(
@@ -132,7 +150,7 @@ if(loading){
                   onBlur={formik.handleBlur}
                   value={formik.values.content}
                   className='w-full p-2 border border-gray-300 rounded'
-                  rows='4'
+                  rows={4} 
                   placeholder='Enter content'
                 ></textarea>
                 {formik.touched.content && formik.errors.content ? (
@@ -144,16 +162,24 @@ if(loading){
                 <input
                   name='files'
                   type='file'
-                  onChange={(event) => {
-                    formik.setFieldValue('files', Array.from(event.currentTarget.files));
-                  }}
-                  onBlur={formik.handleBlur}
-                  multiple
-                  className='w-full p-2 border text-white border-gray-300 rounded'
-                />
-                {formik.touched.files && formik.errors.files ? (
-                  <div className='text-red-500'>{formik.errors.files}</div>
-                ) : null}
+               
+  onChange={(event:React.ChangeEvent<HTMLInputElement> ) => {
+    const files = event.currentTarget.files;
+
+    if (files) {
+      formik.setFieldValue('files', Array.from(files));
+    } else {
+      formik.setFieldValue('files', []);
+    }
+  }}
+  onBlur={formik.handleBlur}
+  multiple
+  className='w-full p-2 border text-white border-gray-300 rounded'
+/>
+{formik.touched.files && formik.errors.files ? (
+  <div className='text-red-500'>{formik.errors.files}</div>
+) : null}
+
               </div>
               <button
                 type='submit'

@@ -76,7 +76,6 @@ function App() {
               <Route element={<Layout />}>
 
                 <Route path="/studentProfile" element={<StudentProfileDetails />} />
-                <Route path="/myStudent" element={<Mystudent />} />
                 <Route path='/orderedCourses'element={<OrderedCourse/>}/>
                 <Route path='/getPaymentDetails'element={<PaymentInfo/>}/>
                 </Route>

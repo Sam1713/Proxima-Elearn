@@ -13,6 +13,7 @@ export interface TutorState {
     bookingDetails:CallRequestType|null,//changed callRequestType
     walletInfo:WalletDetailsTypes|null,
     quizDetails:StudentQuiz|null,
+    allCategories:CategoryTypes|[],
     studentChat:[],
     sortedStudents: Student[],
     newBio?:UpdatedBio|null,
@@ -136,6 +137,11 @@ interface studentChatType{
     senderType:string
 }
 
+interface CategoryTypes{
+    _id:string;
+    categoryName:string;
+}
+
 const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
@@ -147,6 +153,7 @@ const initialState:TutorState={
     bookingDetails:null,
     walletInfo:null,
     quizDetails:null,
+    allCategories:[],
     studentChat:[],
     categoryDetails:[],
     purchased:[],
@@ -243,10 +250,13 @@ const tutorSlice=createSlice({
         },
         setQuizDetails:(state,action:PayloadAction<StudentQuiz>)=>{
             state.quizDetails=action.payload
+        },
+        setTutorCategories:(state,action:PayloadAction<CategoryTypes>)=>{
+            state.allCategories=action.payload
         }
     },
 });
 
-export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails,setWalletInfo,setStudentChat,setQuizDetails } = tutorSlice.actions;
+export const { signinStart, signinSuccess, signinFailure,tutorsignout,isTutorApproved,updateSuccessTutor,updateBio,updateFiles,licenseAgreement,setUploadedCourses,setUploadedCoursesDetails,setPurchasedStudents,setCategoryDetails,setCallRequests,setCallRequestAccept,setBookingDetails,setWalletInfo,setStudentChat,setQuizDetails,setTutorCategories } = tutorSlice.actions;
 
 export default tutorSlice.reducer;

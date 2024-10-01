@@ -6,15 +6,15 @@ import RecentFeed from './RecentFeed';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearFeed, setFeeds } from '../../redux/feed/feedSlice';
 import { setLoading, setLoadingClose, signout } from '../../redux/student/studentSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../API/Api'
-import { RootState } from '../../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import FeedShimmer from '../shimmers/FeedShimmer';
-function FeedHome() {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+const FeedHome:React.FC=()=> {
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); 
   const loading=useSelector((state:RootState)=>state.student.loading)
-  const dispatch=useDispatch()
+  const dispatch=useDispatch<AppDispatch>()
   const navigate=useNavigate()
   useEffect(() => {
     const img = new Image();
@@ -40,22 +40,18 @@ function FeedHome() {
         dispatch(setFeeds(response.data))
         
         console.log('Feeds response:', response.data);
-        // Handle response
-      } catch (error) {
+      } catch (error:unknown) {
         dispatch(setLoadingClose())
           if (error.response) {
             const { status, data } = error.response;
      
-            // Check if the error is due to the user being blocked
             if (status === 403 && data.error === 'UserBlocked') {
               dispatch(signout());
               dispatch(clearFeed());
-              // Handle blocked user scenario
-              alert(data.message); // Display message to user
-              localStorage.removeItem('access_token'); // Clear access token from local storage
-              navigate('/signin'); // Redirect to sign-in page
+              alert(data.message); 
+              localStorage.removeItem('access_token'); 
+              navigate('/signin'); 
             } else {
-              // Handle other errors
               console.error('An error occurred:', error);
             }
           } else {
@@ -110,7 +106,7 @@ function FeedHome() {
               alt="Stylish Image"
             />
             <div className='absolute bottom-4 right-4 bg-black bg-opacity-60 text-white p-4 rounded-lg shadow-lg cursor-pointer hover:bg-stone-900'>
-              <h2 className='text-sm font-semibold'>Get The Course!</h2>
+              <Link to='/courses' className='text-sm font-semibold'>Get The Course!</Link>
             </div>
           </div>
         </div>
@@ -119,7 +115,7 @@ function FeedHome() {
         <h1 className='text-white font-bold text-2xl opacity-90 underline'>Your Recent Feeds</h1>
         
       </div>
-      <RecentFeed fetchFeeds={fetchFeeds} />
+      <RecentFeed />
 
       <div className='fixed bottom-4 right-4'>
         <button 

@@ -65,9 +65,8 @@ function BookingIcon() {
   );
 }
 
-function Notifications() {
+const Notifications:React.FC=()=> {
   const navigate=useNavigate()
-  const dispatch=useDispatch()
   const studentNotification = useSelector((state: RootState) => state.student.Notifications);
    const handleNavigate=async(courseId: string | undefined, id: string)=>{
     try{
@@ -86,7 +85,7 @@ function Notifications() {
   return (
     <Menu >
       <MenuHandler>
-        <IconButton variant="text">
+        <IconButton variant="text" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -102,10 +101,10 @@ function Notifications() {
         </IconButton>
       </MenuHandler>
       
-      <MenuList className="flex flex-col gap-2 max-w-xs">
+      <MenuList className="flex flex-col gap-2 max-w-xs"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         {studentNotification.length > 0 ? (
           studentNotification.map((notification) => (
-            <MenuItem key={notification.id} className="flex items-center gap-4 py-2 pl-2 pr-4">
+            <MenuItem key={notification._id} className="flex items-center gap-4 py-2 pl-2 pr-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               <div onClick={() => notification.type === 'booking' && handleNavigate(notification?.courseId,notification?._id)}
  className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
                 {notification.type === 'booking' ? (
@@ -134,7 +133,7 @@ function Notifications() {
             </MenuItem>
           ))
         ) : (
-          <MenuItem className="flex items-center justify-center py-2">
+          <MenuItem className="flex items-center justify-center py-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             <Typography variant="small" color="gray-500">
               No notifications
             </Typography>

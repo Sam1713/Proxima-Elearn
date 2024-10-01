@@ -10,8 +10,9 @@ import JoinCallButton from "./JoinCallButton";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ClipboardIcon } from '@heroicons/react/24/outline'; // Clipboard icon
 import { useDispatch, useSelector } from "react-redux";
-import { setCallDetails } from "../../redux/student/studentSlice";
+import { setCallDetails, setLoading, setLoadingClose } from "../../redux/student/studentSlice";
 import { RootState } from "../../redux/store";
+import LoadingSpinner from "../../utils/LoadingSpinner";
 
 function BookingCall() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ function BookingCall() {
   const dispatch = useDispatch();
   const bookingDetails = useSelector((state: RootState) => state.student.callDetails);
   console.log('nno',booking)
+  const loading=useSelector((state:RootState)=>state.student.loading)
   const bookId=useSelector((state:RootState)=>state.student.bookingId)
   const handleOpen = () => setOpen(!open);
 
@@ -29,6 +31,7 @@ function BookingCall() {
 
   const fetchCallData = async () => {
     try {
+      dispatch(setLoading())
       const response = await api.get(`/backend/contact/getCallData/${id}`, {
         headers: {
           'X-Token-Type': 'student'
@@ -38,11 +41,19 @@ function BookingCall() {
       console.log('res', response);
       
       setBooking(response.data.bookingResult);
+      dispatch(setLoadingClose())
       dispatch(setCallDetails(response.data.bookingResult));
     } catch (error) {
+      dispatch(setLoadingClose())
       console.log('err', error);
     }
   };
+if(loading){
+  return(
+  <LoadingSpinner/>
+  )
+}
+
 console.log('book',bookingDetails)
   return (
     <div className="py-20 bg-custom-gradient min-h-screen flex flex-col items-center font-serif">
@@ -50,31 +61,29 @@ console.log('book',bookingDetails)
         <> 
         <div className="flex flex-col m-auto">
         <Button
-            onClick={handleOpen}
-            variant="gradient"
-            className=" text-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out p-8"
-          >
+              onClick={handleOpen}
+              variant="gradient"
+              className=" text-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out p-8"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Book a Slot
           </Button>
           <BookingModal open={open} handleOpen={handleOpen} id={id} fetchCallData={fetchCallData} />
           <div className="m-auto flex items-center justify-center mt-5">
-          <Typography variant="h4" className="text-gray-100 mb-4 font-poppins">No Booking Found</Typography>
+          <Typography variant="h4" className="text-gray-100 mb-4 font-poppins"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>No Booking Found</Typography>
           </div>
         </div>
         </>
       ) : (
         <div className="w-full max-w-4xl bg-white bg-opacity-5 rounded-lg shadow-lg p-6">
           <div className="text-center mb-6">
-            <Typography variant="h3" className="text-gray-100 font-poppins underline">Booking Details</Typography>
+            <Typography variant="h3" className="text-gray-100 font-poppins underline"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Booking Details</Typography>
           </div>
 
           <div className="flex justify-end mb-6">
             <Button
-              onClick={handleOpen}
-              variant="gradient"
-              disabled={bookingDetails?.status !=='completed'}
-              className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out"
-            >
+                onClick={handleOpen}
+                variant="gradient"
+                disabled={bookingDetails?.status !== 'completed'}
+                className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            >
               Book a Call
             </Button>
             <BookingModal open={open} handleOpen={handleOpen} id={id} />
@@ -82,7 +91,7 @@ console.log('book',bookingDetails)
 
           {/* Call Request Details */}
           <div className="bg-custom-gradient p-6 rounded-2xl shadow-xl mb-6 font-serif">
-            <Typography variant="h4" className="font-semibold text-gray-100 mb-4">Call Request Details</Typography>
+            <Typography variant="h4" className="font-semibold text-gray-100 mb-4"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call Request Details</Typography>
             <div className="space-y-4">
               <div className="flex items-center">
                 <MdPerson className="text-2xl text-gray-600 mr-2" />
@@ -136,7 +145,7 @@ console.log('book',bookingDetails)
             ) : (
               <div className="flex flex-col items-center">
                 <ImSpinner2 className="text-4xl text-white animate-spin mb-4" />
-                <Typography variant="h6" className="text-gray-300">Awaiting Tutor Response...</Typography>
+                <Typography variant="h6" className="text-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Awaiting Tutor Response...</Typography>
                 <Typography variant="body2" className="text-gray-400">The tutor hasn't responded yet. Please check back later.</Typography>
               </div>
             )}
@@ -145,11 +154,11 @@ console.log('book',bookingDetails)
           {/* Video Call Information */}
           {booking?.callId ? (
             <div className="bg-custom-gradient p-6 rounded-lg shadow-md">
-              <Typography variant="h4" className="font-semibold text-gray-100 mb-4">Video Call Information</Typography>
+              <Typography variant="h4" className="font-semibold text-gray-100 mb-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Video Call Information</Typography>
               <div className="flex items-center space-x-4">
                 <Typography variant="body1" className="text-gray-300 font-poppins">Call ID: {bookingDetails?.callId}</Typography>
                 <CopyToClipboard  text={bookingDetails?.callId}>
-                  <Button variant="gradient" className="bg-blue-500 text-white flex items-center space-x-2">
+                  <Button variant="gradient" className="bg-blue-500 text-white flex items-center space-x-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     <ClipboardIcon className="h-5 w-5" />
                     <span>Copy Call ID</span>
                   </Button>
@@ -162,7 +171,7 @@ console.log('book',bookingDetails)
           ) : (
             <div className="flex flex-col items-center">
               <ImSpinner2 className="text-4xl text-white animate-spin mb-4" />
-              <Typography variant="h6" className="text-gray-300">Loading Call Information...</Typography>
+              <Typography variant="h6" className="text-gray-300" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Loading Call Information...</Typography>
               <Typography variant="body2" className="text-gray-400">Please wait while we retrieve the call details.</Typography>
             </div>
           )}

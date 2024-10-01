@@ -3,12 +3,12 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-
-const ResetPassword = () => {
-  const [token, setToken] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+import api from '../API/Api'
+const ResetPassword:React.FC = () => {
+  const [token, setToken] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +29,7 @@ const ResetPassword = () => {
     setLoading(true);
   
     try {
-      const response = await axios.post(`/backend/auth/resetPassword/${token}`, { password, token });
+      const response = await api.post(`/backend/auth/resetPassword/${token}`, { password, token });
     toast.success(response.data.message);
     console.log(response.data.message)
       setLoading(false);
@@ -46,10 +46,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-800 bg-cover bg-center'
-          style={{ backgroundImage: "url('https://cdn.wallpapersafari.com/24/93/1d9UAi.jpg')"  }}>
+    <div className='flex items-center justify-center min-h-screen bg-black bg-cover bg-center'>
       <ToastContainer />
-      <div className='w-full max-w-md bg-slate-500 p-8 rounded-lg shadow-lg'>
+      <div className='w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-lg'>
         <h2 className='text-2xl font-bold text-white mb-6 text-center'>Reset Password</h2>
         <form className='space-y-4' onSubmit={handleSubmit}>
           <div className='flex flex-col'>

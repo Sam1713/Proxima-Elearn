@@ -66,7 +66,7 @@ export const AdminSignin = async (req: Request, res: Response): Promise<unknown>
             return res.status(400).json({ message: "Invalid credentials" });
         }
 console.log('sdfdsf')
-        const token = jwt.sign({ id: admin._id }, process.env.ADMIN_JWT_KEY as string, {
+        const token = jwt.sign({ id: admin._id,userType:'admin' }, process.env.STUDENT_JWT_SECRET as string, {
         });
      console.log('tok',token)
      const { password: hashedPassword, ...rest } = admin;
@@ -200,10 +200,16 @@ export const AdminRejectTutor = async (req: Request, res: Response, next: NextFu
 
 export const AdminUserListing=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
   console.log('hello')
+  // const page=parseInt(req.query.page as string)||1
+  // const limit=parseInt(req.query.limit as string)||10
+  // const skip=(page-1)*limit
+  // const totalDoc=await Student.countDocuments()
+
+
   try{
-     const users=await Student.find().lean()
-     console.log('usrs',users)
-     return res.json(users)
+    const users = await Student.find().lean()
+         console.log('usrs',users)
+     return res.json({users})
   }catch(error){
     console.log(error)
   }
@@ -479,3 +485,106 @@ export const getAdminWalletDetails=async(req:Request,res:Response,next:NextFunct
   console.log('err',error)
 }
 }
+
+
+export const getUserSearch=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  console.log('eewr')
+  const search=req.query.search as string
+  console.log('s',search) 
+  try{
+    const users=await Student.find(
+      {
+        username:{ $regex: search, $options: 'i' }
+      }
+    )
+    if(!users){
+      res.json('No users found')
+    }
+    res.json(users)
+  }catch(error){
+    console.log('er',error)
+  }
+} 
+
+export const getOrderSearchVal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const searchVal = req.query.searchVal as string;
+
+    const searchRegex = new RegExp(searchVal, 'i'); // 'i' makes it case-insensitive
+
+    const ordersList = await Payment.aggregate([
+      {
+        $lookup: {
+          from: 'enrollments',
+          localField: 'enrollmentId',
+          foreignField: '_id',
+          as: 'EnrollmentDetails'
+        }
+      },
+      {
+        $unwind: { path: "$EnrollmentDetails" }
+      },
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'EnrollmentDetails.studentId',
+          foreignField: '_id',
+          as: 'StudentDetails'
+        }
+      },
+      {
+        $unwind: { path: "$StudentDetails" }
+      },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'EnrollmentDetails.courseId',
+          foreignField: '_id',
+          as: 'CourseDetails'
+        }
+      },
+      {
+        $unwind: { path: "$CourseDetails" }
+      },
+      {
+        $match: {
+          $or: [
+            { 'StudentDetails.username': searchRegex },    // Search by username
+            { 'StudentDetails.email': searchRegex },       // Search by email
+            { 'CourseDetails.title': searchRegex }         // Search by course title
+          ]
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          username: '$StudentDetails.username',
+          email: '$StudentDetails.email',
+          profilePic: '$StudentDetails.profilePic',
+          title: '$CourseDetails.title',
+          price: '$CourseDetails.price',
+          createdAt: '$created_at'
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
+        $skip: Number(req.query.skip) || 0
+      },
+      {
+        $limit: Number(req.query.limit) || 10
+      },
+    ]);
+
+    const totalOrders = await Payment.countDocuments(); // For pagination, you might want to adjust the count
+    const totalPages = Math.ceil(totalOrders / (Number(req.query.limit) || 10));
+
+    res.status(200).json({ ordersList, totalPages });
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

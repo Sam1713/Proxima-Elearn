@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { MoonLoader } from "react-spinners";
 import { css } from "@emotion/react";
 import { useNavigate } from 'react-router-dom';
+import api from '../API/Api'
 
-const spinnerStyle = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-  animation: spin 1s linear infinite;
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+const spinnerStyle = {
+  display: 'block',
+  margin: '0 auto',
+  borderColor: 'red',
+  animation: 'spin 1s linear infinite',
+  '@keyframes spin': {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
   }
-`;
+};
 
-function ForgotPassword() {
+const ForgotPassword:React.FC=()=> {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement> ) => {
     e.preventDefault();
 
     if (!email) {
@@ -37,7 +38,9 @@ function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post('/backend/auth/forgotPassword', { email });
+      const response = await api.post('/backend/auth/forgotPassword', { email },{
+       
+      });
       console.log(response.data.message);
       
         setTimeout(()=>{
@@ -46,13 +49,15 @@ function ForgotPassword() {
         navigate(`/resetPassword?token=${response.data.token}`);
       
 
-    } catch (error) {
-      console.error(error); 
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'An error occurred');
-      } else {
-        toast.error('An unexpected error occurred. Please try again.');
-      }
+    }
+      catch (error: unknown) {
+        setLoading(false);
+
+        console.error(error); 
+        const axiosError = error as AxiosError;
+        if (axiosError.response && axiosError.response.data) {
+          toast.error((axiosError.response.data as string));
+        } 
     } finally {
       setLoading(false);
     }
@@ -66,16 +71,15 @@ function ForgotPassword() {
           <MoonLoader
             color="#fff"
             loading={loading}
-            css={spinnerStyle}
+            style={spinnerStyle}
             size={60}
             aria-label="Loading Spinner"
             data-testid="loader"
           />
         </div>
       ) : (
-        <div className='flex items-center justify-center min-h-screen bg-gray-800  bg-cover bg-center'
-          style={{ backgroundImage: "url('https://cdn.wallpapersafari.com/24/93/1d9UAi.jpg')"  }}>
-          <div className='w-full max-w-md bg-slate-500 p-8 rounded-lg shadow-lg'>
+        <div className='flex items-center justify-center min-h-screen bg-black  bg-cover bg-center'>
+          <div className='w-full max-w-md bg-slate-500 p-8 rounded-lg bg-gray-900 shadow-lg'>
             <h2 className='text-2xl font-bold text-white mb-6 text-center'>Forgot Password</h2>
             <form className='space-y-4' onSubmit={handleSubmit}>
               <div className='flex flex-col'>
@@ -95,13 +99,13 @@ function ForgotPassword() {
               >
                 Send Reset Link
               </button>
-              <button
+              {/* <button
                 type='button'
                 className='w-1/3 mx-60 my-20 py-2 bg-red-600 text-white font-bold rounded hover:bg-red-700 transition duration-300'
-                onClick={handleSubmit} // Changed to type='button' to avoid duplicate submission
+                onClick={handleSubmit} 
               >
                 Resend
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

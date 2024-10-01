@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import AnimatedText from '../../animation/AnimatedText'; // Adjust path as needed
 import courseImage from '../../assets/images/pablo-blockchain-courses.png'
 import AddCourseModal from '../../modals/courseModal/AddCourseModal';
-
+import api from '../API/Api'
+import { useDispatch, useSelector } from 'react-redux';
+import { setCategories } from '../../redux/student/studentSlice';
+import { RootState } from '../../redux/store';
+import { setTutorCategories } from '../../redux/tutor/tutorSlice';
 const  CoursePage:React.FC=()=> {
     const[courseOpen,setCourseOpen]=useState<boolean>(false)
+    const dispatch=useDispatch()
     const handleCourse=()=>{
         setCourseOpen(true)
     }
@@ -39,7 +44,22 @@ const  CoursePage:React.FC=()=> {
     config: { duration: 3000 },
     loop: { reverse: true },
   });
+ 
+useEffect(()=>{
+  fetchCategory()
+},[])
 
+const fetchCategory=async()=>{
+  const response=await api.get('/backend/course/getCategory',{
+    headers:{
+      'X-Token-Type':'tutor'
+    }
+  })
+  dispatch(setTutorCategories(response.data))
+  console.log('resaf',response.data)
+}
+const category=useSelector((state:RootState)=>state.tutor.allCategories)
+console.log('cat',category)
   return (
     <div className='text-white min-h-screen flex flex-col w-[100%] items-center justify-center p-8'>
       {/* Animated background color and floating wrapper */}

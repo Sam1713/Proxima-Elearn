@@ -10,6 +10,8 @@ import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 
 const TutorSignup: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -137,7 +139,7 @@ const TutorSignup: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap mb-4 my-[-2%] md:my-5">
-              <div className="w-1/4 md:w-[10%] pr-2">
+              {/* <div className="w-1/4 md:w-[10%] pr-2">
                 <select
                   name="countrycode"
                   onChange={formik.handleChange}
@@ -153,7 +155,22 @@ const TutorSignup: React.FC = () => {
                   <div className="text-red-400 font-bold">{formik.errors.countrycode}</div>
                 ) : null}
               </div>
-              <div className="w-3/4 md:w-2/5 pr-2 mb-4 sm:mb-0">
+              */}
+<div className="w-1/4 md:w-[10%] pr-2">
+  <PhoneInput
+    defaultCountry="US"
+    onBlur={() => formik.setFieldTouched('countrycode')}
+    // value={formik.values.countrycode}
+    onChange={(value) => formik.setFieldValue('countrycode', value)}
+    international
+    className="w-full h-10 bg-white from-neutral-50 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    countrySelectProps={{ className: "country-select" }} // To only render country select
+  />
+  {formik.touched.countrycode && formik.errors.countrycode ? (
+    <div className="text-red-400 font-bold">{formik.errors.countrycode}</div>
+  ) : null}
+</div>
+<div className="w-3/4 md:w-2/5 pr-2 mb-4 sm:mb-0">
                 <input
                   type="text"
                   name="phonenumber"

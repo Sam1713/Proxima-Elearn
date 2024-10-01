@@ -30,23 +30,27 @@ function UserListing() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get('/backend/admin/userlisting', {
-          headers: {
-            'X-Token-Type': 'admin',
-          },
-        });
-        dispatch(adminUsersFetch(response.data));
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
+    fetchUsers()
   }, [dispatch]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get('/backend/admin/userlisting', {
+        headers: {
+          'X-Token-Type': 'admin',
+        },
+      });
+      console.log('res',response)
+      dispatch(adminUsersFetch(response.data.users));
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
 
   const handleValidateClick = async (id: string, isBlocked: boolean) =>
      {
@@ -122,7 +126,7 @@ function UserListing() {
         <img
           src={value || userIcon}
           alt="Profile"
-          className='rounded-full'
+          className="rounded-full"
           style={{ width: 50, height: 50 }}
         />
       ),
@@ -143,8 +147,9 @@ function UserListing() {
       disableFilters: true,
     },
   ], [adminUsers]);
-
-  const data = useMemo(() => adminUsers, [adminUsers]);
+  
+  const data = useMemo(() => adminUsers , [adminUsers]);
+  
 
   const {
     getTableProps,
@@ -159,7 +164,7 @@ function UserListing() {
     pageOptions,
     nextPage,
     previousPage,
-  } = useTable(
+   } = useTable(
     {
       columns,
       data,
@@ -173,9 +178,11 @@ function UserListing() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading users: {error.message}</div>;
+  if (!adminUsers || adminUsers.length === 0) return <div>No users available</div>;
+  
 
   return (
-    <div className=' w-[90%] md:w-[125%] md:mx-10 md:mt-[1%] flex flex-col md:h-[85vh] mt-[10%] bg-custom-gradient rounded-xl p-5 shadow-lg'>
+    <div className=' w-[90%] md:w-auto md:mx-10 md:mt-[1%] flex flex-col mt-[10%] bg-black rounded-xl p-5 shadow-lg'>
       <div className='font-serif text-2xl mb-4 text-center'>
         <h1 className='text-gray-100 font-bold'>Welcome to User's Page</h1>
       </div>

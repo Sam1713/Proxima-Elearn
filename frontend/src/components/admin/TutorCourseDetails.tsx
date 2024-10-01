@@ -27,7 +27,7 @@ const TutorCourseDetails: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-900 bg-opacity-70 w-full h-full p-8 rounded-xl shadow-xl">
+    <div className="bg-custom-gradient bg-opacity-70 md:w-[95%] md:mx-auto h-full p-8 rounded-xl shadow-xl">
       <div className="mb-8">
         <img
           className="w-full h-[300px] object-cover rounded-lg shadow-lg"
@@ -38,13 +38,13 @@ const TutorCourseDetails: React.FC = () => {
 
       <div className="mb-6">
         <h1 className="text-white text-4xl font-serif font-bold mb-2">{courseDetail?.title}</h1>
-        <span className="text-gray-400 text-lg font-medium">Category: {courseDetail?.category}</span>
+        <span className="text-gray-400 text-lg font-medium font-poppins">Category: {courseDetail?.category}</span>
       </div>
 
       {/* About Course Description */}
       <div className="mb-8">
         <h2 className="text-white text-3xl font-serif font-bold mb-4">About this Course</h2>
-        <p className="text-gray-300 text-lg leading-relaxed">
+        <p className="text-gray-300 text-lg leading-relaxed font-poppins">
           {courseDetail?.AboutCourse}
         </p>
       </div>

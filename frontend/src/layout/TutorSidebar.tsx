@@ -44,7 +44,7 @@ function TutorSidebar() {
   };
 
   return (
-    <div className='md:w-[20%] z-10 fixed  pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
+    <div className='md:w-[20%] z-10 md:fixed overflow-x-scroll md:overflow-x-hidden pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'

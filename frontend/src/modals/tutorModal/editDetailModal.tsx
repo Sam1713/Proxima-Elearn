@@ -144,7 +144,7 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                             type="text"
                             name='tutorname'
                             placeholder='Tutor Name'
-                            className='pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white rounded-2xl p-4 w-[60%] mx-auto'
+                            className='pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white text-white rounded-2xl p-4 w-[60%] mx-auto'
                             value={formik.values.tutorname}
                             onChange={formik.handleChange}
                         />
@@ -159,7 +159,7 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                             type="email"
                             name='email'
                             placeholder='Email'
-                            className='relative pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white rounded-2xl p-4 w-[60%]'
+                            className='relative pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white text-white rounded-2xl p-4 w-[60%]'
                             value={formik.values.email}
                             onChange={formik.handleChange}
                         />
@@ -189,7 +189,7 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                                 type="text"
                                 name='otp'
                                 placeholder='OTP'
-                                className='relative pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white rounded-2xl p-4 w-[60%]'
+                                className='relative pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white text-white rounded-2xl p-4 w-[60%]'
                                 value={formik.values.otp}
                                 onChange={formik.handleChange}
                             />
@@ -213,10 +213,10 @@ const EditDetailModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                             type="text"
                             name='phonenumber'
                             placeholder='Phone Number'
-                            className='pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white rounded-2xl p-4 w-[60%] mx-auto'
+                            className='pl-10 text-neutral-50 bg-gradient-to-r from-black via-black to-white rounded-2xl text-white p-4 w-[60%] mx-auto'
                             value={formik.values.phonenumber}
                             onChange={formik.handleChange}
-                        />
+                        /> 
                         <FaPhoneAlt className='text-white absolute left-[23%] top-1/2 transform -translate-y-1/2' />
                         {formik.touched.phonenumber && formik.errors.phonenumber && (
                             <div className='absolute md:mx-32 text-red-500 text-sm'>{formik.errors.phonenumber}</div>

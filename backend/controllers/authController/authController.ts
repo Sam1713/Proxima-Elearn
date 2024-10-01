@@ -122,7 +122,7 @@ export const authSignin = async (
     }
 
     const token = jwt.sign(
-      { id: user._id }, 
+      { id: user._id,userType:'student' }, 
       process.env.STUDENT_JWT_SECRET as string,
     );
     console.log('Generated token:', token); 
@@ -184,7 +184,7 @@ export const authWithGoogle = async (
 
     if (user) {
       const token = jwt.sign(
-        { id: user._id }, 
+        { id: user._id,userType:'student' }, 
         process.env.STUDENT_JWT_SECRET as string
       );
       console.log('toke',token)
@@ -209,7 +209,7 @@ export const authWithGoogle = async (
       await newUser.save(); 
 
       const token = jwt.sign(
-        { id: newUser._id }, 
+        { id: newUser._id,userType:'student' }, 
         process.env.STUDENT_JWT_SECRET as string
       );
 
@@ -398,7 +398,8 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       return res.status(400).json({ message: 'Invalid page or limit parameters' });
     }
     console.log('skip',skip) 
-    const totalCourses=await CourseModel.countDocuments()
+    const totalCourses=await CourseModel.countDocuments({isDelete:false})
+    console.log('das',totalCourses)
     const courses = await CourseModel.aggregate([
       {$match:{isDelete:false}},
       { 
@@ -435,9 +436,10 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       }
     ]);
     const totalPages=Math.ceil(totalCourses/limit)
+    const categories = await CategoryeModel.find({ isDelete: false }).select('categoryName');
 
     // console.log('Courses with tutor details:', courses);
-    res.json({courses,totalPages})
+    res.json({courses,totalPages,categories})
   }
 
   export const getSingleCourse = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -522,10 +524,11 @@ export const forgotPasswordInStudentProfile=async(req:Request,res:Response,next:
       const totalNumber=await CategoryeModel.countDocuments()
 
     console.log('yes')
-    const getAllCategories=await CategoryeModel.find().skip(skip).limit(limit)
+    const getAllCategories=await CategoryeModel.find({isDelete:false}).skip(skip).limit(limit)
     if(!getAllCategories){
       res.json('No Course Found')
     }
+    console.log('a',getAllCategories)
     const totalPages= Math.ceil(totalNumber / limit)
 
     console.log('tit',totalPages)
