@@ -1,11 +1,11 @@
-import { Card, Typography } from '@material-tailwind/react';
+import { Card } from '@material-tailwind/react';
 import React from 'react';
 
-const FeedShimmer = () => {
+const FeedShimmer:React.FC = () => {
   return (
     <div className='bg-black min-h-screen py-32'>
       {/* Main Card */}
-      <Card className='animate-pulse p-4'>
+      <Card className='animate-pulse p-4'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         {/* Container for both typography and image */}
         <div className='flex justify-between items-center h-[50vh] w-full bg-gray-500 p-4'>
           {/* Shimmer text lines */}
@@ -26,7 +26,7 @@ const FeedShimmer = () => {
       {/* Post Cards Section */}
       <div className='mt-10 space-y-6 w-[80%] mx-auto'>
         {[...Array(6)].map((_, index) => (
-          <Card key={index} className='animate-pulse p-6 h-[80vh] bg-gray-500'>
+          <Card key={index} className='animate-pulse p-6 h-[80vh] bg-gray-500' placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             <div className='space-y-4 w-full'>
               {/* Circular Avatar Placeholder */}
               <div className='rounded-full h-12 w-12 bg-gray-400 animate-pulse'></div>

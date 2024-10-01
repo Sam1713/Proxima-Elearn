@@ -1,17 +1,16 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Typography } from '@material-tailwind/react';
 import React from 'react';
 
-const CourseDetailShimmer = () => {
+const CourseDetailShimmer:React.FC = () => {
   return (
     <div className='bg-custom-gradient min-h-screen py-16'>
       <div>
-      <Card className="animate-pulse bg-gray-900">
+      <Card className="animate-pulse bg-gray-900"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
 
         <CardHeader
-          shadow={false}
-          floated={false}
-          className="md:h-[60vh] bg-gray-400 justify-center items-center hidden md:flex"
-        >
+            shadow={false}
+            floated={false}
+            className="md:h-[60vh] bg-gray-400 justify-center items-center hidden md:flex"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -29,12 +28,11 @@ const CourseDetailShimmer = () => {
         </CardHeader>
         </Card>
         <div className='mt-[50%] md:mt-0 md:absolute  rounded-xl right-[4%] md:transform -translate-y-1/2 p-5'>
-        <Card className="w-66 animate-pulse bg-gray-700">
+        <Card className="w-66 animate-pulse bg-gray-700" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
       <CardHeader
-        shadow={false}
-        floated={false}
-        className="relative grid h-56 place-items-center bg-gray-900"
-      >
+              shadow={false}
+              floated={false}
+              className="relative grid h-56 place-items-center bg-gray-900"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -50,12 +48,11 @@ const CourseDetailShimmer = () => {
           />
         </svg>
       </CardHeader>
-      <CardBody>
+      <CardBody  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <Typography
-          as="div"
-          variant="h1"
-          className="mb-4 h-3 w-56 rounded-full bg-gray-300"
-        >
+                as="div"
+                variant="h1"
+                className="mb-4 h-3 w-56 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         {/* <Typography
@@ -73,26 +70,23 @@ const CourseDetailShimmer = () => {
           &nbsp;
         </Typography> */}
         <Typography
-          as="div"
-          variant="paragraph"
-          className="mb-2 h-2 w-full rounded-full bg-gray-300"
-        >
+                as="div"
+                variant="paragraph"
+                className="mb-2 h-2 w-full rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
-          as="div"
-          variant="paragraph"
-          className="mb-2 h-2 w-full rounded-full bg-gray-300"
-        >
+                as="div"
+                variant="paragraph"
+                className="mb-2 h-2 w-full rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
       </CardBody>
-      <CardFooter className="pt-0">
+      <CardFooter className="pt-0"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <Button
-          disabled
-          tabIndex={-1}
-          className="h-8 w-20 bg-gray-300 shadow-none hover:shadow-none"
-        >
+                disabled
+                tabIndex={-1}
+                className="h-8 w-20 bg-gray-300 shadow-none hover:shadow-none"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Button>
       </CardFooter>
@@ -100,10 +94,9 @@ const CourseDetailShimmer = () => {
         </div>
       </div>
       <Typography
-  as="div"
-  variant="paragraph"
-  className="mb-2 h-20 mx-20 mt-10 animate-pulse w-[65%] rounded-xl bg-gray-500 grid grid-cols-4 gap-4 p-4"
->
+        as="div"
+        variant="paragraph"
+        className="mb-2 h-20 mx-20 mt-10 animate-pulse w-[65%] rounded-xl bg-gray-500 grid grid-cols-4 gap-4 p-4"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
   {/* Box 1 */}
   <div className="flex justify-center items-center">
     <div className="h-full w-[50%] rounded bg-gray-400"></div>
@@ -127,8 +120,7 @@ const CourseDetailShimmer = () => {
 <Typography
         as="div"
         variant="paragraph"
-        className="mb-2 animate-pulse  mx-20 mt-10 h-[50vh] w-[65%] rounded-xl bg-gray-500"
-      >
+        className="mb-2 animate-pulse  mx-20 mt-10 h-[50vh] w-[65%] rounded-xl bg-gray-500" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
         <div className='py-10 '>
         <div className='h-10 w-[20%] rounded-xl mx-auto    bg-gray-300'>
         </div>
@@ -137,43 +129,37 @@ const CourseDetailShimmer = () => {
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-2 h-3 w-[80%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-2 h-3 w-[80%] mx-10 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-2 h-3 w-[70%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-2 h-3 w-[70%] mx-10 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-10 h-3 w-[60%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-10 h-3 w-[60%] mx-10 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-2 h-3 w-[80%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-2 h-3 w-[80%] mx-10 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-2 h-3 w-[70%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-2 h-3 w-[70%] mx-10 rounded-full bg-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
         <Typography
           as="div"
           variant="paragraph"
-          className="mb-2 h-3 w-[60%] mx-10 rounded-full bg-gray-300"
-        >
+          className="mb-2 h-3 w-[60%] mx-10 rounded-full bg-gray-300" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           &nbsp;
         </Typography>
       </Typography>

@@ -1,16 +1,15 @@
 import React from 'react';
-import { Card, CardHeader, Typography } from '@material-tailwind/react';
+import { Card, CardHeader } from '@material-tailwind/react';
 
-const OrderCourseShimmer = () => {
+const OrderCourseShimmer:React.FC = () => {
   return (
     <div className='bg-custom-gradient min-h-screen py-16'>
       <div className='px-6 md:px-12'>
-        <Card className="animate-pulse bg-gray-900 rounded-lg shadow-lg">
+        <Card className="animate-pulse bg-gray-900 rounded-lg shadow-lg"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <CardHeader
             shadow={false}
             floated={false}
-            className="md:h-[70vh] bg-gray-400 flex p-6 rounded-t-lg"
-          >
+            className="md:h-[70vh] bg-gray-400 flex p-6 rounded-t-lg"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             {/* Left Side - Typography */}
             <div className='flex-1 flex flex-col space-y-4 my-40'>
               <div className="h-4 w-[50%] rounded bg-gray-300"></div>
