@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { FaDollarSign, FaUsers, FaBook } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import female from '../../assets/images/1-512.webp';
 import { Card, CardBody, CardHeader, Typography } from "@material-tailwind/react";
@@ -7,8 +6,9 @@ import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 import api from '../API/Api'
 // Chart configuration
+// Chart configuration
 const chartConfig = {
-  type: "line",
+  type: "line" as const,
   height: 240,
   series: [
     {
@@ -23,15 +23,20 @@ const chartConfig = {
       },
     },
     title: {
-      show: "",
+      text: "Sales Overview", // Title of the chart
+      style: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#fff',
+      },
     },
     dataLabels: {
       enabled: false,
     },
-    colors: ["#4F46E5"], // Changed to a more modern color
+    colors: ["#4F46E5"], // Modern color
     stroke: {
-      lineCap: "round",
-      curve: "smooth",
+      lineCap: "round" as const, // Explicit type for lineCap
+      curve: "smooth" as const, // Explicit type for curve
     },
     markers: {
       size: 0,
@@ -45,19 +50,19 @@ const chartConfig = {
       },
       labels: {
         style: {
-          colors: "#6B7280", // Updated color
+          colors: "#6B7280", // Updated color for x-axis labels
           fontSize: "14px",
           fontWeight: 500,
         },
       },
       categories: [
-        "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
       ],
     },
     yaxis: {
       labels: {
         style: {
-          colors: "#6B7280", // Updated color
+          colors: "#6B7280", // Updated color for y-axis labels
           fontSize: "14px",
           fontWeight: 500,
         },
@@ -78,7 +83,7 @@ const chartConfig = {
       },
     },
     fill: {
-      opacity: 0.9, // Slightly adjusted opacity
+      opacity: 0.9, // Adjusted opacity for the fill
     },
     tooltip: {
       theme: "dark",
@@ -86,7 +91,9 @@ const chartConfig = {
   },
 };
 
+
 const Dashboard: React.FC = () => {
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const [totalAmount,setTotalAmount]=useState<number>(0)
    const [deductedAmount,setDeductedAmount]=useState<number>(0)
     useEffect(()=>{
@@ -207,32 +214,34 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Chart Card */}
-      <Card className="shadow-lg rounded-lg overflow-hidden">
+      <Card className="shadow-lg rounded-lg overflow-hidden"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <CardHeader
           floated={false}
           shadow={false}
           color="transparent"
-          className="flex flex-col gap-4 rounded-none md:flex-row md:items-center bg-gray-800 text-white"
-        >
+          className="flex flex-col gap-4 rounded-none md:flex-row md:items-center bg-gray-800 text-white"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           <div className="w-max rounded-lg bg-gray-900 p-5 text-white">
             <Square3Stack3DIcon className="h-6 w-6" />
           </div>
           <div>
-            <Typography variant="h6" color="white">
+            <Typography variant="h6" color="white"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               Line Chart
             </Typography>
             <Typography
               variant="small"
               color="gray"
-              className="max-w-sm font-normal"
-            >
+              className="max-w-sm font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            >
               Visualize your data in a simple way using the @material-tailwind/react chart plugin.
             </Typography>
           </div>
         </CardHeader>
-        <CardBody className="px-4 py-2">
-          <Chart {...chartConfig} />
-        </CardBody>
+        <CardBody className="px-4 py-2" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+        <Chart 
+        options={chartConfig.options} 
+        series={chartConfig.series} 
+        type={chartConfig.type} 
+        height={chartConfig.height} 
+      />        </CardBody>
       </Card>
     </div>
   );
