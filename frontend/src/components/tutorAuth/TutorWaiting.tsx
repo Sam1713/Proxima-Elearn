@@ -2,21 +2,18 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { isTutorApproved, signinSuccess } from '../../redux/tutor/tutorSlice';
-
-function TutorWaiting() {
+import { isTutorApproved } from '../../redux/tutor/tutorSlice';
+import api from '../API/Api'
+const TutorWaiting:React.FC=()=> {
   const navigate = useNavigate();
   const dispatch=useDispatch()
   const currentTutor = useSelector((state: RootState) => state.tutor.currentTutor);
-  const approved=useSelector((state:RootState)=>state.admin.isApproved)
   const tutorApproved=useSelector((state:RootState)=>state.tutor.tutorApproval)
   useEffect(()=>{
-    const tutor_access_token=localStorage.getItem('tutor_access_token')
     const fetchTutorWait=async()=>{
-      const response=await axios.get('/backend/tutor/tutorwait',{
+      const response=await api.get('/backend/tutor/tutorwait',{
         headers: {
-          Authorization: `Bearer ${tutor_access_token}`,
+          'X-Token-Type':'tutor',
         }
       })
       console.log('res',response)
@@ -30,17 +27,14 @@ function TutorWaiting() {
     try {
       const tutor_access_token = localStorage.getItem('tutor_access_token');
       console.log('token',tutor_access_token)
-      if (token) {
-        // Make sure to use the correct header configuration for authentication
-        await axios.get('/backend/tutor/tutorhome', {
+      if (tutor_access_token) {
+        await api.get('/backend/tutor/tutorhome', {
           headers: {
-            'Authorization': `Bearer ${tutor_access_token}`
+            'X-Token-Type':'tutor'
           },
-          withCredentials: true,
         });
 
         
-        // Navigate to home page after successful response
         navigate('/tutorhome');
       } else {
         console.error('No access token found');
@@ -87,7 +81,7 @@ function TutorWaiting() {
             </>
           ) : (
             <>
-              <p className='text-gray-600'>Congratulations {currentTutor?.name}!</p>
+              <p className='text-gray-600'>Congratulations {currentTutor?.tutorname}!</p>
               <p>Your request has been successfully processed. Now you can explore your journey.</p>
               <p>Welcome to Proxima-Elearn!</p>
               <button

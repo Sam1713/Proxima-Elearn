@@ -1,4 +1,4 @@
-import ClipLoader from "react-spinners/ClipLoader";
+
 export const override: CSSProperties = {
     display: "block",
     margin: "0 auto",

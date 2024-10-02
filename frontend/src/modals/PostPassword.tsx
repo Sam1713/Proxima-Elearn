@@ -9,12 +9,13 @@ import axios from 'axios';
 import { MoonLoader } from 'react-spinners';
 import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
-import {  ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../components/API/Api'
+import api from '../components/API/Api';
+
 interface PostPasswordProps {
   onClose: () => void;
-} 
+}
 
 const spinnerStyle = css`
   display: block;
@@ -25,7 +26,7 @@ const spinnerStyle = css`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-`; 
+`;
 
 const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
@@ -39,33 +40,35 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     onClose();
   };
 
-  const email=currentStudent?.email
+  const email = currentStudent?.email;
+
   const handleForgotPasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!email) {
+      Swal.fire('Error!', 'Email is required.', 'error');
+      return;
+    }
+
     try {
       setLoading(true);
-      await axios.post('/backend/auth/forgotPasswordInStudentProfile', {email} );
+      await api.post('/backend/auth/forgotPasswordInStudentProfile', { email });
       setLoading(false);
       Swal.fire('Success!', 'Password reset instructions have been sent to your email.', 'success');
       setOpenForgotPass(false);
       setOpenOtpModal(true);
-    } catch (error: unknown) { 
-    setLoading(false);
-    
-    if (error instanceof Error) {
-      console.error("Error message: ", error.message);
-      Swal.fire('Error!', `An error occurred: ${error.message}`, 'error');
-    } else {
-      Swal.fire('Error!', 'An unknown error occurred.', 'error');
+    } catch (error) {
+      setLoading(false);
+      console.error("Error message: ", (error as Error).message || 'Unknown error');
+      Swal.fire('Error!', `An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
     }
-  }
+  };
 
-  const handleOtpSubmit = async (values: { otp: string, newPassword: string, confirmPassword: string }) => {
+  const handleOtpSubmit = async (values: { otp: string; newPassword: string; confirmPassword: string }) => {
     try {
       setLoading(true);
-      await api.post('/backend/auth/verifyOtpAndResetPassword', { otp: values.otp, newPassword: values.newPassword,confirmPassword:values.confirmPassword },{
-        headers:{
-          'X-Token-Type':'student'
+      await api.post('/backend/auth/verifyOtpAndResetPassword', { otp: values.otp, newPassword: values.newPassword, confirmPassword: values.confirmPassword }, {
+        headers: {
+          'X-Token-Type': 'student'
         }
       });
       setLoading(false);
@@ -90,8 +93,8 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
       const token = localStorage.getItem('access_token');
       if (!token) {
         Swal.fire('Error!', 'No authentication token found.', 'error');
-        return; 
-      } 
+        return;
+      }
 
       Swal.fire({
         title: 'Are you sure?',
@@ -112,7 +115,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
 
             await api.put(`/backend/auth/updatePassword/${id}`, formData, {
               headers: {
-                'X-Token-Type':'student'
+                'X-Token-Type': 'student'
               }
             });
             setLoading(false);
@@ -120,7 +123,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
             onClose();
           } catch (error) {
             setLoading(false);
-            toast.error(error)
+            toast.error((error as Error).message || 'Unknown error');
           }
         }
       });
@@ -141,7 +144,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     <>
       {!openForgotPass && !openOtpModal && (
         <div className='inset-0 fixed flex justify-center items-center bg-black bg-opacity-50 z-40'>
-          <ToastContainer/>
+          <ToastContainer />
           <div className='relative md:w-[30%] m-auto items-center md:h-[50%] bg-black p-6 rounded-lg shadow-lg w-[90%]'>
             <button
               className='absolute top-2 right-2 text-white text-2xl'
@@ -164,9 +167,9 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                   aria-describedby='currentPasswordError'
                 />
                 <TbPassword className='absolute left-3 top-1/2 transform -translate-y-1/2 text-white' />
-                {formik.touched.currentPassword && formik.errors.currentPassword ? (
-                  <div id='currentPasswordError' className='absolute  text-red-500 text-sm mb-0'>{formik.errors.currentPassword}</div>
-                ) : null}
+                {formik.touched.currentPassword && formik.errors.currentPassword && (
+                  <div id='currentPasswordError' className='absolute text-red-500 text-sm mb-0'>{formik.errors.currentPassword}</div>
+                )}
               </div>
 
               <div className='mb-4 mt-10 relative'>
@@ -181,9 +184,9 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                   aria-describedby='newPasswordError'
                 />
                 <TbPassword className='absolute left-3 top-1/2 transform -translate-y-1/2 text-white' />
-                {formik.touched.newPassword && formik.errors.newPassword ? (
+                {formik.touched.newPassword && formik.errors.newPassword && (
                   <div id='newPasswordError' className='absolute text-red-500 text-sm mb-0'>{formik.errors.newPassword}</div>
-                ) : null}
+                )}
               </div>
 
               <div className='text-white shadow-lg float-right'>
@@ -230,19 +233,20 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                 <input
                   type='email'
                   placeholder='Enter your email'
-                  value={currentStudent?.email}
-                  onChange={(e:React.ChangeEvent<HTMLInputElement> ) => setEmail(e.target.value)}
-                  className='w-full p-2 border border-gray-400 rounded mb-4 focus:outline-blue-600'
+                  value={email}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                  className='w-full p-2 border border-gray-400 rounded mb-4'
+                  required
                 />
               </div>
               <button
                 type='submit'
-                className='bg-custom-gradient text-white p-2 rounded'
+                className='bg-white text-black p-2 rounded w-full hover:bg-gray-300'
                 disabled={loading}
               >
                 {loading ? (
                   <MoonLoader
-                    color="#fff"
+                    color="#000"
                     loading={loading}
                     css={spinnerStyle}
                     size={20}
@@ -260,7 +264,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
 
       {openOtpModal && (
         <div className='inset-0 fixed flex justify-center items-center bg-black bg-opacity-50 z-40'>
-          <div className='relative md:w-[30%] m-auto items-center md:h-[60%] bg-black p-6 rounded-lg shadow-lg w-[90%]'>
+          <div className='relative md:w-[30%] m-auto items-center md:h-[50%] bg-black p-6 rounded-lg shadow-lg w-[90%]'>
             <button
               className='absolute top-2 right-2 text-white text-2xl'
               onClick={() => setOpenOtpModal(false)}
@@ -268,78 +272,62 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
             >
               &times;
             </button>
-            <h2 className='relative text-2xl text-center font-semibold mb-4 text-white'>Enter OTP</h2>
-            <form className='w-full' onSubmit={otpFormik.handleSubmit}>
-              <div className='mb-4 mt-0 relative'>
+            <h2 className='relative text-2xl text-center font-semibold mb-4 text-white'>Verify OTP</h2>
+            <form onSubmit={otpFormik.handleSubmit}>
+              <div className='mb-4 relative'>
                 <input
-                  className='w-full p-2 pl-10 rounded bg-custom-gradient text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
                   type='text'
                   placeholder='Enter OTP'
                   name='otp'
                   onChange={otpFormik.handleChange}
                   onBlur={otpFormik.handleBlur}
                   value={otpFormik.values.otp}
-                  aria-describedby='otpError'
+                  className='w-full p-2 border border-gray-400 rounded mb-4'
+                  required
                 />
-                {otpFormik.touched.otp && otpFormik.errors.otp ? (
-                  <div id='otpError' className='absolute text-red-500 text-sm mb-0'>{otpFormik.errors.otp}</div>
-                ) : null}
               </div>
-
-              <div className='mb-4 mt-10 relative'>
+              <div className='mb-4 relative'>
                 <input
-                  className='w-full p-2 pl-10 rounded bg-custom-gradient text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
                   type='password'
                   placeholder='New Password'
                   name='newPassword'
                   onChange={otpFormik.handleChange}
                   onBlur={otpFormik.handleBlur}
                   value={otpFormik.values.newPassword}
-                  aria-describedby='newPasswordOtpError'
+                  className='w-full p-2 border border-gray-400 rounded mb-4'
+                  required
                 />
-                <TbPassword className='absolute left-3 top-1/2 transform -translate-y-1/2 text-white' />
-                {otpFormik.touched.newPassword && otpFormik.errors.newPassword ? (
-                  <div id='newPasswordOtpError' className='absolute text-red-500 text-sm mb-0'>{otpFormik.errors.newPassword}</div>
-                ) : null}
               </div>
-
-              <div className='mb-4 mt-10 relative'>
-                <input 
-                  className='w-full p-2 pl-10 rounded bg-custom-gradient text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              <div className='mb-4 relative'>
+                <input
                   type='password'
                   placeholder='Confirm New Password'
                   name='confirmPassword'
                   onChange={otpFormik.handleChange}
                   onBlur={otpFormik.handleBlur}
                   value={otpFormik.values.confirmPassword}
-                  aria-describedby='confirmPasswordOtpError'
+                  className='w-full p-2 border border-gray-400 rounded mb-4'
+                  required
                 />
-                <TbPassword className='absolute left-3 top-1/2 transform -translate-y-1/2 text-white' />
-                {otpFormik.touched.confirmPassword && otpFormik.errors.confirmPassword ? (
-                  <div id='confirmPasswordOtpError' className='absolute text-red-500 text-sm mb-0'>{otpFormik.errors.confirmPassword}</div>
-                ) : null}
               </div>
-
-              <div className='w-full justify-center flex md:mt-20'>
-                <button
-                  type='submit'
-                  className='bg-custom-gradient text-white p-2 rounded'
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <MoonLoader
-                      color="#fff"
-                      loading={loading}
-                      css={spinnerStyle}
-                      size={20}
-                      aria-label="Loading Spinner"
-                      data-testid="loader"
-                    />
-                  ) : (
-                    'Submit'
-                  )}
-                </button>
-              </div>
+              <button
+                type='submit'
+                className='bg-white text-black p-2 rounded w-full hover:bg-gray-300'
+                disabled={loading}
+              >
+                {loading ? (
+                  <MoonLoader
+                    color="#000"
+                    loading={loading}
+                    css={spinnerStyle}
+                    size={20}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  'Reset Password'
+                )}
+              </button>
             </form>
           </div>
         </div>
@@ -347,5 +335,5 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     </>
   );
 };
-}
+
 export default PostPassword;
