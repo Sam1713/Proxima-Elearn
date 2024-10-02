@@ -5,7 +5,6 @@ import courseImage from '../../assets/images/pablo-blockchain-courses.png'
 import AddCourseModal from '../../modals/courseModal/AddCourseModal';
 import api from '../API/Api'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategories } from '../../redux/student/studentSlice';
 import { RootState } from '../../redux/store';
 import { setTutorCategories } from '../../redux/tutor/tutorSlice';
 const  CoursePage:React.FC=()=> {
@@ -24,7 +23,6 @@ const  CoursePage:React.FC=()=> {
     loop: { reverse: true },
   });
 
-  // Background color animation with react-spring
   const colorAnimation = useSpring({
     from: { backgroundColor: '#2c3e50' }, // Dark blueish-black
     to: [
@@ -62,7 +60,6 @@ const category=useSelector((state:RootState)=>state.tutor.allCategories)
 console.log('cat',category)
   return (
     <div className='text-white min-h-screen flex flex-col w-[100%] items-center justify-center p-8'>
-      {/* Animated background color and floating wrapper */}
       <animated.div
         style={{
           ...floatAnimation,
@@ -73,13 +70,12 @@ console.log('cat',category)
           maxWidth: '900px',
           width: '100%',
           textAlign: 'center',
-          backgroundSize: '200% 200%', // Ensures the background color animation is smooth
+          backgroundSize: '200% 200%', 
         }}
         className='flex shadow-2xl flex-col space-y-8'
       >
-        {/* Animated image */}
         <animated.img
-          src={courseImage} // Replace with your image URL
+          src={courseImage} 
           alt='Course'
           style={{
             ...imageAnimation,

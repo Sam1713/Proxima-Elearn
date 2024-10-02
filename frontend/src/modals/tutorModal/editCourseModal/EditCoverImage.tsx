@@ -4,8 +4,9 @@ import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import api from "../../../components/API/Api";
-import { setUploadedCourses, setUploadedCoursesDetails } from '../../../redux/tutor/tutorSlice';
+import {  setUploadedCoursesDetails } from '../../../redux/tutor/tutorSlice';
 import Swal from 'sweetalert2';
+import { EditTutor } from '../../../types/modalTypes/EditModat';
 
 const EditCoverImage: React.FC<EditTutor> = ({ isOpen, onClose }) => {
     const detailedValue = useSelector((state: RootState) => state.tutor.tutorUploadedCourseDetail);
@@ -27,11 +28,19 @@ const EditCoverImage: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         enableReinitialize: true,
 
         validationSchema: Yup.object({
-            coverImage: Yup.mixed()
-                .required('A cover image is required')
-                .test('fileSize', 'File too large', value => !value || (value && value.size <= 3000000)) // 3MB limit
-                .test('fileType', 'Unsupported file format', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
+            coverImage: Yup.mixed() // Change this to coverImage
+            .required('A cover image is required') 
+            .test('fileSize', 'File too large', (value) => {
+                const file = value as File | null;
+                return !file || (file.size <= 3000000);
+            })
+            .test('fileType', 'Unsupported file format', (value) => {
+                const file = value as File | null;
+                return !file || (['image/jpeg', 'image/png', 'image/gif'].includes(file.type));
+            }),
         }),
+        
+        
         onSubmit: async (values) => {
             Swal.fire({
                 title: 'Are you sure?',
@@ -83,7 +92,6 @@ const EditCoverImage: React.FC<EditTutor> = ({ isOpen, onClose }) => {
             const objectUrl = URL.createObjectURL(file);
             setPreviewImage(objectUrl);
 
-            // Revoke the object URL to free up memory when the component unmounts or a new file is selected
             return () => URL.revokeObjectURL(objectUrl);
         }
     };
@@ -129,8 +137,11 @@ const EditCoverImage: React.FC<EditTutor> = ({ isOpen, onClose }) => {
                             <button
                                 type="button"
                                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                                onClick={() => document.querySelector('input[type="file"]')?.click()}
-                            >
+                                onClick={() => {
+                                    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null; // Type assertion
+                                    fileInput?.click(); 
+                                  }}
+                                                              >
                                 Choose File
                             </button>
                         </div>

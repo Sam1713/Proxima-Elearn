@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Button,
   Dialog,
@@ -16,13 +16,13 @@ import api from '../../components/API/Api'
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css'; // Ensure this import is included for styling
 import './BookingModal.css'; // Adjust the path as needed
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
 import { setBookingId } from '../../redux/student/studentSlice';
+import { dismissType } from '@material-tailwind/react/types/generic';
 interface DialogComponentProps {
   open: boolean;
   handleOpen: () => void;
-  id:string;
+  id:string|undefined;
   fetchCallData:()=>void;
 }
 
@@ -35,11 +35,9 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
     { value: 'Material Tailwind Angular', text: 'Material Tailwind Angular' },
     { value: 'Material Tailwind Svelte', text: 'Material Tailwind Svelte' }
   ];
-  const orderedCourseDetail=useSelector((state:RootState)=>state.course.singleCourse)
  console.log('sda',id)
  const courseId=id
  const dispatch=useDispatch()
- const [book,setBook]=useState(null)
   const formik = useFormik({
     initialValues: {
         courseId: courseId || '',
@@ -53,7 +51,7 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
       name: Yup.string().required('Student Name is required'),
       email: Yup.string().email('Invalid email format').required('Email is required'),
       purpose: Yup.string().required('Purpose is required'),
-      description: Yup.lazy((value, context) =>
+      description: Yup.lazy((_value, context) =>
         context.parent.purpose === 'Doubt Clearance'
           ? Yup.string().required('Description is required for Doubt Clearance')
           : Yup.string().notRequired()
@@ -90,7 +88,6 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
                 }
               });
               console.log('Response:', response);
-              setBook(response.data.newBooking)
               dispatch(setBookingId(response.data.newBooking?._id))
               Swal.fire('Success!', 'Your request has been submitted.', 'success');
               handleOpen(); // Close the modal after successful submission
@@ -107,19 +104,24 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
       });
     }
   });
+  
+  const dismissConfig: dismissType = {};  
 
-  return (
-    <Dialog
-      open={open}
-      onClose={handleOpen}
-      className="p-6 bg-custom-gradient rounded-lg shadow-xl max-w-md mx-auto z-1000" // Ensure modal z-index is lower
-      style={{ zIndex: 1000 }} // Ensure this is higher than SweetAlert2's z-index
-
-    >
-      <DialogHeader className="bg-custom-gradient p-4 rounded-t-lg text-white shadow-md z-40">
+return (
+  <Dialog
+    open={open}
+    dismiss={dismissConfig} 
+    className="p-6 bg-custom-gradient rounded-lg shadow-xl max-w-md mx-auto z-1000"
+    style={{ zIndex: 1000 }} 
+    handler={() => console.log('Dialog handler')}
+    placeholder={""}
+    onPointerEnterCapture={() => {}}
+    onPointerLeaveCapture={() => {}}
+  >
+      <DialogHeader className="bg-custom-gradient p-4 rounded-t-lg text-white shadow-md z-40"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         Book a Call with Tutor
       </DialogHeader>
-      <DialogBody className="p-6 bg-custom-gradient">
+      <DialogBody className="p-6 bg-custom-gradient"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <form onSubmit={formik.handleSubmit} className="space-y-6 p-4 rounded-lg shadow-md">
           <div className="flex gap-4 w-full">
             <div className="w-full">
@@ -171,8 +173,7 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
                 onChange={(e) => formik.setFieldValue('purpose', e)}
                 onBlur={formik.handleBlur}
                 className="text-white"
-                label="Select Purpose"
-              >
+                label="Select Purpose"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}              >
                 {options.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.text}
@@ -202,21 +203,20 @@ const BookingModal: React.FC<DialogComponentProps> = ({ open, handleOpen,id,fetc
           )}
         </form>
       </DialogBody>
-      <DialogFooter className="bg-custom-gradient p-4 rounded-b-lg">
+      <DialogFooter className="bg-custom-gradient p-4 rounded-b-lg" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <Button
           variant="text"
           color="red"
           onClick={handleOpen}
-          className="mr-2 hover:bg-red-100 transition duration-300 ease-in-out"
-        >
+          className="mr-2 hover:bg-red-100 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           Cancel
         </Button>
         <Button
           variant="gradient"
           color="green"
-          onClick={formik.handleSubmit}
-          className="bg-gradient-to-r from-green-500 to-teal-500 hover:opacity-90 transition duration-300 ease-in-out"
-        >
+          onClick={() => {
+            formik.handleSubmit();
+          } } className="bg-gradient-to-r from-green-500 to-teal-500 hover:opacity-90 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           Submit
         </Button>
       </DialogFooter>

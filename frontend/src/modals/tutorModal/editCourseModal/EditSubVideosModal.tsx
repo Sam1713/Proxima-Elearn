@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import { RootState } from '../../../redux/store';
 import { EditTutor } from '../../../types/modalTypes/EditModat';
-import api from '../../../components/API/Api'
+import api from '../../../components/API/Api';
 import { setUploadedCoursesDetails } from '../../../redux/tutor/tutorSlice';
+
 interface EditSubVideosModalProps extends EditTutor {
     selectedVideo: { _id?: string; fileUrl: string; description: string } | null;
 }
@@ -14,9 +15,11 @@ interface EditSubVideosModalProps extends EditTutor {
 const EditSubVideosModal: React.FC<EditSubVideosModalProps> = ({ isOpen, onClose, selectedVideo }) => {
     const details = useSelector((state: RootState) => state.tutor.tutorUploadedCourseDetail);
     const [tempVideo, setTempVideo] = useState<string | File | null>(null);
-    const dispatch=useDispatch()
+    const dispatch = useDispatch();
     const id = selectedVideo?._id;
-    const courseId=details?._id
+    const courseId = details?._id;
+
+    // Initialize tempVideo with the existing fileUrl when selectedVideo changes
     useEffect(() => {
         if (selectedVideo?.fileUrl) {
             setTempVideo(selectedVideo.fileUrl);
@@ -25,15 +28,16 @@ const EditSubVideosModal: React.FC<EditSubVideosModalProps> = ({ isOpen, onClose
 
     const formik = useFormik({
         initialValues: {
-            subVideo: selectedVideo?.fileUrl || '',
+            subVideo: selectedVideo?.fileUrl || null, // Initialize with fileUrl or null
             description: selectedVideo?.description || '',
         },
-        enableReinitialize: true, 
+        enableReinitialize: true,
         validationSchema: Yup.object({
-            subVideo: Yup.string().required('Video URL is required'),
+            subVideo: Yup.mixed().required('A video file is required'), // Change to mixed to allow for File or string
             description: Yup.string().required('Description is required'),
         }),
         onSubmit: async (values) => {
+            console.log('va',values)
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Do you want to save the changes?",
@@ -47,8 +51,8 @@ const EditSubVideosModal: React.FC<EditSubVideosModalProps> = ({ isOpen, onClose
                     try {
                         const formData = new FormData();
                         formData.append('description', values.description);
-                        
-                        if (values.subVideo instanceof File) {
+
+                        if (values.subVideo) {
                             formData.append('subVideo', values.subVideo);
                         }
 
@@ -56,14 +60,14 @@ const EditSubVideosModal: React.FC<EditSubVideosModalProps> = ({ isOpen, onClose
                             formData.append('videoId', id);
                         }
 
-                        // Perform the API request here using formData
-                        const response= await api.patch(`/backend/course/updateSubVideo/${courseId}`, formData, {
+                        const response = await api.patch(`/backend/course/updateSubVideo/${courseId}`, formData, {
                             headers: { 
-                                'X-Token-Type':'tutor',
-                                'Content-Type': 'multipart/form-data' }
+                                'X-Token-Type': 'tutor',
+                                'Content-Type': 'multipart/form-data'
+                            }
                         });
-                        console.log('res',response)
-                        dispatch(setUploadedCoursesDetails(response.data.course))
+                        console.log('res', response);
+                        dispatch(setUploadedCoursesDetails(response.data.course));
                         Swal.fire('Saved!', 'Your changes have been saved.', 'success');
                         onClose(); // Close the modal after saving
                     } catch (error) {
@@ -75,15 +79,18 @@ const EditSubVideosModal: React.FC<EditSubVideosModalProps> = ({ isOpen, onClose
         },
     });
 
+    // If the modal is not open, return null
     if (!isOpen) return null;
 
+    // Handle file change event
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.currentTarget.files && event.currentTarget.files[0]) {
-            formik.setFieldValue('subVideo', event.currentTarget.files[0]);
-            setTempVideo(event.currentTarget.files[0]);
+            const file = event.currentTarget.files[0];
+            formik.setFieldValue('subVideo', file); // Set file as the value for subVideo
+            setTempVideo(file); // Update tempVideo to the new file
         }
     };
-
+    
     return (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
             <div className='bg-custom-gradient w-[70%] p-6 mt-20 rounded-lg shadow-lg text-white overflow-y-scroll h-[90vh]'>

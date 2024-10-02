@@ -3,19 +3,20 @@ import { animated, useSpring } from '@react-spring/web';
 import { EditTutor } from '../../types/modalTypes/EditModat'; // Adjust the path as needed
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { response } from 'express';
+
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import api from '../../components/API/Api'
+import { AxiosError } from 'axios';
 
-// Define the type for SubVideo
 interface SubVideo {
   file: File | null;
   description: string;
 }
-
+interface ErrorResponse {
+  message: string;
+}
 // Validation schema
 const validationSchema = Yup.object({
   title: Yup.string().required('Title is required'),
@@ -76,7 +77,7 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
       }
     
       // Show a loading message
-      const loadingSwal = Swal.fire({
+      Swal.fire({
         title: 'Submitting...',
         text: 'Please wait while we submit your course.',
         icon: 'info',
@@ -84,6 +85,7 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         showConfirmButton: false,
         allowOutsideClick: false, // Prevent closing the dialog
       });
+      
     
       setLoading(true);
     
@@ -103,7 +105,7 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         formData.append('coverVideo', values.coverVideo);
       }
     
-      values.videos.forEach((video, index) => {
+      values.videos.forEach((video) => {
         if (video.file) {
           formData.append('videos', video.file);
           formData.append('videoDescriptions[]', video.description);
@@ -133,12 +135,12 @@ const AddCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
         onClose();
       } catch (error) {
         setLoading(false);
-        console.error('Error uploading course:', error.response.data.message);
     
         // Close the loading message
-        Swal.close(); 
-    
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to upload course. Please try again.';
+        const axiosError = error as AxiosError<ErrorResponse>;
+
+  // Access the message from the response or fallback to default message
+  const errorMessage = axiosError?.response?.data?.message || axiosError.message || 'Failed to upload course. Please try again.';
 
         Swal.fire({
           title: 'Error!',

@@ -18,8 +18,7 @@ import api from '../API/Api'
 
 
 const CourseDetails:React.FC=()=> {
-  const {Id}=useParams() 
-  const id = Id as string;
+  const {id}=useParams() 
 
   const dispatch=useDispatch()
   const orderedCourseDetail=useSelector((state:RootState)=>state.course.orderedCourseDetail)
@@ -83,9 +82,6 @@ dispatch(setStudentQuizDetails(studentquiz))
     navigate(`/getQuiz/${id}`,{state:{quizDetails,orderedCourseDetail}})
   }
 
-  const handleChat=(id:string)=>{
-    navigate(`/studentChat/${id}`,{state:{orderedCourseDetail}})
-  }
 
   if(loading){
     return(
@@ -226,18 +222,18 @@ dispatch(setStudentQuizDetails(studentquiz))
             initial="hidden"
             whileInView={"visible"}
             variants={SlideLeft(0.9)} className='font-bold md:w-[15%] text-center'>Success Stories</motion.h1>
-          <motion.button
+          {/* <motion.button
            initial="hidden"
            whileInView={"visible"}
            variants={SlideRight(1)}
-          onClick={()=>handleChat(id)} className='w-full md:w-[15%] mt-4 md:mt-0 text-white py-2 rounded-lg text-center border-black border-2 hover:bg-custom-gradient'>
+           onClick={() => handleVideoCall(id || 'defaultId')} className='w-full md:w-[15%] mt-4 md:mt-0 text-white py-2 rounded-lg text-center border-black border-2 hover:bg-custom-gradient'>
             Chat With Tutor
-          </motion.button>
+          </motion.button> */}
           <motion.button
            initial="hidden"
            whileInView={"visible"}
            variants={SlideRight(1.2)}
-          onClick={()=>handleVideoCall(id)} className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
+           onClick={() => handleVideoCall(id || 'defaultId')} className='w-full md:w-[15%] mt-4 md:mt-0 bg-blue-600 text-white py-2 rounded-lg text-center bg-custom-gradient'>
             Video Call
           </motion.button>
         </motion.div>

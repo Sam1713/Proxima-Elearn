@@ -207,7 +207,13 @@ export const verifyPayment=async(req:Request,res:Response)=>{
 
         export const getOrderedCourseDetail=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
           console.log('sfdfsds')
-          const CourseId=req.params.id as string
+          const CourseId=req.params.id 
+          console.log('Received CourseId:', CourseId); // Debugging line
+      
+          // Check if the CourseId is a valid ObjectId
+          if (!mongoose.Types.ObjectId.isValid(CourseId)) {
+               res.status(400).json({ error: 'Invalid Course ID format' });
+          }  
           const courseId=new mongoose.Types.ObjectId(CourseId)
           const UserId=req.userId
           const userId=new mongoose.Types.ObjectId(UserId)

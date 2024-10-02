@@ -13,7 +13,7 @@ export interface TutorState {
     bookingDetails:CallRequestType|null,//changed callRequestType
     walletInfo:WalletDetailsTypes|null,
     quizDetails:StudentQuiz|null,
-    allCategories:CategoryTypes|[],
+    allCategories:CategoryTypes[],
     studentChat: Record<string, StudentChatType[]>; // Use Record for dynamic keys
     sortedStudents: Student[];
     newBio?:UpdatedBio|null,
@@ -49,7 +49,7 @@ export interface UpdatedBio{
 }
 
 export interface TutorCourse{
-    courseId:string
+    _id:string
     title:string;
     description:string;
     coverImageUrl:string;
@@ -77,6 +77,7 @@ export interface Category{
 
 
 interface PurchasedStudentDetails{
+    _id:string;
     username:string;
     email:string;
     title:string;
@@ -248,7 +249,7 @@ const tutorSlice=createSlice({
         setQuizDetails:(state,action:PayloadAction<StudentQuiz>)=>{
             state.quizDetails=action.payload
         },
-        setTutorCategories:(state,action:PayloadAction<CategoryTypes>)=>{
+        setTutorCategories:(state,action:PayloadAction<CategoryTypes[]>)=>{
             state.allCategories=action.payload
         }
     },

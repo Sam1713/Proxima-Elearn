@@ -1,7 +1,11 @@
 import React, { useRef } from 'react';
 import ReactPlayer from 'react-player';
+interface VideoPlayerProps {
+  videoUrl: string; 
+  description: string; 
+}
 
-const VideoPlayer = ({ videoUrl, description }) => {
+const VideoPlayer:React.FC<VideoPlayerProps> = ({ videoUrl, description }) => {
   const playerRef = useRef(null);
 
   const handlePlay = () => {
@@ -30,9 +34,9 @@ const VideoPlayer = ({ videoUrl, description }) => {
         config={{
           file: {
             attributes: {
-              controlsList: 'nodownload', // Disable download option
-              onContextMenu: (e) => e.preventDefault(), // Disable right-click
-              disablePictureInPicture: true, // Disable Picture-in-Picture
+              controlsList: 'nodownload', 
+              onContextMenu: (e: React.MouseEvent<HTMLVideoElement>) => e.preventDefault(),
+              disablePictureInPicture: true,
             }
           }
         }}

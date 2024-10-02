@@ -34,12 +34,16 @@ const EditCourseModal: React.FC<EditTutor> = ({ isOpen, onClose }) => {
       description: Yup.string()
         .required('Description is required')
         .test('minWords', 'Description must contain at least 50 words', (value: string) => {
-          return value && value.split(' ').filter(word => word.length > 0).length >= 50;
+          return value ? value.split(' ').filter(word => word.length > 0).length >= 50 : false;
         }),
-      AboutCourse: Yup.string()
+        AboutCourse: Yup.string()
         .required('About Course is required')
-        .test('minWords', 'About Course must contain at least 50 words', (value: string) => {
-          return value && value.split(' ').filter(word => word.length > 0).length >= 50;
+        .test('minWords', 'About Course must contain at least 50 words', (value) => {
+          if (!value) return false;
+    
+          const wordCount = value.split(' ').filter(word => word.trim().length > 0).length;
+    
+          return wordCount >= 50;
         }),
     }),
     onSubmit: async (values) => {
@@ -157,7 +161,6 @@ console.log('res',response)
           <div className="w-full relative">
             <textarea 
               className={`pl-10 p-4 w-full rounded-xl mb-8 text-black resize-y ${formik.errors.description && formik.touched.description ? 'border-red-500' : ''}`}  
-              name="description" 
               rows={8}
               placeholder="Description"
               {...formik.getFieldProps('description')}
@@ -173,7 +176,6 @@ console.log('res',response)
           <div className="w-full relative">
             <textarea 
               className={`pl-10 p-4 w-full rounded-xl mb-8 text-black resize-y ${formik.errors.AboutCourse && formik.touched.AboutCourse ? 'border-red-500' : ''}`}  
-              name="AboutCourse" 
               rows={8}
               placeholder="About Course"
               {...formik.getFieldProps('AboutCourse')}

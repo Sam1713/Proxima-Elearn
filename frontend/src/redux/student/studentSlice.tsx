@@ -56,6 +56,7 @@ interface Course {
     studentId:string;
     profilePic:string;
     callId:string;
+    createdAt:Date;
     tutorResponse?:{
         responseDate?:string;
         startingTime?:string;

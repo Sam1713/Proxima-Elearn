@@ -4,7 +4,6 @@ import api from '../API/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setAllCategory } from '../../redux/admin/adminSlice';
-import { response } from 'express';
 import Swal from 'sweetalert2';
 import { Button } from '@material-tailwind/react';
 
@@ -116,7 +115,7 @@ const AdminCategory: React.FC = () => {
       }
     })
       console.log('res',response)
-      fetchAllCategory();
+      fetchAllCategory(page,limit);
 
 
     Swal.fire({
@@ -200,10 +199,9 @@ const AdminCategory: React.FC = () => {
       <div className='flex justify-center items-center space-x-4'>
   <div>
     <Button 
-      disabled={page === 1} 
-      onClick={() => setPage((prev) => prev - 1)}
-      className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}    >
       Prev
     </Button>
   </div>
@@ -212,10 +210,9 @@ const AdminCategory: React.FC = () => {
   </span>
   <div>
     <Button 
-      disabled={page === totalPage} 
-      onClick={() => setPage((prev) => prev + 1)}
-      className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === totalPage ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
+            disabled={page === totalPage}
+            onClick={() => setPage((prev) => prev + 1)}
+            className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ${page === totalPage ? 'opacity-50 cursor-not-allowed' : ''}`}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}    >
       Next
     </Button>
   </div>

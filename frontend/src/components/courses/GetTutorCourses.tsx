@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
-function GetTutorCourses() {
+const GetTutorCourses:React.FC=()=> {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const uploadedCourses = useSelector((state: RootState) => state.tutor.tutorUploadedCourses);
@@ -94,8 +94,8 @@ function GetTutorCourses() {
       <div className="relative grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6">
         {uploadedCourses?.map((course) => (
           <div
-            key={course?.courseId}
-            onClick={() => handleNavigate(course?.courseId)}
+            key={course?._id}
+            onClick={() => handleNavigate(course?._id)}
             className="bg-gradient-to-r from-black via-gray-1000 to-white p-5 rounded-lg shadow-lg cursor-pointer transform transition-shadow duration-300 ease-in-out hover:shadow-2xl"
           >
             <img
@@ -106,7 +106,7 @@ function GetTutorCourses() {
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevents the button click from triggering the parent div's onClick
-                handleDeleteCourse(course?.courseId);
+                handleDeleteCourse(course?._id);
               }}
               className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
             >

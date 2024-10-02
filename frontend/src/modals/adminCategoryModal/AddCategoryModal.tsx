@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setEachCategory } from '../../redux/admin/adminSlice';
 
 interface AddCategoryModalProps extends EditTutor {
-  fetchAllCategory: () => void;
+  fetchAllCategory: (page: number, limit: number) => Promise<void>;
   isEditable?: boolean;
   categoryToEdit?: { _id: string; categoryName: string; catDescription: string } | null; // Updated to include null
 }
@@ -71,7 +71,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
               'success'
             );
             onClose();
-            fetchAllCategory();
+            fetchAllCategory(1,10);
 
           } catch (error) {
             console.error('Error:', error);

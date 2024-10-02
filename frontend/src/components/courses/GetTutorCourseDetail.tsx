@@ -5,13 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCategoryDetails, setUploadedCoursesDetails } from '../../redux/tutor/tutorSlice';
 import { RootState } from '../../redux/store';
 import { CiEdit } from 'react-icons/ci';
-import { MdDelete } from 'react-icons/md';
 import EditCourseModal from '../../modals/tutorModal/editCourseModal/EditCourseModal';
 import EditCoverImage from '../../modals/tutorModal/editCourseModal/EditCoverImage';
 import EditSubVideosModal from '../../modals/tutorModal/editCourseModal/EditSubVideosModal';
 import { Button } from '@material-tailwind/react';
 
-function GetTutorCourseDetail() {
+
+interface VideoType {
+  _id?: string;
+  fileUrl: string;
+  description: string;
+}
+const GetTutorCourseDetail:React.FC=()=> {
   const { id } = useParams();
   const dispatch = useDispatch();
   const details = useSelector((state: RootState) => state.tutor.tutorUploadedCourseDetail);
@@ -22,7 +27,7 @@ function GetTutorCourseDetail() {
   const [editCourse, setEditCourse] = useState<boolean>(false);
   const [editCoverImage, setEditCoverImage] = useState<boolean>(false);
   const [subVideos, setSubVideos] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<any>(null); // Added state for selected video
+  const [selectedVideo, setSelectedVideo] = useState<VideoType|null>(null); // Added state for selected video
   const allCategories=useSelector((state:RootState)=>state.tutor.categoryDetails)
   useEffect(() => {
     const fetchCourseDetail = async () => {
@@ -58,8 +63,8 @@ function GetTutorCourseDetail() {
     setEditCoverImage(false);
   };
 
-  const onEditSubVideo = (video) => {
-    setSelectedVideo(video); // Set the selected video for editing
+  const onEditSubVideo = (video: React.SetStateAction<VideoType | null>) => {
+    setSelectedVideo(video); 
     setSubVideos(true);
   };
 
@@ -81,7 +86,7 @@ function GetTutorCourseDetail() {
   //   }
   // };
 
-  const onDeleteVideo = async (videoId) => {
+  const onDeleteVideo = async (videoId: string) => {
     try {
       await api.delete(`/backend/course/deleteVideo/${videoId}`, {
         headers: {
@@ -116,9 +121,16 @@ function GetTutorCourseDetail() {
     <div className="bg-custom-gradient min-h-screen py-20 px-4 font-serif">
       <div className='mx-8 mb-4'>
         <div className='flex justify-between '>
-        <Button onClick={handleGo} className='bg-red-500 p-4 rounded-xl'>Call Request</Button>
+        <Button onClick={handleGo} className='bg-red-500 p-4 rounded-xl'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call Request</Button>
      
-      <div><Button className='bg-green-400' onClick={()=>handleQuiz(details?._id)}>Start Quiz</Button></div>
+      <div><Button className='bg-green-400' onClick={() => {
+      if (details?._id) {
+        handleQuiz(details._id); 
+      } else {
+        console.error("Quiz ID is undefined");
+        
+      }
+    }} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Start Quiz</Button></div>
       </div>
       </div>
       {/* Cover Image */}
@@ -126,8 +138,7 @@ function GetTutorCourseDetail() {
         <div className="absolute top-0 right-8 mt-2 flex space-x-3">
           <Button
             onClick={onEditCoverImage}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
-          >
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             <CiEdit className="text-xl" />
           </Button>
         </div>
