@@ -12,7 +12,9 @@ const socket = io('http://localhost:3000');
 
 const TutorChat:React.FC = () => {
     const [message, setMessage] = useState<string>(''); 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [chat, setChat] = useState<any[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [students, setStudents] = useState<any[]>([]); 
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null); 
     const [page, setPage] = useState<number>(1); 

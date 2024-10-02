@@ -5,9 +5,7 @@ import { RootState } from '../redux/store';
 import { useFormik } from 'formik';
 import { validationSchema, otpValidationSchema } from '../utils/studentValidation/PasswordValidation';
 import Swal from 'sweetalert2';
-import axios from 'axios';
 import { MoonLoader } from 'react-spinners';
-import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,16 +15,7 @@ interface PostPasswordProps {
   onClose: () => void;
 }
 
-const spinnerStyle = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-  animation: spin 1s linear infinite;
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
+
 
 const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
@@ -76,6 +65,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
       setOpenOtpModal(false);
       onClose();
     } catch (error) {
+      console.log('err',error)
       setLoading(false);
       Swal.fire('Error!', 'An error occurred while resetting your password.', 'error');
     }
@@ -140,6 +130,11 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     onSubmit: handleOtpSubmit
   });
 
+  function setEmail(value: string) {
+    console.log('erm',value)
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <>
       {!openForgotPass && !openOtpModal && (
@@ -199,17 +194,18 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                   disabled={loading}
                 >
                   {loading ? (
-                    <MoonLoader
-                      color="#fff"
-                      loading={loading}
-                      css={spinnerStyle}
-                      size={20}
-                      aria-label="Loading Spinner"
-                      data-testid="loader"
-                    />
-                  ) : (
-                    'Submit'
-                  )}
+  <MoonLoader
+    color="#000"
+    loading={loading}
+    size={20}
+    aria-label="Loading Spinner"
+    data-testid="loader"
+    style={{ margin: '0 auto' }} // Add any other styles as needed
+  />
+) : (
+  'Submit'
+)}
+
                 </button>
               </div>
             </form>
@@ -244,18 +240,19 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                 className='bg-white text-black p-2 rounded w-full hover:bg-gray-300'
                 disabled={loading}
               >
-                {loading ? (
-                  <MoonLoader
-                    color="#000"
-                    loading={loading}
-                    css={spinnerStyle}
-                    size={20}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                  />
-                ) : (
-                  'Send OTP'
-                )}
+               {loading ? (
+  <MoonLoader
+    color="#000"
+    loading={loading}
+    size={20}
+    aria-label="Loading Spinner"
+    data-testid="loader"
+    style={{ margin: '0 auto' }} // Add any other styles as needed
+  />
+) : (
+  'Send OTP'
+)}
+
               </button>
             </form>
           </div>
@@ -316,17 +313,18 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
                 disabled={loading}
               >
                 {loading ? (
-                  <MoonLoader
-                    color="#000"
-                    loading={loading}
-                    css={spinnerStyle}
-                    size={20}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                  />
-                ) : (
-                  'Reset Password'
-                )}
+  <MoonLoader
+    color="#000"
+    loading={loading}
+    size={20}
+    aria-label="Loading Spinner"
+    data-testid="loader"
+    style={{ margin: '0 auto' }} // Add any other styles as needed
+  />
+) : (
+  'Reset Password'
+)}
+
               </button>
             </form>
           </div>
