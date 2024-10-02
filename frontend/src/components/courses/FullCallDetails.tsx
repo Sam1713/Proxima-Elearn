@@ -7,7 +7,7 @@ import {
   TimelineIcon,
   TimelineBody,
   Typography,
-  Button,
+  
 } from "@material-tailwind/react";
 import {
   CheckCircleIcon,
@@ -23,7 +23,7 @@ import { setBookingDetails } from "../../redux/tutor/tutorSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
-function FullCallDetails() {
+const FullCallDetails:React.FC=()=> {
   const { id } = useParams();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +62,7 @@ function FullCallDetails() {
   if (!booking) {
     return (
       <div className="bg-custom-gradient min-h-screen flex justify-center items-center">
-        <Typography variant="h5" color="white">
+        <Typography variant="h5" color="white"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           Booking details not found.
         </Typography>
       </div>
@@ -75,8 +75,7 @@ function FullCallDetails() {
         <Typography
           variant="h2"
           color="white"
-          className="text-center mb-10 font-bold tracking-wide leading-tight"
-        >
+          className="text-center mb-10 font-bold tracking-wide leading-tight"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           Detailed View of Video Call Request
         </Typography>
 
@@ -88,24 +87,24 @@ function FullCallDetails() {
               <TimelineIcon className="p-0">
                 <QuestionMarkCircleIcon className="h-12 w-12 text-white" />
               </TimelineIcon>
-              <Typography variant="h4" color="white" className="font-serif leading-tight">
+              <Typography variant="h4" color="white" className="font-serif leading-tight" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 Call Requested by Student
               </Typography>
             </TimelineHeader>
             <TimelineBody className="pb-8 text-white">
-              <Typography className="text-lg leading-relaxed">
+              <Typography className="text-lg leading-relaxed" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <div className="font-semibold mb-4 flex items-center">
-                  <FaUserAlt className="mr-2 text-blue-500" /> {booking?.name}
+                  <FaUserAlt className="mr-2 text-blue-500" /> {bookingDetails?.name}
                 </div>
                 <div className="mb-2 flex items-center">
-                  <MdEmail className="mr-2 text-blue-500" /> {booking?.email}
+                  <MdEmail className="mr-2 text-blue-500" /> {bookingDetails?.email}
                 </div>
                 <div className="mb-2 flex items-center">
                   <QuestionMarkCircleIcon className="mr-2 w-[19px] text-blue-500" />{" "}
-                  {booking?.purpose}
+                  {bookingDetails?.purpose}
                 </div>
                 <div className="flex items-center">
-                  <FaStickyNote className="mr-2 text-blue-500 text-lg" /> {booking?.description}
+                  <FaStickyNote className="mr-2 text-blue-500 text-lg" /> {bookingDetails?.description}
                 </div>
               </Typography>
             </TimelineBody>
@@ -118,24 +117,24 @@ function FullCallDetails() {
               <TimelineIcon className="p-0">
                 <CheckCircleIcon className="h-12 w-12 text-white" />
               </TimelineIcon>
-              <Typography variant="h4" color="white" className="font-serif leading-tight">
+              <Typography variant="h4" color="white" className="font-serif leading-tight"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 Tutor's Response
               </Typography>
             </TimelineHeader>
             <TimelineBody className="pb-8 text-white">
-              <Typography className="text-lg leading-relaxed">
+              <Typography className="text-lg leading-relaxed"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <div className="font-semibold mb-4 flex items-center">
                   <FaCalendarAlt className="mr-2 text-green-500" />{" "}
-                  {booking?.tutorResponse?.responseDate}
+                  {bookingDetails?.tutorResponse?.responseDate}
                 </div>
                 <div className="mb-2 flex items-center">
-                  <FaClock className="mr-2 text-green-500" /> {booking?.tutorResponse?.startingTime}
+                  <FaClock className="mr-2 text-green-500" /> {bookingDetails?.tutorResponse?.startingTime}
                 </div>
                 <div className="mb-2 flex items-center">
-                  <FaClock className="mr-2 text-green-500" /> {booking?.tutorResponse?.endingTime}
+                  <FaClock className="mr-2 text-green-500" /> {bookingDetails?.tutorResponse?.endingTime}
                 </div>
                 <div className="flex items-center">
-                  <FaStickyNote className="mr-2 text-green-500" /> {booking?.tutorResponse?.notes}
+                  <FaStickyNote className="mr-2 text-green-500" /> {bookingDetails?.tutorResponse?.notes}
                 </div>
               </Typography>
             </TimelineBody>
@@ -147,18 +146,18 @@ function FullCallDetails() {
               <TimelineIcon className="p-0">
                 <VideoCameraIcon className="h-12 w-12 text-white" />
               </TimelineIcon>
-              <Typography variant="h4" color="white" className="font-serif leading-tight">
+              <Typography variant="h4" color="white" className="font-serif leading-tight" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 Video Call Details
               </Typography>
             </TimelineHeader>
             <TimelineBody className="text-white">
-              <Typography className="text-lg leading-relaxed mb-4">
+              <Typography className="text-lg leading-relaxed mb-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <div className="font-semibold mb-4 flex items-center">
                   <FaCalendarAlt className="mr-2 text-pink-500" />{" "}
-                  {booking?.tutorResponse?.responseDate}
+                  {bookingDetails?.tutorResponse?.responseDate}
                 </div>
                 <div className="mb-2 flex items-center">
-                  <FaClock className="mr-2 text-pink-500" /> {booking?.tutorResponse?.startingTime}
+                  <FaClock className="mr-2 text-pink-500" /> {bookingDetails?.tutorResponse?.startingTime}
                 </div>
                 <div className="mb-2 flex items-center">
                   <FaClock className="mr-2 text-pink-500" /> 60 minutes

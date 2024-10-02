@@ -36,7 +36,9 @@ const GetTutorCourses:React.FC=()=> {
     fetchTutorCourses();
   }, [dispatch, page]);
 
-  const handleNavigate = async (id: string): Promise<void> => {
+  const handleNavigate = async (id:string) => {
+    console.log('iif',id);
+    
     navigate(`/getTutorCourseDetail/${id}`);
   };
 

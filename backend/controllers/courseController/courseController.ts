@@ -124,8 +124,8 @@ export const getTutorCourses = async (req: Request, res: Response): Promise<void
     const tutorCourses = await CourseModel.aggregate([
       { $match: { tutorId:tutorId,isDelete:false } }, 
       { $project: {
-          _id: 0,
-          courseId: '$_id',
+          _id: 1,
+          // courseId: '$_id',
           title: 1,
           category: 1,
           coverImageUrl: 1,
@@ -138,7 +138,7 @@ export const getTutorCourses = async (req: Request, res: Response): Promise<void
 
     const totalCourses = await CourseModel.countDocuments({ tutorId: tutorId });
     const totalPages = Math.ceil(totalCourses / limit);
-  //  console.log('rt',tutorCourses)
+   console.log('rt',tutorCourses)
     if(tutorCourses.map(tutor=>tutor?.isDelete==true)){
       res.json({
         courses: tutorCourses,
@@ -166,7 +166,7 @@ export const getTutorCourses = async (req: Request, res: Response): Promise<void
 
 export const getTutorCourseDetail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
     console.log('id', id);
     
     const course = await CourseModel.findById(id);

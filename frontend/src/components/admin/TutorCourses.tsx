@@ -7,7 +7,7 @@ import { RootState } from '../../redux/store';
 import AnimatedText from '../../animation/AnimatedText';
 import notFound from '../../assets/images/49342678_9214777.jpg';
 
-function TutorCourses() {
+const TutorCourses:React.FC=()=> {
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const tutorCourses = useSelector((state: RootState) => state.admin.getTutorCourses);

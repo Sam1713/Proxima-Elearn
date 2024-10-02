@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, CheckIcon } from "@heroicons/react/24/solid";
+import {  CheckIcon } from "@heroicons/react/24/solid";
 import api from '../API/Api';
 import {
   Card,
@@ -28,11 +28,9 @@ function GetCallRequest() {
     const [open, setOpen] = useState<boolean>(false);
     const details = useSelector((state: RootState) => state.tutor.tutorUploadedCourseDetail);
     const CallRequestDetails = useSelector((state: RootState) => state.tutor.CallRequestDetails || []);
-    const booking = useSelector((state: RootState) => state.tutor.CallRequestAccept);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const courseId = details?._id;
-    const [search, setSearch] = useState<string>("");
     const [bookingId, setBookingId] = useState<string>('');
     const [page,setPage]=useState<number>(1)
     const [totalPage,setTotalPage]=useState<number>(1)
@@ -44,7 +42,7 @@ function GetCallRequest() {
         }
     }, [courseId,limit,page]);
 
-    const fetchCallRequest = async (courseId: string,limit:number,paage:number) => {
+    const fetchCallRequest = async (courseId: string,limit:number,page:number) => {
         try {
             const response = await api.get('/backend/contact/getCallRequest', {
                 headers: {
@@ -63,16 +61,16 @@ function GetCallRequest() {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value);
-    };
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setSearch(e.target.value);
+    // };
 
-    const filteredRequests = (CallRequestDetails || []).filter(({ name, email, purpose, description }: any) =>
-        name.toLowerCase().includes(search.toLowerCase()) ||
-        email.toLowerCase().includes(search.toLowerCase()) ||
-        purpose.toLowerCase().includes(search.toLowerCase()) ||
-        description.toLowerCase().includes(search.toLowerCase())
-    );
+    // const filteredRequests = (CallRequestDetails || []).filter(({ name, email, purpose, description }: any) =>
+    //     name.toLowerCase().includes(search.toLowerCase()) ||
+    //     email.toLowerCase().includes(search.toLowerCase()) ||
+    //     purpose.toLowerCase().includes(search.toLowerCase()) ||
+    //     description.toLowerCase().includes(search.toLowerCase())
+    // );
 
     const handleApprove = (id: string) => {
         setBookingId(id);
@@ -108,7 +106,7 @@ const handleForward=()=>{
                 <div className="w-full md:w-1/2 mb-4">
                     <Input
                             label="Search"
-                            onChange={handleChange}
+                            // onChange={handleChange}
                             icon={<MagnifyingGlassIcon className="h-5 w-5 text-black" />}
                             className="rounded-full text-black bg-white placeholder-white focus:ring-2 focus:ring-red-600 focus:outline-none"
                             containerProps={{
@@ -117,7 +115,7 @@ const handleForward=()=>{
                 </div>
                 <div className="flex items-center gap-3 text-white">
                     <Typography variant="small" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                        Total Requests: {filteredRequests.length}
+                        Total Requests: {CallRequestDetails.length}
                     </Typography>
                     <Button variant="filled" size="sm" className="bg-white text-red-400"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                         Add Request
@@ -142,88 +140,92 @@ const handleForward=()=>{
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredRequests.length > 0 ? (
-                            filteredRequests.map(({ name, email, purpose, status, profilePic, description, createdAt, _id }: any) => (
-                                <tr key={_id} className="hover:bg-teal-50 transition-all">
-                                    <td className="p-4 border-b border-gray-200">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar src={profilePic} alt={name} size="sm" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-                                            <div>
-                                                <Typography variant="small" color="teal" className="font-semibold"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                                    {name}
-                                                </Typography>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                            {email}
-                                        </Typography>
-                                    </td>
-                                    <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                            {purpose}
-                                        </Typography>
-                                    </td>
-                                    <td className="px-[1] border-b">
-                                        <Chip
-                                            variant="ghost"
-                                            size="sm"
-                                            value={status}
-                                            color={
-                                                status === "approved"
-                                                    ? "green"
-                                                    : status === "rejected"
-                                                    ? "red"
-                                                    : status === "pending"
-                                                    ? "yellow"
-                                                    : "blue"
-                                            }
-                                            className="rounded-full"
-                                        />
-                                    </td>
+{CallRequestDetails.length > 0 ? (
+    CallRequestDetails.map((request) => (
+        <tr key={request._id} className="hover:bg-teal-50 transition-all">
+            <td className="p-4 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                    <Avatar
+                        src={request.profilePic} // Make sure to get the profilePic from the request
+                        alt={request.name} // Use request.name for the alt text
+                        size="sm"
+                        placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                    />
+                    <div>
+                        <Typography variant="small" color="teal" className="font-semibold" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                            {request.name} 
+                        </Typography>
+                    </div>
+                </div>
+            </td>
+            <td className="p-4 border-b border-gray-200">
+                <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                    {request.email}
+                </Typography>
+            </td>
+            <td className="p-4 border-b border-gray-200">
+                <Typography variant="small" color="gray" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                    {request.purpose}
+                </Typography>
+            </td>
+            <td className="px-[1] border-b">
+                <Chip
+                    variant="ghost"
+                    size="sm"
+                    value={request.status} // Use request.status
+                    color={
+                        request.status === "approved"
+                            ? "green"
+                            : request.status === "rejected"
+                            ? "red"
+                            : request.status === "pending"
+                            ? "yellow"
+                            : "blue"
+                    }
+                    className="rounded-full"
+                />
+            </td>
+            <td className="p-4 border-b border-gray-200">
+                <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                    {request.description} 
+                </Typography>
+                <ApproveBookingModal 
+    isOpen={open}
+    onClose={handleClose}
+    id={bookingId}
+    fetchCallRequest={() => fetchCallRequest(courseId || '', limit, page)} // Provide an empty string if courseId is undefined
+    courseId={courseId || ''} // Also ensure courseId is defined
+/>
+            </td>
+            <td className="p-4 border-b border-gray-200">
+                <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                    {dayjs(request.createdAt).format('MMM D, YYYY h:mm A')} // Use request.createdAt
+                </Typography>
+            </td>
+            <td className="p-4 border-b border-gray-200 text-right flex gap-2">
+                {request.status === 'pending' || request.status === 'rejected' ? (
+                    <Tooltip content="Approve Request">
+                        <IconButton onClick={() => handleApprove(request._id)} variant="text"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                            <CheckIcon className="h-4 w-4 text-green-500" />
+                        </IconButton>
+                    </Tooltip>
+                ) : request.status === 'completed' ? (
+                    <span className="text-blue-900 font-bold mt-1">Done</span>
+                ) : (
+                    <Button onClick={() => handleView(request._id)} size="sm"placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>View</Button>
+                )}
+            </td>
+        </tr>
+    ))
+) : (
+    <tr>
+        <td colSpan={TABLE_HEAD.length} className="p-4 text-center">
+            <Typography variant="small" color="gray" className="font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                No Request found
+            </Typography>
+        </td>
+    </tr>
+)}
 
-                                    <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                            {description}
-                                        </Typography>
-                                    </td>
-                                    <ApproveBookingModal 
-                                        isOpen={open} 
-                                        onClose={handleClose} 
-                                        id={bookingId}   
-                                        fetchCallRequest={() => fetchCallRequest(courseId)} 
-                                    />
-                                    <td className="p-4 border-b border-gray-200">
-                                        <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                            {dayjs(createdAt).format('MMM D, YYYY h:mm A')}
-                                        </Typography>
-                                    </td>
-                                    <td className="p-4 border-b border-gray-200 text-right flex gap-2">
-    {status === 'pending' || status === 'rejected' ? (
-        <Tooltip content="Approve Request">
-            <IconButton onClick={() => handleApprove(_id)} variant="text"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                <CheckIcon className="h-4 w-4 text-green-500" />
-            </IconButton>
-        </Tooltip>
-    ) : status === 'completed' ? (
-        <span className="text-blue-900 font-bold mt-1">Done</span> // Display "Completed" text or any other custom content
-    ) : (
-        <Button onClick={() => handleView(_id)} size="sm" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>View</Button>
-    )}
-</td>
-
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={TABLE_HEAD.length} className="p-4 text-center">
-                                    <Typography variant="small" color="gray" className="font-normal"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                                        No Request found
-                                    </Typography>
-                                </td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </CardBody>

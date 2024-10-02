@@ -85,6 +85,7 @@ interface PurchasedStudentDetails{
     profilePic:string
 }
 interface CallRequestType{
+    createdAt: Date;
     _id:string;
     name:string;
     email:string;

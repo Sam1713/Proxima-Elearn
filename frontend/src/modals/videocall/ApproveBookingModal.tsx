@@ -14,9 +14,8 @@ import * as Yup from "yup";
 import { FaCalendarAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 import api from '../../components/API/Api'; // Make sure axios is imported correctly
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setCallRequestAccept } from "../../redux/tutor/tutorSlice";
-import { RootState } from "../../redux/store";
 
 interface ApproveType {
     isOpen: boolean;
@@ -25,13 +24,18 @@ interface ApproveType {
     courseId: string; // Add this line
     fetchCallRequest: (courseId: string) => void;
   }
+  interface FormValues {
+    date?: Date|null; 
+    startingTime?: Date|null;
+    endingTime?: Date|null;
+    notes?: string|null;
+}
   
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
 const ApproveBookingModal: React.FC<ApproveType> = ({ isOpen, onClose, id,courseId,fetchCallRequest }) => {
     const dispatch=useDispatch()
-    const booking=useSelector((state:RootState)=>state.tutor.CallRequestAccept)
     console.log('if',id)
   const formik = useFormik({
     initialValues: {
@@ -60,7 +64,7 @@ const ApproveBookingModal: React.FC<ApproveType> = ({ isOpen, onClose, id,course
           }
         ),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values:FormValues) => {
       try {
         const result = await Swal.fire({
           title: "Are you sure?",
@@ -86,8 +90,7 @@ const ApproveBookingModal: React.FC<ApproveType> = ({ isOpen, onClose, id,course
             ? values.endingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) 
             : ''
           );
-          formData.append('notes', values.notes);
-
+          formData.append('notes', values.notes || '');
           try {
             const response = await api.post('/backend/contact/approveRequest', formData, {
               headers: {
@@ -130,12 +133,14 @@ const ApproveBookingModal: React.FC<ApproveType> = ({ isOpen, onClose, id,course
         unmount: { scale: 0.9, y: -100 },
       }}
       className="max-w-lg mx-auto bg-custom-gradient font-serif"
-    >
-      <DialogHeader className="text-lg font-bold text-indigo-600 font-serif">
+      handler={() => console.log('Dialog handler')}
+
+      placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}    >
+      <DialogHeader className="text-lg font-bold text-indigo-600 font-serif" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         Approve Booking Request
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
-        <DialogBody className="h-auto space-y-4">
+        <DialogBody className="h-auto space-y-4"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <div className="flex flex-col gap-4">
             <div className="w-full">
               <label className="text-sm font-medium text-gray-100 flex items-center mb-2">
@@ -185,29 +190,26 @@ const ApproveBookingModal: React.FC<ApproveType> = ({ isOpen, onClose, id,course
             ) : null}
 
             <Textarea
-              value={formik.values.notes}
+              value={formik.values.notes || ''}
               onChange={(e) => formik.setFieldValue("notes", e.target.value)}
               className="border border-indigo-300 rounded-xl text-white bg-transparent focus:ring-0 focus:border-indigo-300"
               placeholder="Add any additional notes..."
-              rows={4}
-            />
+              rows={4} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}            />
           </div>
         </DialogBody>
-        <DialogFooter className="space-x-2">
+        <DialogFooter className="space-x-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           <Button
             variant="text"
             color="red"
             onClick={onClose}
-            className="mr-1 hover:bg-red-50 transition duration-300 ease-in-out"
-          >
+            className="mr-1 hover:bg-red-50 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Cancel
           </Button>
           <Button
             type="submit"
             variant="gradient"
             color="green"
-            className="bg-gradient-to-r from-green-400 to-green-600 hover:opacity-90 transition duration-300 ease-in-out"
-          >
+            className="bg-gradient-to-r from-green-400 to-green-600 hover:opacity-90 transition duration-300 ease-in-out"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
             Confirm
           </Button>
         </DialogFooter>

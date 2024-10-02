@@ -39,6 +39,7 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
 
 
             export const getCallRequest = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+              console.log('started')
                 try {
                     const tutorId = req.userId;
                     const courseId = req.query.courseId as string;
@@ -103,6 +104,7 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
             }
                        
                     ]);
+                    console.log('get',getAllCallRequest)
             const totalPages=Math.ceil(totalDoc/limit)
                     console.log('d', getAllCallRequest);
                     res.json({getAllCallRequest,totalPages});

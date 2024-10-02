@@ -4,8 +4,7 @@ import api from '../API/Api';
 import { setCourseDetails } from '../../redux/admin/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import AnimatedText from '../../animation/AnimatedText';
-import notFound from '../../assets/images/49342678_9214777.jpg'
+
 
 const TutorCourseDetails: React.FC = () => {
   const { id } = useParams();
@@ -87,7 +86,7 @@ const TutorCourseDetails: React.FC = () => {
         <video
           className="w-full h-[200px] object-cover"
           controls
-          poster={video.thumbnailUrl} // Optional: Add a thumbnail preview for the video
+          poster={video.fileUrl} 
         >
           <source src={video.fileUrl} type="video/mp4" />
           Your browser does not support the video tag.
@@ -97,7 +96,7 @@ const TutorCourseDetails: React.FC = () => {
             {video.description}
           </h3>
           <p className="text-gray-400 text-sm">
-            Duration: {video.duration} mins
+            Duration: 23.39 hrs
           </p>
         </div>
       </div>

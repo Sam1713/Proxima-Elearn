@@ -10,12 +10,13 @@ import EditCoverImage from '../../modals/tutorModal/editCourseModal/EditCoverIma
 import EditSubVideosModal from '../../modals/tutorModal/editCourseModal/EditSubVideosModal';
 import { Button } from '@material-tailwind/react';
 
-
-interface VideoType {
+interface VideoTypes{
   _id?: string;
   fileUrl: string;
   description: string;
+
 }
+
 const GetTutorCourseDetail:React.FC=()=> {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const GetTutorCourseDetail:React.FC=()=> {
   const [editCourse, setEditCourse] = useState<boolean>(false);
   const [editCoverImage, setEditCoverImage] = useState<boolean>(false);
   const [subVideos, setSubVideos] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<VideoType|null>(null); // Added state for selected video
+  const [selectedVideo, setSelectedVideo] = useState<VideoTypes|null>(null); // Added state for selected video
   const allCategories=useSelector((state:RootState)=>state.tutor.categoryDetails)
   useEffect(() => {
     const fetchCourseDetail = async () => {
@@ -63,8 +64,8 @@ const GetTutorCourseDetail:React.FC=()=> {
     setEditCoverImage(false);
   };
 
-  const onEditSubVideo = (video: React.SetStateAction<VideoType | null>) => {
-    setSelectedVideo(video); 
+  const onEditSubVideo = (video: React.SetStateAction<VideoTypes | null>) => {
+    setSelectedVideo(video); // Set the selected video for editing
     setSubVideos(true);
   };
 
@@ -111,6 +112,8 @@ const GetTutorCourseDetail:React.FC=()=> {
 
   const navigate=useNavigate()
   const handleGo=()=>{
+    console.log('delo');
+    
    navigate('/getCallList')
   }
   const handleQuiz=(id:string)=>{
@@ -124,12 +127,11 @@ const GetTutorCourseDetail:React.FC=()=> {
         <Button onClick={handleGo} className='bg-red-500 p-4 rounded-xl'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call Request</Button>
      
       <div><Button className='bg-green-400' onClick={() => {
-      if (details?._id) {
-        handleQuiz(details._id); 
-      } else {
-        console.error("Quiz ID is undefined");
-        
-      }
+        if (details?._id) {
+            handleQuiz(details._id);
+        } else {
+            console.error("ID is undefined");
+        }
     }} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Start Quiz</Button></div>
       </div>
       </div>
