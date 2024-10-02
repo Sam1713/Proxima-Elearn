@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CurrencyDollarIcon, ArrowUpIcon } from '@heroicons/react/24/solid';
+import {  ArrowUpIcon } from '@heroicons/react/24/solid';
 import api from '../API/Api';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
@@ -60,17 +60,7 @@ const TutorWallet: React.FC = () => {
         item.courseTitle.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    const sortedData = filteredData?.sort((a, b) => {
-        if (sortColumn) {
-            const valueA = a[sortColumn as keyof typeof a];
-            const valueB = b[sortColumn as keyof typeof b];
-
-            if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
-            if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        }
-        return 0;
-    });
+   
 
     const handlePrev = () => {
         setPage((prev) => prev - 1);
@@ -78,7 +68,7 @@ const TutorWallet: React.FC = () => {
     const handleNext = () => {
         setPage((prev) => prev + 1);
     };
-console.log('sd',walletInfo.totalAmount.length)
+console.log('sd',walletInfo?.totalAmount?.length)
 return (
     <div className="min-h-screen md:px-8 md:pt-8 pt-10">
         <div
@@ -130,7 +120,7 @@ return (
                 </div>
             )}
 
-            {walletInfo?.walletDetails?.length > 0 && (
+{walletInfo?.walletDetails && walletInfo.walletDetails.length > 0 && (
                 <div
                     className="overflow-x-auto md:overflow-hidden md:min-w-full w-[95%] mx-auto md:mx-0 rounded-xl"
                     style={{
@@ -174,13 +164,12 @@ return (
             )}
 
             {/* Pagination: Show only if there are transactions */}
-            {walletInfo?.walletDetails?.length > 0 && (
+            {walletInfo?.walletDetails && walletInfo.walletDetails.length > 0 && (
                 <div className="flex items-center justify-center mt-6 space-x-4">
                     <Button
                         onClick={handlePrev}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-                        disabled={page === 1}
-                    >
+                        disabled={page === 1}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                    >
                         Prev
                     </Button>
 
@@ -193,8 +182,7 @@ return (
                     <Button
                         onClick={handleNext}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-                        disabled={page === totalPages}
-                    >
+                        disabled={page === totalPages}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                    >
                         Next
                     </Button>
                 </div>

@@ -8,30 +8,29 @@ import { setStudentChat } from '../../redux/tutor/tutorSlice';
 import { FaComment, FaSpinner } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
-const socket = io('http://localhost:3000'); // Connect to the Socket.IO server
+const socket = io('http://localhost:3000'); 
 
-const TutorChat = () => {
-    const [message, setMessage] = useState<string>(''); // Message input state
-    const [chat, setChat] = useState<any[]>([]); // Chat messages state
-    const [students, setStudents] = useState<any[]>([]); // Student list state
-    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null); // Selected student ID
-    const [page, setPage] = useState<number>(1); // Pagination page state
-    const [isFetching, setIsFetching] = useState<boolean>(false); // Fetching state
-    const [hasMore, setHasMore] = useState<boolean>(true); // More data available state
-    const studentListRef = useRef<HTMLDivElement>(null); // Reference to the student list container
+const TutorChat:React.FC = () => {
+    const [message, setMessage] = useState<string>(''); 
+    const [chat, setChat] = useState<any[]>([]);
+    const [students, setStudents] = useState<any[]>([]); 
+    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null); 
+    const [page, setPage] = useState<number>(1); 
+    const [isFetching, setIsFetching] = useState<boolean>(false); 
+    const [hasMore, setHasMore] = useState<boolean>(true); 
+    const studentListRef = useRef<HTMLDivElement>(null); 
     const dispatch=useDispatch()
-    const chatContainerRef = useRef<HTMLDivElement>(null); // Reference to the chat message container
+    const chatContainerRef = useRef<HTMLDivElement>(null); 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     const [studentChats, setStudentChats] = useState<{ [key: string]: any[] }>({});
      const [loading,setLoading]=useState<boolean>(false)
     const currentTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
     const {id}=useParams()
     const myTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
-    const myTutorId=myTutor._id
-    const [tempChat,setTempChat]=useState<string>('')
+    const myTutorId = myTutor ? myTutor._id : null;   
     const [unreadMessages, setUnreadMessages] = useState<{ [tutorId: string]: boolean }>({});
     const [show,setShow]=useState<boolean>(false)
    const [recId,setRecId]=useState<string>('')
-    // Function to fetch chat messages for the selected student
     const fetchChatMessages = async (studentId: string) => {
       console.log('st',studentId)
         try {
@@ -45,7 +44,7 @@ const TutorChat = () => {
             console.log('res',response.data)
             if (response.data && response.data.chats) {
                 setLoading(false)
-                setChat(response.data.chats); // Update chat messages for the selected student
+                setChat(response.data.chats); 
                 dispatch(setStudentChat(response.data.chats))
             }   
         } catch (error) {
@@ -71,7 +70,7 @@ console.log('tut',id)
     useEffect(() => {
         console.log('started');
       
-        const handleReceiveMessage = (newMessage) => {
+        const handleReceiveMessage = (newMessage:{ receiverId: string; senderId: string; message: string; createdAt: string; senderType: string; }) => {
           console.log('Received message:', newMessage);
       
           // Check if the message is from the selected tutor
@@ -103,13 +102,11 @@ console.log('tut',id)
       
         socket.on('receiveMessage', handleReceiveMessage);
       
-        // Cleanup function to remove event listeners
         return () => {
           socket.off('receiveMessage', handleReceiveMessage);
         };
       }, [socket, selectedStudentId]);
       
-    // Sending a new message (from tutor)
     const sendMessage = async (selectedStudentId: string) => {
         if (!selectedStudentId) {
             alert('Please select a student to chat with.');
@@ -134,30 +131,25 @@ console.log('tut',id)
                 params: { studentId: selectedStudentId },
             });
     
-            // Update the chat
             setChat((prevMessages) => [...prevMessages, newMessage]);
     
-            // Update students list
             setStudents((prevStudents) => {
-                // Find the index of the student who received the message
                 const studentIndex = prevStudents.findIndex(student => student._id === selectedStudentId);
                 if (studentIndex !== -1) {
                     const updatedStudent = {
                         ...prevStudents[studentIndex],
                         latestMessage: newMessage.message,
-                        createdAt: new Date(newMessage.createdAt) // Ensure this is a Date object
+                        createdAt: new Date(newMessage.createdAt) 
                     };
             
-                    // Remove the student from their current position and move to the top
                     const updatedStudents = [
                         updatedStudent,
                         ...prevStudents.filter((_, index) => index !== studentIndex)
                     ];
             
-                    // Sort the updated student list by latest message date
                     return updatedStudents.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                 }
-                return prevStudents; // If not found, return unchanged list
+                return prevStudents;
             });
             
     
@@ -168,7 +160,6 @@ console.log('tut',id)
     };
      
 console.log('cha',chat)
-    // Fetch students using pagination
     const fetchStudentDetails = async (page: number) => {
         try {
             console.log('started')

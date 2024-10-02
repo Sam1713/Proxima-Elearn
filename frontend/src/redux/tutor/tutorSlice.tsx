@@ -105,16 +105,22 @@ interface CallRequestType{
 }
 
 interface WalletTypes{
+    _id:string;
     studentName:string;
     courseTitle:string;
     courseId:string;
     amountPaid:string;
     paymentDate:string;
 }
+interface TotalAmount{
+    _id:null,
+    totalAmount:string
+}
 interface WalletDetailsTypes{
-    WalletDetails:WalletTypes[],
+    walletDetails:WalletTypes[],
     deductedAmount:string;
-    balanceAmount:string
+    balanceAmount:string;
+    totalAmount:TotalAmount[];
 }
 interface Stud {
     courseId: string;
@@ -144,7 +150,7 @@ interface CategoryTypes{
     categoryName:string;
 }
 
-const initialState:TutorState={
+ const initialState:TutorState={
     currentTutor:null,
     tutorApproval:false,
     updateBasicTutor:null,
@@ -182,6 +188,7 @@ const tutorSlice=createSlice({
             state.error=action.payload
         },
         tutorsignout(state){
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             state.loading=false,
             state.currentTutor=null
         },

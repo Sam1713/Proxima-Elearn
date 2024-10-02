@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../context/RoomContext';
 import { Button } from '@material-tailwind/react';
 
-const Notification = () => {
+const Notification:React.FC = () => {
   const context = useContext(SocketContext);
 
   const { answerCall, call, callAccepted } = context!;

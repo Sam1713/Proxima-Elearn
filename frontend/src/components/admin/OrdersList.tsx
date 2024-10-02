@@ -24,7 +24,7 @@ const TABLE_HEAD = [
   { head: "" },
 ];
 
-function OrdersList() {
+const OrdersList:React.FC=()=> {
   const dispatch = useDispatch();
   const OrdersList = useSelector((state: RootState) => state.admin.ordersList);
   const [page,setPage]=useState<number>(1)
@@ -89,22 +89,20 @@ function OrdersList() {
     }
   }
   return (
-    <div className="mt-5 md:mx-10 w-[90%] mx-auto md:mx-0 rounded-xl bg-black md:w-auto">
-      <Card className="bg-black shadow-lg rounded-lg overflow-hidden">
+    <div className="mt-5 md:mx-10 w-[90%] mx-auto  rounded-xl bg-black md:w-auto">
+      <Card className="bg-black shadow-lg rounded-lg overflow-hidden"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <h1 className="text-2xl pt-4 mx-5 text-gray-100 font-extrabold underline">Orders List</h1>
         <CardHeader
           floated={false}
           shadow={false}
-          className="mb-4 rounded-none p-2 bg-gray-70"
-        >
+          className="mb-4 rounded-none p-2 bg-gray-70" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        >
           <div className="w-full md:w-96 text-white">
   <div className="relative">
     <Input
-    onChange={(e)=>handleChange(e)}
-      label={<span className="text-white">Search</span>} // Apply custom class here
-      icon={<MagnifyingGlassIcon onClick={handleSearch} className="h-5 w-5 cursor-pointer text-gray-100" />}
-      className="bg-gray-900 text-gray-100 placeholder-white"
-    />
+                onChange={(e) => handleChange(e)}
+                label={"Search"}
+                icon={<MagnifyingGlassIcon onClick={handleSearch} className="h-5 w-5 cursor-pointer text-gray-100" />}
+                className="bg-gray-900 text-gray-100 placeholder-white" onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}    />
   </div>
 </div>
 
@@ -116,7 +114,7 @@ function OrdersList() {
               <tr className="bg-gray-900 text-gray-100">
                 {TABLE_HEAD.map(({ head }, index) => (
                   <th key={index} className="border-b border-gray-100 p-4">
-                    <Typography variant="small" className="font-bold">
+                    <Typography variant="small" className="font-bold"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                       {head}
                     </Typography>
                   </th>
@@ -126,49 +124,49 @@ function OrdersList() {
             <tbody>
               {OrdersList.map(
                 (order, index) => {
-                  const { number, username, email, title, price, createdAt } = order;
+                  const { username, email, title, price, createdAt } = order;
                   const isLast = index === OrdersList.length - 1;
                   const classes = `p-4 w-[17%]  ${isLast ? '' : 'border-b border-gray-600'}`;
                   const pageIndex =index+1;
 
                   return (
-                    <tr key={number} className="hover:bg-gray-700">
+                    <tr key={index} className="hover:bg-gray-700">
                       <td className={classes}>
-                        <Typography variant="small" className="font-bold text-gray-300">
+                        <Typography variant="small" className="font-bold text-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           {pageIndex} {/* Display index number */}
                         </Typography>
                       </td>
                       <td className={classes}>
-                        <Typography variant="small" className="font-normal text-gray-300">
+                        <Typography variant="small" className="font-normal text-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           {username}
                         </Typography>
                       </td>
                       <td className={classes}>
-                        <Typography variant="small" className="font-normal text-gray-400">
+                        <Typography variant="small" className="font-normal text-gray-400" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           {email}
                         </Typography>
                       </td>
                       <td className={classes}>
-                        <Typography variant="small" className="font-normal text-gray-300 ">
+                        <Typography variant="small" className="font-normal text-gray-300 " placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           {title}
                         </Typography>
                       </td>
                       <td className={classes}>
-                        <Typography variant="small" className="font-normal text-gray-300">
+                        <Typography variant="small" className="font-normal text-gray-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           ${price}
                         </Typography>
                       </td>
                       <td className={classes}>
-                        <Typography variant="small" className="font-normal text-gray-300">
+                        <Typography variant="small" className="font-normal text-gray-300" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                           {new Date(createdAt).toLocaleDateString()}
                         </Typography>
                       </td>
                       <td className={classes}>
                         <div className="flex items-center gap-2">
-                          <IconButton variant="text" size="sm">
+                          <IconButton variant="text" size="sm"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                             <DocumentIcon className="h-4 w-4 text-gray-400" />
                           </IconButton>
-                          <IconButton variant="text" size="sm">
+                          <IconButton variant="text" size="sm"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                             <ArrowDownTrayIcon className="h-4 w-4 text-gray-400" />
                           </IconButton>
                         </div>
