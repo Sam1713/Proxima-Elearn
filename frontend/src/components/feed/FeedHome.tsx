@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import bgImage from '../../assets/images/1d9UAi.jpg'; // Local high-resolution image
 import newImage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
 import Modal from '../../modals/PostModal'; // Import your modal component
 import RecentFeed from './RecentFeed';
