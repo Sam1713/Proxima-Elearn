@@ -23,8 +23,6 @@ const TutorChat:React.FC = () => {
     const studentListRef = useRef<HTMLDivElement>(null); 
     const dispatch=useDispatch()
     const chatContainerRef = useRef<HTMLDivElement>(null); 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-    const [studentChats, setStudentChats] = useState<{ [key: string]: any[] }>({});
      const [loading,setLoading]=useState<boolean>(false)
     const currentTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
     const {id}=useParams()

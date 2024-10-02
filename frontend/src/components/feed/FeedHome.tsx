@@ -12,20 +12,11 @@ import { AppDispatch, RootState } from '../../redux/store';
 import FeedShimmer from '../shimmers/FeedShimmer';
 import axios from 'axios';
 const FeedHome:React.FC=()=> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); 
   const loading=useSelector((state:RootState)=>state.student.loading)
   const dispatch=useDispatch<AppDispatch>()
   const navigate=useNavigate()
-  useEffect(() => {
-    const img = new Image();
-    img.src = bgImage;
-    img.onload = () => {
-      setImageLoaded(true);
-    };
-    
-  }, []);
+ 
 
 
 

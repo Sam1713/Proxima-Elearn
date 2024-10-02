@@ -108,26 +108,34 @@ tutorList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
 
 
-
-
-export const postStudentMessage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const postStudentMessage = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
     try {
       const { senderId, receiverId, message, createdAt, senderType } = req.body;
-      console.log('rec',receiverId)
-      console.log('sem',senderId)
-      // Debugging: Log the request body to ensure all fields are present
-    //   console.log('Message data:', req.body);
-      
-      const newMessage = new Chat({ sender: senderId, receiver: receiverId, message, createdAt, senderType });
-      console.log('dsfsd',newMessage)
+  
+      // Convert senderId and receiverId to ObjectId if they are not already
+      const senderObjectId = mongoose.Types.ObjectId.isValid(senderId) ? new mongoose.Types.ObjectId(senderId) : null;
+      const receiverObjectId = mongoose.Types.ObjectId.isValid(receiverId) ? new mongoose.Types.ObjectId(receiverId) : null;
+  
+      if (!senderObjectId || !receiverObjectId) {
+        return res.status(400).json({ error: 'Invalid senderId or receiverId' });
+      }
+  
+      // Create new message
+      const newMessage = new Chat({
+        sender: senderObjectId,
+        receiver: receiverObjectId,
+        message,
+        createdAt,
+        senderType,
+      });
+  
       await newMessage.save();
       res.status(201).json(newMessage);
     } catch (error) {
-      console.error('Error sending message:', error);  // Log the error on the server
+      console.error('Error sending message:', error);
       res.status(500).json({ error: 'Error sending message' });
     }
   };
-
   
 //   export const getStudentDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 //       try {

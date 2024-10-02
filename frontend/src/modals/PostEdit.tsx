@@ -53,7 +53,7 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
         confirmButtonText: 'Yes, submit it!',
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const loadingSwal = Swal.fire({
+           Swal.fire({
             title: 'Submitting...',
             text: 'Please wait while we submit your Details.',
             icon: 'info',
@@ -96,10 +96,8 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
             showToast('error', errorMessage);
             setLoading(false);
           }
-          
-          loadingSwal.close();
-        } else {
-          setLoading(false);
+           } else {
+            setLoading(false);
         }
       });
     }
