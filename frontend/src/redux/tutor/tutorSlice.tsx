@@ -28,7 +28,7 @@ export interface Student {
 }
 
 export interface Tutor {
-    id?: string;
+    _id?: string;
     tutorname?: string;
     email?:string;
     phonenumber?:string;

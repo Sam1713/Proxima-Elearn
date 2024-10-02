@@ -1,15 +1,12 @@
 // StartCallButton.js
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import { Button } from '@material-tailwind/react';
-import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { Link } from 'react-router-dom';
-const socket = io('http://localhost:3000');
 
 
-function StartCallButton() {
+const StartCallButton:React.FC=()=> {
   const navigate=useNavigate()
   const currentTutor=useSelector((state:RootState)=>state.tutor.currentTutor)
   const bookingDetails=useSelector((state:RootState)=>state.tutor.bookingDetails)
@@ -31,9 +28,8 @@ function StartCallButton() {
       >Start</a> */}
       {/* <Link to="/room/:id">Start</Link> */}
       <Button
-      onClick={handleNavigate}
-        className="bg-pink-600 text-white hover:bg-pink-700 transition duration-300"
-        
+        onClick={handleNavigate}
+        className="bg-pink-600 text-white hover:bg-pink-700 transition duration-300"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}        
       >
         Start Video Call
       </Button>
