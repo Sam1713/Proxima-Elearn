@@ -10,7 +10,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../API/Api'
 import { AppDispatch, RootState } from '../../redux/store';
 import FeedShimmer from '../shimmers/FeedShimmer';
+import axios from 'axios';
 const FeedHome:React.FC=()=> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); 
   const loading=useSelector((state:RootState)=>state.student.loading)
@@ -40,24 +42,30 @@ const FeedHome:React.FC=()=> {
         dispatch(setFeeds(response.data))
         
         console.log('Feeds response:', response.data);
-      } catch (error:unknown) {
-        dispatch(setLoadingClose())
-          if (error.response) {
-            const { status, data } = error.response;
-     
+      } catch (error: unknown) {
+        dispatch(setLoadingClose());
+        
+        if (axios.isAxiosError(error)) {
+          const { response } = error;
+      
+          if (response) {
+            const { status, data } = response;
+      
             if (status === 403 && data.error === 'UserBlocked') {
               dispatch(signout());
               dispatch(clearFeed());
-              alert(data.message); 
-              localStorage.removeItem('access_token'); 
-              navigate('/signin'); 
+              alert(data.message);
+              localStorage.removeItem('access_token');
+              navigate('/signin');
             } else {
-              console.error('An error occurred:', error);
+              console.error('An error occurred:', data.message); // Log the specific message from the response
             }
           } else {
-            console.error('An error occurred:', error);
+            console.error('An error occurred:', error.message); // Log the error message if no response is available
           }
-        
+        } else {
+          console.error('An error occurred:', error); // Handle non-Axios errors
+        }
       }
     }    
     useEffect(()=>{

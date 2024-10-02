@@ -3,7 +3,13 @@ import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 import { MdPictureAsPdf } from "react-icons/md";
 
-const FilePreviewModal = ({ open, onClose, selectedFiles }) => {
+interface FilePreviewModalProps {
+  open: boolean;
+  onClose: () => void;
+  selectedFiles: File[];
+}
+
+const FilePreviewModal: React.FC<FilePreviewModalProps> = ({ open, onClose, selectedFiles }) => {
   return (
     <Modal open={open} onClose={onClose} center>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

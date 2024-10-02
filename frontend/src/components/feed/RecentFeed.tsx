@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { FaRegPlayCircle } from "react-icons/fa";
 import { AiFillLike } from "react-icons/ai";
 import { FaComments } from "react-icons/fa";
-import axios from 'axios';
-import { clearFeed, setFeeds } from '../../redux/feed/feedSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import api from '../API/Api'
-import { signout } from '../../redux/student/studentSlice';
-import { useNavigate } from 'react-router-dom';
-import PostModal from '../../modals/PostModal';
 
+interface FileType {
+  fileType: string;
+}
 
 const RecentFeed:React.FC=()=> {
  
@@ -52,7 +49,7 @@ const RecentFeed:React.FC=()=> {
     setSelectedMediaType(mediaType);
   };
 
-  const determineMediaType = (file:any)=> {
+  const determineMediaType = (file:FileType)=> {
     console.log('did',file)
     return file.fileType === 'video' ? 'video' : 'image';
   };

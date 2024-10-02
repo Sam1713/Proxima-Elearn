@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import api from '../components/API/Api'
 interface PostPasswordProps {
   onClose: () => void;
-}
+} 
 
 const spinnerStyle = css`
   display: block;
@@ -25,7 +25,7 @@ const spinnerStyle = css`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-`;
+`; 
 
 const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
   const currentStudent = useSelector((state: RootState) => state.student.currentStudent);
@@ -49,11 +49,16 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
       Swal.fire('Success!', 'Password reset instructions have been sent to your email.', 'success');
       setOpenForgotPass(false);
       setOpenOtpModal(true);
-    } catch (error) {
-      setLoading(false);
-      Swal.fire('Error!', 'An error occurred while sending the reset instructions.', 'error');
+    } catch (error: unknown) { 
+    setLoading(false);
+    
+    if (error instanceof Error) {
+      console.error("Error message: ", error.message);
+      Swal.fire('Error!', `An error occurred: ${error.message}`, 'error');
+    } else {
+      Swal.fire('Error!', 'An unknown error occurred.', 'error');
     }
-  };
+  }
 
   const handleOtpSubmit = async (values: { otp: string, newPassword: string, confirmPassword: string }) => {
     try {
@@ -85,8 +90,8 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
       const token = localStorage.getItem('access_token');
       if (!token) {
         Swal.fire('Error!', 'No authentication token found.', 'error');
-        return;
-      }
+        return; 
+      } 
 
       Swal.fire({
         title: 'Are you sure?',
@@ -299,7 +304,7 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
               </div>
 
               <div className='mb-4 mt-10 relative'>
-                <input
+                <input 
                   className='w-full p-2 pl-10 rounded bg-custom-gradient text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
                   type='password'
                   placeholder='Confirm New Password'
@@ -342,5 +347,5 @@ const PostPassword: React.FC<PostPasswordProps> = ({ onClose }) => {
     </>
   );
 };
-
+}
 export default PostPassword;

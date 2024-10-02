@@ -53,7 +53,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, fetchFeeds }) =>
         }
   
         dispatch(setLoading());
-        const loadingSwal = Swal.fire({
+        Swal.fire({
           title: 'Submitting...',
           text: 'Please wait while we submit your Post.',
           icon: 'info',
@@ -91,7 +91,6 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, fetchFeeds }) =>
             dispatch(setLoadingClose());
           });          
         }
-        loadingSwal.close();
             });
     }
   });

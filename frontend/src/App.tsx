@@ -1,9 +1,8 @@
 // App.js
-import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route,ScrollRestoration } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoadingSpinner from './utils/LoadingSpinner';
 import Layout from './layout/Layout';
-import Mystudent from './components/studentAuth/Mystudent';
 import StudentPrivateRoute from './utils/PrivateRoute'; 
 import StudentPublicRoute from './utils/StudentPublicRoute';
 import StudentLayout from './layout/StudentLayout';
@@ -19,7 +18,6 @@ import TutorPrivateRoute from './utils/TutorPrivateRoute';
 import TutorPublicRoute from './utils/TutorPublicRoute';
 import UserListing from './components/admin/UserListing';
 import TutorLayout from './layout/TutorLayout';
-import TutorSidebar from './layout/TutorSidebar';
 import TutorProfile from './components/tutorAuth/TutorProfile';
 import CoursePage from './components/courses/CoursePage';
 import CourseDetails from './components/studentCourse/CourseDetails';
@@ -38,10 +36,7 @@ import TutorCourseDetails from './components/admin/TutorCourseDetails';
 import BookingCall from './components/studentCourse/BookingCall';
 import GetCallRequest from './components/courses/GetCallRequest';
 import FullCallDetails from './components/courses/FullCallDetails';
-import socketIO from 'socket.io-client'
 import Room from './components/room/Room';
-import { ContextProvider, SocketContext } from './components/context/RoomContext';
-import OpenRoom from './components/room/OpenRoom';
 import OrdersList from './components/admin/OrdersList';
 import TutorWallet from './components/courses/TutorWallet';
 import Dashboard from './components/admin/Dashboard';
@@ -63,10 +58,9 @@ const StudentProfileDetails = React.lazy(() => import('./components/studentAuth/
 
 
 function App() {
-  const student = localStorage.getItem('access_token');
-  const tutor = localStorage.getItem('tutor_access_token');
+  // const student = localStorage.getItem('access_token');
+  // const tutor = localStorage.getItem('tutor_access_token');
 
-  const isAuthorized = student || tutor;
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingSpinner />}>
