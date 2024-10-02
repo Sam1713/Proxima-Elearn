@@ -8,7 +8,6 @@ import LandingBanner from './LandingBanner'
 import img1 from '../assets/images/banner1-ChWN6Q7z.png'
 import img2 from '../assets/images/banner2-BMWB7nzP.png'
 import LandingSubCard from './LandingSubCard'
-import LandingReview from './LandingReview'
 const WhyChooseUs=[
     {
         _id:1,

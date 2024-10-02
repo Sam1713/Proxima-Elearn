@@ -5,7 +5,7 @@ import heroImg from '../assets/images/hero-Dv8sjFKx.png'
 import { FaPlay } from 'react-icons/fa';
 import {motion} from 'framer-motion'
 import { SlideRight } from '../animation/animation';
-function LandingDescription() {
+const LandingDescription:React.FC=()=> {
   return (
     <>
     <div className='container  grid grid-cols-1 md:grid-cols-2 w-full mx-auto min-h-[650px] relative'>
@@ -36,8 +36,8 @@ function LandingDescription() {
              initial="hidden"
              animate="visible"
             className='flex gap-4 justify-center md:justify-start !mt-8 items-center'>
-            <Button className='bg-yellow-700 font-semibold px-6 py-3 rounded-full hover:!scale-110 hover:!shadow-xl duration-300'>Get Started</Button>
-            <Button className='flex justify-end items-center gap-2 font-semibold bg-gray-800 rounded-full text-white border-indigo-200 shadow-2xl' ><span className='w-5 h-5  bg-blue-400 rounded-full flex  justify-center items-center'><FaPlay className='text-blue-300'/></span>See how it works</Button>
+            <Button className='bg-yellow-700 font-semibold px-6 py-3 rounded-full hover:!scale-110 hover:!shadow-xl duration-300' placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Get Started</Button>
+            <Button className='flex justify-end items-center gap-2 font-semibold bg-gray-800 rounded-full text-white border-indigo-200 shadow-2xl'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} ><span className='w-5 h-5  bg-blue-400 rounded-full flex  justify-center items-center'><FaPlay className='text-blue-300'/></span>See how it works</Button>
       </motion.div>
       </div>
       </div>

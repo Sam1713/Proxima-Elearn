@@ -2,7 +2,7 @@
 import React from 'react';
 import LandingBody from './LandingBody';
 
-function Landing() {
+const Landing:React.FC=()=> {
   return (
     <div className=''>
       <main className='bg-black'>

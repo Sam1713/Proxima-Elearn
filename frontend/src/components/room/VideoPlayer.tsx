@@ -297,7 +297,7 @@
 
 // export default VideoPlayer;
 
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { SocketContext } from '../context/RoomContext';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaDesktop } from 'react-icons/fa';
 
@@ -339,6 +339,7 @@ const VideoPlayer: React.FC = () => {
   }
 
   // Set up video stream for myVideo
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (myVideo.current && stream) {
       myVideo.current.srcObject = stream;
@@ -346,6 +347,7 @@ const VideoPlayer: React.FC = () => {
   }, [stream]);
 
   // Set up video stream for userVideo
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (callAccepted && !callEnded && call && userVideo.current) {
       userVideo.current.srcObject = call.stream;

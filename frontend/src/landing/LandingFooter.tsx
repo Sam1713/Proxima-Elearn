@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-function LandingFooter() {
+const LandingFooter:React.FC=()=> {
   return (
     <footer className=' text-gray-900 py-12 bg-gray-900'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>

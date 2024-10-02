@@ -3,7 +3,9 @@ import { SocketContext } from '../context/RoomContext';
 import { Button } from '@material-tailwind/react';
 
 const Notification = () => {
-  const { answerCall, call, callAccepted } = useContext(SocketContext);
+  const context = useContext(SocketContext);
+
+  const { answerCall, call, callAccepted } = context!;
 
   return (
     <>

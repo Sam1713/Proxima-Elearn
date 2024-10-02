@@ -2,10 +2,10 @@ import React from 'react';
 import { Button } from '@material-tailwind/react';
 import { motion } from 'framer-motion';
 import { SlideUp } from '../animation/animation';
-import LandingSubCard from './LandingSubCard';
 interface LandingBannerProps {
   image: string;
   title: string;
+  tag?:string;
   subtitle: string;
   reverse?: boolean;
 }
@@ -48,7 +48,7 @@ const LandingBanner: React.FC<LandingBannerProps> = ({ image, title,tag, subtitl
              whileInView={"visible"}
              className='flex justify-center md:justify-start'
             >
-            <Button color="blue" size="lg">Learn More</Button>
+            <Button color="blue" size="lg"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Learn More</Button>
 
             </motion.div>
           </div>

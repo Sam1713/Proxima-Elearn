@@ -1,11 +1,8 @@
 import React from 'react';
-import profileImage from '../assets/images/e37e0e25686c2139b281a57a5b4906f2.jpg'; // Ensure the path is correct
-import achievementImage1 from '../assets/images/LeetCode_Sharing.png'; // Ensure the path is correct
-import { AiFillLike } from "react-icons/ai";
-import LandingFooter from './LandingFooter';
+
 import CountUp from 'react-countup';
 import LandingCategory from './LandingCategory';
-function LandingFeed() {
+const LandingFeed:React.FC=()=> {
   return (
     <>
 <div className='bg-black w-[90%] mx-auto text-white py-12 px-4 border-4 border-lime-200 rounded-xl'>

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import image from '../assets/images/OIP__29_-removebg-preview.png'; 
-import { FaRegPlayCircle } from "react-icons/fa";
+
 import LandingDescription from './LandingDescription';
 import {motion} from 'framer-motion'
 import { Link } from 'react-router-dom';
-function LandingBody() {
+const LandingBody:React.FC=()=> {
   const [isOpen,setIsOpen]=useState<boolean>(true)
   return (
     
