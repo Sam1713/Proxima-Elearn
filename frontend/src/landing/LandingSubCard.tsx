@@ -1,5 +1,5 @@
 import React from 'react'
-import {delay, motion} from 'framer-motion'
+import { motion} from 'framer-motion'
 import { FaBook, FaComment } from 'react-icons/fa'
 import LandingReview from './LandingReview'
 
@@ -62,7 +62,7 @@ const subjectList=[
         delay:0.9
     },
 ]
-const LandingSubCard = () => {
+const LandingSubCard:React.FC = () => {
   return (
     <>
       <div className='py-14 md:py-24'>

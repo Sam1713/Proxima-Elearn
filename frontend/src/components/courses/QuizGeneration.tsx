@@ -6,7 +6,14 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setQuizDetails } from '../../redux/tutor/tutorSlice';
-const QuizGeneration = () => {
+interface QuestionErrors {
+    question?: string;
+    options?: string;
+    totalMarks?: string;
+    correctAnswer?: string;
+}
+
+const QuizGeneration :React.FC=() => {
     const [numQuestions, setNumQuestions] = useState<number>(0);
     const [questions, setQuestions] = useState<{question: string, options: string[], totalMarks: number, correctAnswer: number}[]>([]);
     const [currentQuestion, setCurrentQuestion] = useState<number>(1);
@@ -44,7 +51,7 @@ const QuizGeneration = () => {
 
     const validateCurrentQuestion = () => {
         const current = questions[currentQuestion - 1];
-        const newErrors: any = {};
+        const newErrors: QuestionErrors = {};
 
         if (!current.question.trim()) {
             newErrors.question = 'Question cannot be empty';
@@ -132,7 +139,7 @@ const QuizGeneration = () => {
                             }
                         }); 
                         console.log('res',response)
-                        if (response.success) {
+                        if (response.data.success) {
                             Swal.fire(
                                 'Submitted!',
                                 'Your quiz has been submitted successfully.',
@@ -140,6 +147,7 @@ const QuizGeneration = () => {
                             );
                         }
                     } catch (error) {
+                        console.error('Error submitting quiz:', error)
                         Swal.fire(
                             'Error!',
                             'There was an error submitting your quiz. Please try again later.',
@@ -218,7 +226,7 @@ const QuizGeneration = () => {
                 <h1 className='text-gray-100 text-4xl font-bold mb-6 text-center'>Create Quiz</h1>
                 {quizDetails ? (
     <div className='bg-gray-900 p-8 rounded-lg shadow-lg text-white'>
-        <Button onClick={handleDelete} className='float-end bg-red-500'>Delete</Button>
+        <Button onClick={handleDelete} className='float-end bg-red-500'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Delete</Button>
     <h2 className='text-3xl font-protest mb-6  text-indigo-400'>Quiz Already Created</h2>
     <p className='text-lg text-gray-300 font-poppins mb-6 '>The quiz has already been created for this course. Here are the details:</p>
 
@@ -258,25 +266,22 @@ const QuizGeneration = () => {
                             <h2 className='text-2xl font-semibold text-gray-100 mb-4 text-center'>Quiz Setup</h2>
                             <div className='mb-4'>
                                 <Input
-                                    label='Number of Questions'
-                                    type='number'
-                                    floatingLabel={true}
-                                    className='w-full bg-custom-gradient text-white px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-200'
-                                    value={numQuestions}
-                                    onChange={handleNumQuestionsChange}
-                                    labelProps={{
-                                        className: 'text-gray-100 peer-placeholder-shown:text-gray-400 peer-focus:none transition-all',
-                                    }}
-                                    containerProps={{
-                                        className: 'relative',
-                                    }}
-                                />
+                                            label='Number of Questions'
+                                            type='number'
+                                            className='w-full bg-custom-gradient text-white px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-200'
+                                            value={numQuestions}
+                                            onChange={handleNumQuestionsChange}
+                                            labelProps={{
+                                                className: 'text-gray-100 peer-placeholder-shown:text-gray-400 peer-focus:none transition-all',
+                                            }}
+                                            containerProps={{
+                                                className: 'relative',
+                                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                                />
                             </div>
 
                             <Button
-                                className='w-full py-3 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition duration-300'
-                                onClick={handleStartQuiz}
-                            >
+                                        className='w-full py-3 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition duration-300'
+                                        onClick={handleStartQuiz} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                            >
                                 Start Quiz
                             </Button>
                         </div>
@@ -295,16 +300,14 @@ const QuizGeneration = () => {
 
                                 <div className='mb-6'>
                                     <Input
-                                        label='Enter your question'
-                                        type='text'
-                                        floatingLabel={true}
-                                        className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
-                                        value={questions[currentQuestion - 1].question}
-                                        onChange={handleQuestionChange}
-                                        labelProps={{
-                                            className: 'text-white peer-focus:text-white',
-                                        }}
-                                    />
+                                                    label='Enter your question'
+                                                    type='text'
+                                                    className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
+                                                    value={questions[currentQuestion - 1].question}
+                                                    onChange={handleQuestionChange}
+                                                    labelProps={{
+                                                        className: 'text-white peer-focus:text-white',
+                                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                                    />
                                     {errors[currentQuestion - 1]?.question && (
                                         <p className="text-red-500 text-sm">{errors[currentQuestion - 1].question}</p>
                                     )}
@@ -316,14 +319,12 @@ const QuizGeneration = () => {
                                             key={index}
                                             label={`Option ${index + 1}`}
                                             type='text'
-                                            floatingLabel={true}
                                             className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
                                             value={option}
                                             onChange={(e) => handleOptionChange(index, e)}
                                             labelProps={{
                                                 className: 'text-white peer-focus:text-white',
-                                            }}
-                                        />
+                                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                                        />
                                     ))}
                                     {errors[currentQuestion - 1]?.options && (
                                         <p className="text-red-500 text-sm">{errors[currentQuestion - 1].options}</p>
@@ -332,16 +333,14 @@ const QuizGeneration = () => {
 
                                 <div className='mb-6'>
                                     <Input
-                                        label='Total Marks'
-                                        type='number'
-                                        floatingLabel={true}
-                                        className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
-                                        value={questions[currentQuestion - 1].totalMarks}
-                                        onChange={handleTotalMarksChange}
-                                        labelProps={{
-                                            className: 'text-white peer-focus:text-white',
-                                        }}
-                                    />
+                                                    label='Total Marks'
+                                                    type='number'
+                                                    className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
+                                                    value={questions[currentQuestion - 1].totalMarks}
+                                                    onChange={handleTotalMarksChange}
+                                                    labelProps={{
+                                                        className: 'text-white peer-focus:text-white',
+                                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                                    />
                                     {errors[currentQuestion - 1]?.totalMarks && (
                                         <p className="text-red-500 text-sm">{errors[currentQuestion - 1].totalMarks}</p>
                                     )}
@@ -349,16 +348,14 @@ const QuizGeneration = () => {
 
                                 <div className='mb-6'>
                                     <Input
-                                        label='Correct Answer (Option 1 to 4)'
-                                        type='number'
-                                        floatingLabel={true}
-                                        className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
-                                        value={questions[currentQuestion - 1].correctAnswer}
-                                        onChange={handleCorrectAnswerChange}
-                                        labelProps={{
-                                            className: 'text-white peer-focus:text-white',
-                                        }}
-                                    />
+                                                    label='Correct Answer (Option 1 to 4)'
+                                                    type='number'
+                                                    className='w-full bg-custom-gradient text-white px-6 py-3 rounded-lg shadow-lg focus:border-transparent transition ease-in-out duration-200'
+                                                    value={questions[currentQuestion - 1].correctAnswer}
+                                                    onChange={handleCorrectAnswerChange}
+                                                    labelProps={{
+                                                        className: 'text-white peer-focus:text-white',
+                                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} crossOrigin={undefined}                                    />
                                     {errors[currentQuestion - 1]?.correctAnswer && (
                                         <p className="text-red-500 text-sm">{errors[currentQuestion - 1].correctAnswer}</p>
                                     )}
@@ -366,25 +363,22 @@ const QuizGeneration = () => {
 
                                 <div className='flex justify-between'>
                                     <Button
-                                        className={`py-3 px-6 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ${currentQuestion === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        onClick={handlePreviousQuestion}
-                                        disabled={currentQuestion === 1}
-                                    >
+                                                    className={`py-3 px-6 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ${currentQuestion === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                    onClick={handlePreviousQuestion}
+                                                    disabled={currentQuestion === 1} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                                    >
                                         Previous
                                     </Button>
 
                                     {currentQuestion < numQuestions ? (
                                         <Button
-                                            className='py-3 px-6 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-300'
-                                            onClick={handleNextQuestion}
-                                        >
+                                                        className='py-3 px-6 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-300'
+                                                        onClick={handleNextQuestion}  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                                        >
                                             Next
                                         </Button>
                                     ) : (
                                         <Button
-                                            className='py-3 px-6 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition duration-300'
-                                            onClick={handleSubmit}
-                                        >
+                                                            className='py-3 px-6 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:bg-purple-700 transition duration-300'
+                                                            onClick={handleSubmit} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                                        >
                                             Submit Quiz
                                         </Button>
                                     )}

@@ -93,8 +93,6 @@ const chartConfig = {
 
 
 const Dashboard: React.FC = () => {
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   const [totalAmount,setTotalAmount]=useState<number>(0)
    const [deductedAmount,setDeductedAmount]=useState<number>(0)
     useEffect(()=>{
       fetchWalletDetails()
@@ -106,7 +104,6 @@ const Dashboard: React.FC = () => {
             'X-Token-Type':'admin'
            }
         })
-        setTotalAmount(response.data.totalAmount)
         setDeductedAmount(response.data.adminAmount)
         console.log('res',response.data)
     }

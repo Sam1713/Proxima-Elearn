@@ -39,7 +39,7 @@ const TestData = [
   }
 ];
 
-const LandingReview = () => {
+const LandingReview:React.FC = () => {
   const settings = {
     dots: true,
     arrows: false,

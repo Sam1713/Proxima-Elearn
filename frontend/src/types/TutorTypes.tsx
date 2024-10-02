@@ -5,7 +5,7 @@ export interface TutorTypes{
     countrycode:number;
     phonenumber:number;
     bio:string;
-    files?:[]
+    files: File[]
 }
 
 export interface TutorSigninType{

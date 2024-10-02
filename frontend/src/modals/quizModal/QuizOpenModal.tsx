@@ -53,7 +53,7 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
   const currentUser=useSelector((state:RootState)=>state.student.currentStudent)
 
   const location = useLocation();
-
+console.log('oe',fetchQuizResult)
   const { orderedCourseDetail } = location.state || {};
 
 
@@ -130,7 +130,7 @@ const QuizOpenModal: React.FC<QuizTypes> = ({ isOpen, onClose, quizDetails,id,fe
      const correctCount=response.data.correctCount
      const totalMarks=response.data.totalMarks
      const percentage=(correctCount/totalMarks)*100
-     const courseId=response.data.courseId
+    //  const courseId=response.data.courseId
       setScore(correctCount); 
       setPercentage(percentage)
   setShowResult(true);

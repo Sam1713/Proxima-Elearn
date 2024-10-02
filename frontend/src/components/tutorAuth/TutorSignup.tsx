@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { FaUser } from 'react-icons/fa';
 import { MdEmail, MdPictureAsPdf, MdRemoveCircle } from 'react-icons/md';
 import { TutorTypes } from '../../types/TutorTypes';
@@ -21,8 +20,8 @@ const TutorSignup: React.FC = () => {
       tutorname: '',
       email: '',
       password: '',
-      countrycode: '+1',
-      phonenumber: '',
+      countrycode: +1,
+      phonenumber: 0,
       bio: '',
       files: []
     },
@@ -58,6 +57,7 @@ const TutorSignup: React.FC = () => {
             toast.success(response.data.message);
             resetForm(); // Reset the form fields
           } catch (error) {
+            console.error(error);
             toast.error('Something went wrong');
           } finally {
             setLoading(false);
@@ -91,13 +91,14 @@ const TutorSignup: React.FC = () => {
         {loading && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
             <ClipLoader
-              color="#fff"
-              loading={loading}
-              css={{ margin: '0 auto' }}
-              size={60}
-              aria-label="Loading Spinner"
-              data-testid="loader"
-            />
+    color="#fff"
+    loading={loading}
+    style={{ margin: '0 auto' }} 
+    size={60}
+    aria-label="Loading Spinner"
+    data-testid="loader"
+/>
+
           </div>
         )}
         
