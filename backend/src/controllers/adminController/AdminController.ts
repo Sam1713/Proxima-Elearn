@@ -4,7 +4,7 @@ import { AdminSignupType } from "../../types/authTypes";
 import Admin from "../../../src/models/AdminModel";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import TutorModel from "../../../src/models/tutorModal";
+import TutorModel from "../../models/tutorModal";
 import nodemailer from "nodemailer";
 import Student from "../../models/studentModel";
 import CategoryeModel from "../../models/categoryModel";
