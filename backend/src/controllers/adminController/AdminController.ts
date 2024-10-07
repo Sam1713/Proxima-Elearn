@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { emailValidator, passwordValidator, userNameValidator } from "../../utils/validator";
 import { AdminSignupType } from "../../types/authTypes";
-import Admin from "../../../src/models/AdminModel";
+import Admin from "../../models/AdminModel";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import TutorModel from "../../models/tutorModal";
