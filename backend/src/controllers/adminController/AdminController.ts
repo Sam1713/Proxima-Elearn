@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { emailValidator, passwordValidator, userNameValidator } from "../../utils/validator";
-import { AdminSignupType } from "../../../src/types/authTypes";
+import { AdminSignupType } from "../../types/authTypes";
 import Admin from "../../../src/models/AdminModel";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'

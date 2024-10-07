@@ -1,6 +1,6 @@
 import express from 'express'
-import authMiddleware from '../../src/middleware/jwt'
-import { deleteQuiz, getQuizResult, getQuizTutor, postQuizResult, postQuizTutor } from '../../src/controllers/quizController/quizController'
+import authMiddleware from '../middleware/jwt'
+import { deleteQuiz, getQuizResult, getQuizTutor, postQuizResult, postQuizTutor } from '../controllers/quizController/quizController'
 const router=express.Router()
 
 router.post('/postQuiz',authMiddleware('tutor'),postQuizTutor)

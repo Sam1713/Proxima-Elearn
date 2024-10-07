@@ -12,7 +12,7 @@ import {
   SigninType, 
   StudentDetails,
   ForgotPasswordType,
-} from "../../../src/types/authTypes";
+} from "../../types/authTypes";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import cloudinary from "../../utils/cloudinaryConfig";

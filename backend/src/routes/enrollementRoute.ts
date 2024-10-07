@@ -1,8 +1,8 @@
 import express from "express";
 const router=express.Router()
-import {createCheckout, verifyPayment,OrderedCourses, getOrderedCourseDetail,getPaymentDetails} from '../../src/controllers/enrollementController/enrollementController'
-import authMiddleware from "../../src/middleware/jwt";
-import { VerifyUser } from "../../src/middleware/VerifyUser";
+import {createCheckout, verifyPayment,OrderedCourses, getOrderedCourseDetail,getPaymentDetails} from '../controllers/enrollementController/enrollementController'
+import authMiddleware from "../middleware/jwt";
+import { VerifyUser } from "../middleware/VerifyUser";
 
 router.post('/checkout',authMiddleware('student'),createCheckout)
 router.post('/verifyPayment',verifyPayment)

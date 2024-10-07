@@ -1,6 +1,6 @@
 import express from 'express'
-import authMiddleware from '../../src/middleware/jwt'
-import {  getStudentDetails, getTutorList, postStudentMessage,getStudentChat, getOldChatsInStudent, postTutorMessage } from '../../src/controllers/chatController/chatController'
+import authMiddleware from '../middleware/jwt'
+import {  getStudentDetails, getTutorList, postStudentMessage,getStudentChat, getOldChatsInStudent, postTutorMessage } from '../controllers/chatController/chatController'
 const router=express.Router()
 
 router.get('/getTutorList',authMiddleware('student'),getTutorList)
