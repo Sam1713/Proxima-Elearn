@@ -1,9 +1,9 @@
 import express from 'express';
-import upload from '../middleware/multer';
-import { tutorSignup,tutorSignin,getTutorHome,TutorWait,sendOtpTutor,verifyOtp,updateTutor,updateBio,updateFiles,acceptLicense, tutorSignout} from '../controllers/tutorAuthController/tutorAuthController';
-import createMulterConfig from '../middleware/multer';
-import authMiddleware from '../middleware/jwt';
-import tutorApprove from '../middleware/tutorApprove';
+import upload from '../../src/middleware/multer';
+import { tutorSignup,tutorSignin,getTutorHome,TutorWait,sendOtpTutor,verifyOtp,updateTutor,updateBio,updateFiles,acceptLicense, tutorSignout} from '../../src/controllers/tutorAuthController/tutorAuthController';
+import createMulterConfig from '../../src/middleware/multer';
+import authMiddleware from '../../src/middleware/jwt';
+import tutorApprove from '../../src/middleware/tutorApprove';
 
 const tutorFilesUpload = createMulterConfig('./uploads/tutorFiles');
 

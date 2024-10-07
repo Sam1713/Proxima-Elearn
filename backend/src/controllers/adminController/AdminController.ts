@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { emailValidator, passwordValidator, userNameValidator } from "../../utils/validator";
-import { AdminSignupType } from "../../types/authTypes";
-import Admin from "../../models/AdminModel";
+import { AdminSignupType } from "../../../src/types/authTypes";
+import Admin from "../../../src/models/AdminModel";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import TutorModel from "../../models/tutorModal";
+import TutorModel from "../../../src/models/tutorModal";
 import nodemailer from "nodemailer";
 import Student from "../../models/studentModel";
 import CategoryeModel from "../../models/categoryModel";
-import CourseModel from "../../models/courseModel";
+import CourseModel from "../../models/courseModel"; 
 import mongoose from "mongoose";
 import Enrollment from "../../models/enrollementModel";
 import Payment from "../../models/paymentModel";

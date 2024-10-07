@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { AdminSignup,AdminSignin,GetAllTutors,GetTutorDetail,AdminApproveTutor,AdminRejectTutor,AdminUserListing,AdminBlockOrUnblock, addCategory, getAllCategories,updateCategory, getTutorCourses, getTutorCourseDetails,deleteCategory, adminSignout, getOrdersList, getAdminWalletDetails, getUserSearch, getOrderSearchVal } from '../controllers/adminController/AdminController';
-import createMulterConfig from '../middleware/multer';
-import authMiddleware from '../middleware/jwt';
+import { AdminSignup,AdminSignin,GetAllTutors,GetTutorDetail,AdminApproveTutor,AdminRejectTutor,AdminUserListing,AdminBlockOrUnblock, addCategory, getAllCategories,updateCategory, getTutorCourses, getTutorCourseDetails,deleteCategory, adminSignout, getOrdersList, getAdminWalletDetails, getUserSearch, getOrderSearchVal } from '../../src/controllers/adminController/AdminController';
+import createMulterConfig from '../../src/middleware/multer';
+import authMiddleware from '../../src/middleware/jwt';
 
 const adminFiles= createMulterConfig('./uploads/admin');
 

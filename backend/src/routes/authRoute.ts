@@ -1,9 +1,9 @@
 import express from 'express';
-import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword,GetAllCourses,getSingleCourse, getAllNotifications, deleteNotification, getAllCategory } from '../controllers/authController/authController';
-import createMulterConfig from '../middleware/multer';
-import authMiddleware from '../middleware/jwt';
-import { VerifyUser } from '../middleware/VerifyUser';
-import { getAllCategories } from '../controllers/adminController/AdminController';
+import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,authSignOut,updateDetails,updatePasswordinStudentProfile,forgotPasswordInStudentProfile,verifyOtpAndResetPassword,GetAllCourses,getSingleCourse, getAllNotifications, deleteNotification, getAllCategory } from '../../src/controllers/authController/authController';
+import createMulterConfig from '../../src/middleware/multer';
+import authMiddleware from '../../src/middleware/jwt';
+import { VerifyUser } from '../../src/middleware/VerifyUser';
+import { getAllCategories } from '../../src/controllers/adminController/AdminController';
 
 const updateStudents= createMulterConfig('./uploads/updateStudents');
 
