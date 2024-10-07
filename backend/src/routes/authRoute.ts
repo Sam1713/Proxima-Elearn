@@ -3,7 +3,7 @@ import { auth,authSignin,authForgotPassword,authResetPassword,authWithGoogle,aut
 import createMulterConfig from '../../src/middleware/multer';
 import authMiddleware from '../../src/middleware/jwt';
 import { VerifyUser } from '../../src/middleware/VerifyUser';
-import { getAllCategories } from '../../src/controllers/adminController/AdminController';
+// import { getAllCategories } from '../../src/controllers/adminController/AdminController';
 
 const updateStudents= createMulterConfig('./uploads/updateStudents');
 
