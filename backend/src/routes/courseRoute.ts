@@ -1,7 +1,7 @@
 import express from 'express'
 const router=express.Router()
 import createMulterConfig from '../middleware/multer';
-import { uploadCourse,getTutorCourses,getTutorCourseDetail, updateCourseNonFileDetail, updateCoverImage, updateSubVideo, getAllPurchasedStudents, deleteCourse, getWalletDetails, getAllCategoryTutor, getSearchResultsCourse, getPriceBasedCourse, getCategorySort } from '../../src/controllers/courseController/courseController';
+import { uploadCourse,getTutorCourses,getTutorCourseDetail, updateCourseNonFileDetail, updateCoverImage, updateSubVideo, getAllPurchasedStudents, deleteCourse, getWalletDetails, getAllCategoryTutor, getSearchResultsCourse, getPriceBasedCourse, getCategorySort } from '../controllers/courseController/courseController';
 import authMiddleware from '../middleware/jwt';
 const courseFilesUpload = createMulterConfig('./uploads/courseFiles');
 
