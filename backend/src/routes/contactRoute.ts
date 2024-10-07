@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCallData, getCallRequest, getFullCallDetails, leaveCall, sendIdToStudent, tutorApproveRequest, videoCallBooking } from '../../src/controllers/contactController/contactController';
+import { getCallData, getCallRequest, getFullCallDetails, leaveCall, sendIdToStudent, tutorApproveRequest, videoCallBooking } from '../controllers/contactController/contactController';
 import multer from "multer";
 import authMiddleware from '../middleware/jwt';
 const upload=multer()
