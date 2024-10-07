@@ -33,11 +33,9 @@
 //   return multer({ storage });
 // };
  
-// export default createMulterConfig;
 import multer from 'multer';
 import path from 'path';
 
-// Generic Multer Configuration Function
 const createMulterConfig = (destination: string) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {

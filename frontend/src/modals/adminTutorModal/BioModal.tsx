@@ -70,15 +70,15 @@ const BioModal: React.FC<BioTypes> = ({ isOpen, onClose, isEditable }) => {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null; // If not open, don't render anything
+  if (!isOpen) return null; 
 
   return (
-    <div className='inset-0 fixed flex justify-center items-center bg-white bg-opacity-30'>
+    <div className='inset-0 fixed flex justify-center items-center  bg-white bg-opacity-30'>
       <ToastContainer/>
       {loading ? (
         <div style={spinnerStyle}></div>
       ) : (
-        <div className='relative rounded-3xl bg-custom-gradient h-[90vh] overflow-auto scrollbar-hidden w-[70%]'>
+        <div className='relative  rounded-3xl bg-custom-gradient h-[80vh] overflow-y-scroll  w-[50%]'>
           <button
             onClick={onClose}
             className='absolute top-0 right-2 text-white text-4xl rounded-full p-4'

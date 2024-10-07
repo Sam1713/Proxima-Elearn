@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
 });
  
 const getToken = (config: any) => {
+  console.log('con',config)
   const tokenType = config.headers['X-Token-Type']; 
   console.log('tokentype',tokenType)
  
