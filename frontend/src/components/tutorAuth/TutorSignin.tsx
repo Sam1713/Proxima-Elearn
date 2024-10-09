@@ -31,9 +31,7 @@ const TutorSignin:React.FC=()=> {
         console.log("form",formdata)
       console.log('Form submitted');
       console.log(values);
-      const response=await api.post("/backend/tutor/tutorsignin",values,{
-       
-      })
+      const response=await api.post("/backend/tutor/tutorsignin",values)
       localStorage.setItem('tutor_access_token', response.data.token);
       console.log('Token saved:', localStorage.getItem('tutor_access_token'));
       toast.success(response.data.message)
