@@ -103,8 +103,8 @@ function App() {
           </Route>
           <Route element={<TutorLayout/>}>
           <Route element={<TutorPublicRoute/>}>
-          <Route path="/tutorSignup" element={<TutorSignup />} />
-          <Route path="/tutorSignin" element={<TutorSignin />} />
+          <Route path="/tutorsignup" element={<TutorSignup />} />
+          <Route path="/tutorsignin" element={<TutorSignin />} />
           <Route path="/tutorWait" element={<TutorWaiting />} />
           </Route>
           <Route element={<TutorPrivateRoute/>}>  
