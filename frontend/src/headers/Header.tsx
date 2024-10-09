@@ -58,7 +58,7 @@ const StudentHeader:React.FC=()=> {
   const handleSignout = async () => {
     try {
       localStorage.removeItem('access_token');
-      await axios.get("/backend/auth/signout");
+      await api.get("/backend/auth/signout");
       dispatch(signout());
       dispatch(clearFeed());
     } catch (error) {
