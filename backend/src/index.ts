@@ -85,7 +85,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/backend/auth', authRoute);
-app.use('/backend/tutor', tutorauthRoute);
+app.use('/backend/tutor/tutorAuth', tutorauthRoute);
 app.use('/backend/feed', feedStudentRoute);
 app.use('/backend/admin', adminRoute); 
 app.use('/backend/course', courseRoute);
