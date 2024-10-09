@@ -23,7 +23,7 @@ const FeedHome:React.FC=()=> {
       
       try {
         dispatch(setLoading())
-        const response = await api.get('/backend/feed/getFeed',{
+        const response = await api.get('/feed/getFeed',{
           headers: {
             'X-Token-Type': 'student',
           },
