@@ -41,6 +41,7 @@ console.log('currentStudent?.isBlocked',currentStudent)
       setLoading(true)
       dispatch(signInStart());
       const response = await api.post("/backend/auth/signin", form);
+      console.log('res',response.data)
       localStorage.setItem('access_token', response.data.token);
       console.log('Token saved:', localStorage.getItem('access_token'));
       setLoading(false)
