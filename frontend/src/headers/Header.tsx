@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetMessageNotification, setStudentNotifications, signout } from '../redux/student/studentSlice';
 import { AppDispatch, RootState } from '../redux/store';
-import axios from 'axios';
 import { clearFeed } from '../redux/feed/feedSlice';
 import Notifications from '../components/studentNotification/Notification';
 import { FaMessage } from "react-icons/fa6";
