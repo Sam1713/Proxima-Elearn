@@ -273,8 +273,12 @@ interface CallData {
 }
 
 const SocketContext = createContext<SocketContextType | null>(null);
-const socket: Socket = io('http://localhost:3000', { autoConnect: false });
-
+const socket: Socket = io(
+  window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' // Development URL
+    : 'https://proxima.ec-shop.life', // Production URL
+  { autoConnect: false }
+);
 interface ContextProviderProps {
   children: ReactNode;
 }

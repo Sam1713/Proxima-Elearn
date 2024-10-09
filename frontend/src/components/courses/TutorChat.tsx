@@ -8,8 +8,11 @@ import { setStudentChat } from '../../redux/tutor/tutorSlice';
 import { FaComment, FaSpinner } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
-const socket = io('http://localhost:3000'); 
+const socketURL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:3000' // Development URL
+  : 'https://proxima.ec-shop.life'; // Production URL
 
+const socket = io(socketURL);
 const TutorChat:React.FC = () => {
     const [message, setMessage] = useState<string>(''); 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

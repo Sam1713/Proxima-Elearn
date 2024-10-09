@@ -10,7 +10,12 @@ import api from '../API/Api';
 import { RootState } from '../../redux/store';
 import { setMessageNotification, setRecieverIds, setUnreadMessagesRedux } from '../../redux/student/studentSlice';
 
-const socket = io('http://localhost:3000');  // Replace with your server URL
+const socketURL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000' // Development URL
+  : 'https://proxima.ec-shop.life'; // Production URL
+
+const socket = io(socketURL);
+
 interface ChatMessage {
   senderId: string;
   receiverId: string;
