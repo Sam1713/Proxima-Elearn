@@ -53,7 +53,7 @@ export const uploadCourse = async (req: Request, res: Response) => {
     let coverVideoUrl = '';
     if (coverVideo) {
       try {
-        const coverVideoUpload = await cloudinary.uploader.upload(coverVideo.path, { resource_type: 'video', type: 'authenticated' });
+        const coverVideoUpload = await cloudinary.uploader.upload(coverVideo.path, { resource_type: 'video' });
         coverVideoUrl = coverVideoUpload.secure_url;
       } catch (error) {
         console.error('Error uploading cover video:', error);
