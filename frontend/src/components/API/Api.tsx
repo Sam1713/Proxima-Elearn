@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://proxima.ec-shop.life/backend', 
+  baseURL: 'https://proxima.ec-shop.life', 
   withCredentials: true, 
 });
  
