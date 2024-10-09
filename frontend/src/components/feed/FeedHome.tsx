@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import newImage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
+// import newImage from '../../assets/images/1000_F_392072816_sO8hOPXhrlg3fELAdmWrLIJyw5dLKWu2.jpg';
 import Modal from '../../modals/PostModal'; // Import your modal component
 import RecentFeed from './RecentFeed';
 import { useDispatch, useSelector } from 'react-redux';
@@ -100,7 +100,7 @@ const FeedHome:React.FC=()=> {
           <div className='relative w-full max-w-md'>
             <img 
               className='w-full h-auto object-cover border-4 border-white rounded-3xl shadow-lg'
-              src={newImage}
+              // src={newImage}
               alt="Stylish Image"
             />
             <div className='absolute bottom-4 right-4 bg-black bg-opacity-60 text-white p-4 rounded-lg shadow-lg cursor-pointer hover:bg-stone-900'>
