@@ -6,7 +6,7 @@ import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import Swal from 'sweetalert2';
-
+  
 const GetTutorCourses:React.FC=()=> {
   const dispatch = useDispatch();
   const navigate = useNavigate();
