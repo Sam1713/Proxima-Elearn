@@ -2,13 +2,12 @@
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import React from 'react';
 import { app } from '../firebase';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch} from 'react-redux';
 import { signInSuccess } from '../redux/student/studentSlice';
 import { Button } from '@material-tailwind/react';
 import { FcGoogle } from 'react-icons/fc';
-
+import api from '../components/API/Api'
 export const GoogleAuth: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ export const GoogleAuth: React.FC = () => {
         photo: result.user.photoURL,
       };
 
-      const response = await axios.post('/backend/auth/google',
+      const response = await api.post('/backend/auth/google',
         userData,
         {
           withCredentials: true,
