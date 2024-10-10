@@ -587,36 +587,41 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   }, []);
 
   const answerCall = () => {
+    console.log('started')
     if (!stream) {
       console.error('No stream available to answer call.');
       return;
     }
-
+  
     const peer = new Peer(); // Initialize Peer instance
     peerRef.current = peer;
-
+  
     setCallAccepted(true);
-    
+  
     peer.on('call', (mediaConnection) => {
-      mediaConnection.answer(stream!); // Answer the call with the current stream
-
+      mediaConnection.answer(stream); // Answer the call with the current stream
+  
       mediaConnection.on('stream', (currentStream) => {
         if (userVideo.current) {
+          console.log('user',userVideo.current)
           userVideo.current.srcObject = currentStream;
+        }else{
+          console.log('no uservideo')
         }
       });
-
+  
       mediaConnection.on('close', () => {
         console.log('Call ended');
         setCallEnded(true);
       });
-
+  
       connectionRef.current = mediaConnection;
     });
-
+  
     // Signal the incoming call
     socket.emit('answercall', { signal: call!.signal, to: call!.from });
   };
+  
 
   const callUser = (id: string) => {
     if (!stream) {
