@@ -609,6 +609,9 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
     mediaConnection.on('close', () => {
       console.log('Call ended');
       setCallEnded(true);
+      if (userVideo.current) {
+        userVideo.current.srcObject = null; // Clear user video stream when call ends
+    }
     });
 
     connectionRef.current = mediaConnection;
