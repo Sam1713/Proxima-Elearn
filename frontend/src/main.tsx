@@ -1,4 +1,4 @@
-import './crypto-polyfill';
+import './cryptopolyfill.ts';
 import 'crypto-browserify';
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
