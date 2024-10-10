@@ -354,10 +354,10 @@ const VideoPlayer: React.FC = () => {
     console.log('Call Accepted:', callAccepted);
     if (callAccepted && userVideo.current) {
         // Here we assume call.signal should include the stream
-        if (call && call.signal) {
+        if (call && call.stream) {
             // Ensure you're using the correct call object
             console.log('Setting remote stream on user video');
-            userVideo.current.srcObject = call.signal; // Use call.signal if it's the stream
+            userVideo.current.srcObject = call.stream; // Use call.signal if it's the stream
         }
     }
 }, [callAccepted, call, userVideo]);
