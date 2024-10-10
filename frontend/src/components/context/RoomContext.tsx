@@ -489,7 +489,7 @@
 
 import React, { createContext, useState, useRef, useEffect, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
-import Peer from 'peerjs';
+import Peer, { MediaConnection } from 'peerjs';
 
 interface SocketContextType {
   call: CallData | null;
@@ -521,8 +521,8 @@ interface CallData {
 const SocketContext = createContext<SocketContextType | null>(null);
 const socket: Socket = io(
   window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
-    : 'https://proxima.ec-shop.life', 
+    ? 'http://localhost:3000' // Development URL
+    : 'https://proxima.ec-shop.life', // Production URL
   { autoConnect: false }
 );
 
@@ -543,7 +543,8 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
 
   const myVideo = useRef<HTMLVideoElement | null>(null);
   const userVideo = useRef<HTMLVideoElement | null>(null);
-  const connectionRef = useRef<Peer | null>(null); // Update the type here
+  const connectionRef = useRef<MediaConnection | null>(null);
+  const peerRef = useRef<Peer | null>(null);
 
   useEffect(() => {
     socket.connect();
@@ -586,30 +587,35 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   }, []);
 
   const answerCall = () => {
+    if (!stream) {
+      console.error('No stream available to answer call.');
+      return;
+    }
+
+    const peer = new Peer(); // Initialize Peer instance
+    peerRef.current = peer;
+
     setCallAccepted(true);
-    const peer = new Peer(); // Initialize PeerJS
+    
+    peer.on('call', (mediaConnection) => {
+      mediaConnection.answer(stream!); // Answer the call with the current stream
 
-    connectionRef.current = peer;
-
-    peer.on('call', (call) => {
-      call.answer(stream!); // Pass the stream
-      call.on('stream', (currentStream) => {
+      mediaConnection.on('stream', (currentStream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = currentStream;
         }
       });
+
+      mediaConnection.on('close', () => {
+        console.log('Call ended');
+        setCallEnded(true);
+      });
+
+      connectionRef.current = mediaConnection;
     });
 
-    peer.on('error', (err) => {
-      console.error('Peer error:', err);
-    });
-
-    socket.once('callaccepted', (signal) => {
-      peer.signal(signal);
-    });
-
-    // Signal to the calling peer
-    socket.emit('answercall', { signal: peer.id, to: call!.from });
+    // Signal the incoming call
+    socket.emit('answercall', { signal: call!.signal, to: call!.from });
   };
 
   const callUser = (id: string) => {
@@ -617,45 +623,68 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
       console.error('No stream available to initiate call.');
       return;
     }
-
-    const peer = new Peer(); // Initialize PeerJS
-
-    connectionRef.current = peer;
-
-    peer.on('error', (err) => {
-      console.error('Peer error:', err);
+  
+    const peer = new Peer(); // Initialize Peer instance
+    peerRef.current = peer;
+  
+    peer.on('open', (peerId) => {
+      socket.emit('calluser', { userToCall: id, signalData: { peerId }, from: me, name });
     });
-
-    const call = peer.call(id, stream); // Call the user
-    call.on('stream', (currentStream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = currentStream;
-      }
-    });
-
-    socket.once('callaccepted', (signal) => {
-      call.signal(signal);
+  
+    // Remove the unused signal parameter
+    socket.once('callaccepted', () => {
       setCallAccepted(true);
+      const mediaConnection = peer.call(id, stream);
+  
+      mediaConnection.on('stream', (currentStream) => {
+        if (userVideo.current) {
+          userVideo.current.srcObject = currentStream;
+        }
+      });
+  
+      mediaConnection.on('close', () => {
+        console.log('Call ended');
+        setCallEnded(true);
+      });
+  
+      connectionRef.current = mediaConnection;
     });
   };
+  
 
   const shareScreen = async () => {
     try {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({ cursor: true });
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+        cursor: true // This is where the error occurs
+      } as DisplayMediaStreamOptions & { cursor: boolean }); // Use type assertion
       if (myVideo.current) {
         myVideo.current.srcObject = screenStream;
       }
-
-      if (connectionRef.current) {
-        connectionRef.current.replaceTrack(
-          stream!.getVideoTracks()[0],
-          screenStream.getVideoTracks()[0],
-          stream!
-        );
+  
+      // Stop the current video track
+      const videoTrack = stream?.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.stop();
       }
-
+  
       setStream(screenStream);
-
+  
+      if (connectionRef.current) {
+        const mediaConnection = connectionRef.current;
+        mediaConnection.close(); // Close the current connection
+        const newConnection = peerRef.current!.call(mediaConnection.peer, screenStream);
+  
+        newConnection.on('stream', (currentStream) => {
+          if (userVideo.current) {
+            userVideo.current.srcObject = currentStream;
+          }
+        });
+  
+        connectionRef.current = newConnection; // Update the connection reference
+      }
+  
       screenStream.getTracks()[0].onended = () => {
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
           .then((currentStream) => {
@@ -663,13 +692,18 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
             if (myVideo.current) {
               myVideo.current.srcObject = currentStream;
             }
-
+  
             if (connectionRef.current) {
-              connectionRef.current.replaceTrack(
-                screenStream.getVideoTracks()[0],
-                currentStream.getVideoTracks()[0],
-                stream!
-              );
+              const mediaConnection = connectionRef.current;
+              const newConnection = peerRef.current!.call(mediaConnection.peer, currentStream);
+              
+              newConnection.on('stream', (currentStream) => {
+                if (userVideo.current) {
+                  userVideo.current.srcObject = currentStream;
+                }
+              });
+  
+              connectionRef.current = newConnection; // Update the connection reference
             }
           });
       };
@@ -677,6 +711,7 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
       console.error('Error sharing screen:', error);
     }
   };
+  
 
   const toggleVideo = () => {
     setVideoEnabled((prev) => !prev);
@@ -695,12 +730,12 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   const leaveCall = () => {
     setCallEnded(true);
     if (connectionRef.current) {
-      connectionRef.current.disconnect();
+      connectionRef.current.close(); // Close the connection
     }
     if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+      stream.getTracks().forEach((track) => track.stop()); // Stop all tracks
     }
-    window.location.reload();
+    window.location.reload(); // Reload the page or navigate elsewhere
   };
 
   return (
