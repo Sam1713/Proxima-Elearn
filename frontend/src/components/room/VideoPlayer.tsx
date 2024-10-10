@@ -381,7 +381,7 @@ const VideoPlayer: React.FC = () => {
             autoPlay
           />
         </div>
-        {callAccepted && !callEnded &&call&& (
+        {callAccepted && !callEnded && (
           <div className="relative">
             <h2 className="absolute top-2 left-2 text-lg bg-black bg-opacity-50 px-2 py-1 rounded">
               User Video: {call?.name || 'User'}

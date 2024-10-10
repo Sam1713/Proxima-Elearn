@@ -589,45 +589,47 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   const answerCall = () => {
     console.log('started');
     if (!stream) {
-      console.error('No stream available to answer call.');
-      return;
+        console.error('No stream available to answer call.');
+        return;
     }
-  
+
     if (!call) {
-      console.error('No call data available to answer call.');
-      return; // Safely exit if call is null
+        console.error('No call data available to answer call.');
+        return; // Safely exit if call is null
     }
-  
+
     const peer = new Peer(); // Initialize Peer instance
     peerRef.current = peer;
-  
+
     setCallAccepted(true);
-  
+
+    // Listen for incoming calls
     peer.on('call', (mediaConnection) => {
-      console.log('conne',mediaConnection)
-      mediaConnection.answer(stream); // Answer the call with the current stream
-  
-      mediaConnection.on('stream', (currentStream) => {
-        console.log('sdfdsfsdf')
-        if (userVideo.current) {
-          console.log('user', userVideo.current);
-          userVideo.current.srcObject = currentStream;
-        } else {
-          console.log('no uservideo');
-        }
-      });
-  
-      mediaConnection.on('close', () => {
-        console.log('Call ended');
-        setCallEnded(true);
-      });
-  
-      connectionRef.current = mediaConnection;
+        console.log('Received media connection:', mediaConnection);
+        mediaConnection.answer(stream); // Answer the call with the current stream
+
+        mediaConnection.on('stream', (currentStream) => {
+            console.log('Received stream:', currentStream);
+            if (userVideo.current) {
+                userVideo.current.srcObject = currentStream; // Set the received stream to userVideo
+                console.log('User video updated:', userVideo.current);
+            } else {
+                console.error('userVideo reference is not available');
+            }
+        });
+
+        mediaConnection.on('close', () => {
+            console.log('Call ended');
+            setCallEnded(true);
+        });
+
+        connectionRef.current = mediaConnection;
     });
-  
+
     // Signal the incoming call
-    socket.emit('answercall', { signal: call.signal, to: call.from }); // Here, it's safe to access call properties
-  };
+    socket.emit('answercall', { signal: call.signal, to: call.from }); // Safe to access call properties
+};
+
   
   const callUser = (id: string) => {
     if (!stream) {
@@ -644,11 +646,13 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
 
     // Remove the unused signal parameter
     socket.once('callaccepted', () => {
+      console.log('accepted')
       setCallAccepted(true);
       const mediaConnection = peer.call(id, stream);
 
       mediaConnection.on('stream', (currentStream) => {
         if (userVideo.current) {
+          console.log('sda',userVideo.current)
           userVideo.current.srcObject = currentStream;
         }
       });
