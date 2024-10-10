@@ -355,6 +355,7 @@ const VideoPlayer: React.FC = () => {
 
     if (callAccepted && !callEnded && call && userVideo.current) {
       console.log('ie',userVideo.current)
+      console.log('ie',call.stream)
       userVideo.current.srcObject = call.stream;
     }
   }, [callAccepted, callEnded, call,userVideo]);
