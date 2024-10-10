@@ -13,6 +13,7 @@ export default defineConfig({
     alias: {
       // Ensure that you install 'rollup-plugin-polyfill-node' package
       'events': 'rollup-plugin-node-polyfills/polyfills/events',
+      crypto: 'crypto-browserify',
     }
 },
 
