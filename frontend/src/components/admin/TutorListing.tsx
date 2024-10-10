@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { adminStoreEachTutorDetail, adminStoreTutorDetails } from '../../redux/admin/adminSlice';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-
+import api from '../API/Api'
 // Tutor Detail Interface
 // interface TutorDetail {
 //   _id: string;
@@ -17,7 +16,7 @@ import { FaSearch } from 'react-icons/fa';
 const TutorListing = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const tutorDetails = useSelector((state: RootState) => state.admin.tutorDetails);
+  const tutorDetails = useSelector((state: RootState) => state.admin.tutorDetails||[]);
   
   // State for search and pagination
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,12 +26,12 @@ const TutorListing = () => {
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const token = localStorage.getItem('admin_access_token');
-        const response = await axios.get('/backend/admin/tutorlist', {
+        // const token = localStorage.getItem('admin_access_token');
+        const response = await api.get('/backend/admin/tutorlist', {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
+          "X-Token-Type":'admin'
+          }
+
         });
         console.log('API response data:', response.data);
         dispatch(adminStoreTutorDetails(response.data));
@@ -51,11 +50,11 @@ const TutorListing = () => {
     }
 
     try {
-      const response = await axios.get(`/backend/admin/tutorDetails/${id}`, {
+      const response = await api.get(`/backend/admin/tutorDetails/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          'X-Token-Type':'admin',
         },
-        withCredentials: true,
+        
       });
       dispatch(adminStoreEachTutorDetail(response.data));
       navigate(`/admin/tutorDetails/${id}`);
@@ -69,11 +68,11 @@ const TutorListing = () => {
   };
 
   // Filtering based on search term
-  const filteredTutors = tutorDetails.filter(tutor => 
+  const filteredTutors = Array.isArray(tutorDetails) ? tutorDetails.filter(tutor => 
     tutor.tutorname.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tutor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tutor.phonenumber.includes(searchTerm)
-  );
+  ):[];
 
   // Calculating paginated data
   const paginatedTutors = filteredTutors.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
