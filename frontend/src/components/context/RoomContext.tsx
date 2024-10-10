@@ -604,9 +604,11 @@ const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
     setCallAccepted(true);
   
     peer.on('call', (mediaConnection) => {
+      console.log('conne',mediaConnection)
       mediaConnection.answer(stream); // Answer the call with the current stream
   
       mediaConnection.on('stream', (currentStream) => {
+        console.log('sdfdsfsdf')
         if (userVideo.current) {
           console.log('user', userVideo.current);
           userVideo.current.srcObject = currentStream;
