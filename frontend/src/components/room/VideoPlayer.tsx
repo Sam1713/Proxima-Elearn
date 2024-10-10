@@ -351,14 +351,18 @@ const VideoPlayer: React.FC = () => {
   // Set up video stream for userVideo
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    console.log('Call Accepted:', callAccepted, 'Call:', call, 'User Video:', userVideo.current);
-
-    if (callAccepted && !callEnded && call && userVideo.current) {
-      console.log('ie',userVideo.current)
-      console.log('ie',call.stream)
+    console.log('Call Accepted:', callAccepted);
+    console.log('Call:', call);  // Log the call object
+    if (call) {
+      console.log('Call Stream:', call.stream);  // Check if call.stream exists
+    }
+  
+    if (callAccepted && !callEnded && call && userVideo.current && call.stream) {
+      console.log('Setting remote stream on user video');
       userVideo.current.srcObject = call.stream;
     }
-  }, [callAccepted, callEnded, call,userVideo]);
+  }, [callAccepted, callEnded, call, userVideo]); 
+  
 
   if (!stream) {
     return (
