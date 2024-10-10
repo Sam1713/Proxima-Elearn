@@ -349,10 +349,11 @@ const VideoPlayer: React.FC = () => {
   // Set up video stream for userVideo
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    if (callAccepted && !callEnded && call && userVideo.current) {
+    if (callAccepted && !callEnded && call && userVideo.current&&call.stream) {
+      console.log('ie',userVideo.current)
       userVideo.current.srcObject = call.stream;
     }
-  }, [callAccepted, callEnded, call]);
+  }, [callAccepted, callEnded, call,userVideo]);
 
   if (!stream) {
     return (
