@@ -14,16 +14,19 @@ import mongoose, { Types } from 'mongoose';
 
 
 export const tutorSignup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  console.log('started')
+
   try {
+    console.log('started')
     const files = req.files as Express.Multer.File[] | undefined;
 
     let fileUrls: string[] = [];
 
     if (files) { 
-      const fileUploads = files.map(async (file) => {
+      const fileUploads = await Promise.all(files.map(async (file) => {
         const result = await cloudinary.uploader.upload(file.path);
-        return result.url; 
-      });
+        return result.secure_url; 
+      }));
 
       fileUrls = await Promise.all(fileUploads);
     }
@@ -48,6 +51,7 @@ export const tutorSignup = async (req: Request, res: Response, next: NextFunctio
 
     res.status(201).json({ message: 'Tutor signed up successfully', tutor: newTutor });
   } catch (error) {
+    console.log('err',error)
     next(error); 
   }
 };
