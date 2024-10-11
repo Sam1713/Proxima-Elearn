@@ -744,184 +744,186 @@
 
 // export { ContextProvider, SocketContext };
 
-import React, { createContext, useState, useRef, useEffect, ReactNode } from 'react';
-import { io, Socket } from 'socket.io-client';
-import Peer, { MediaConnection } from 'peerjs';
+// import React, { createContext, useState, useRef, useEffect, ReactNode } from 'react';
+// import { io, Socket } from 'socket.io-client';
+// import Peer, { MediaConnection } from 'peerjs';
 
-// Define types for context and state
-interface ContextType {
-  call: Call;
-  callAccepted: boolean;
-  myVideo: React.RefObject<HTMLVideoElement>;
-  userVideo: React.RefObject<HTMLVideoElement>;
-  stream: MediaStream | undefined;
-  name: string;
-  setName: React.Dispatch<React.SetStateAction<string>>;
-  callEnded: boolean;
-  me: string;
-  callUser: (id: string) => void;
-  leaveCall: () => void;
-  answerCall: () => void;
-}
+// // Define types for context and state
+// interface ContextType {
+//   call: Call;
+//   callAccepted: boolean;
+//   myVideo: React.RefObject<HTMLVideoElement>;
+//   userVideo: React.RefObject<HTMLVideoElement>;
+//   stream: MediaStream | undefined;
+//   name: string;
+//   setName: React.Dispatch<React.SetStateAction<string>>;
+//   callEnded: boolean;
+//   me: string;
+//   callUser: (id: string) => void;
+//   leaveCall: () => void;
+//   answerCall: () => void;
+// }
 
-interface Call {
-  isReceivingCall: boolean;
-  from: string;
-  name: string;
-  signal: any; // PeerJS handles signaling differently
-}
+// interface Call {
+//   isReceivingCall: boolean;
+//   from: string;
+//   name: string;
+//   signal: any; // PeerJS handles signaling differently
+// }
 
-// Context initialization
-const SocketContext = createContext<ContextType | undefined>(undefined);
+// // Context initialization
+// const SocketContext = createContext<ContextType | undefined>(undefined);
 
-const socket: Socket = io(
-  window.location.hostname === 'localhost'
-    ? 'http://localhost:3000' // Development URL
-    : 'https://proxima.ec-shop.life', // Production URL
-  { autoConnect: false }
-);
+// const socket: Socket = io(
+//   window.location.hostname === 'localhost'
+//     ? 'http://localhost:3000' // Development URL
+//     : 'https://proxima.ec-shop.life', // Production URL
+//   { autoConnect: false }
+// );
 
-interface ContextProviderProps {
-  children: ReactNode;
-}
+// interface ContextProviderProps {
+//   children: ReactNode;
+// }
 
-const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
-  const [callAccepted, setCallAccepted] = useState<boolean>(false);
-  const [callEnded, setCallEnded] = useState<boolean>(false);
-  const [stream, setStream] = useState<MediaStream>();
-  const [name, setName] = useState<string>('');
-  const [call, setCall] = useState<Call>({} as Call);
-  const [me, setMe] = useState<string>('');
+// const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
+//   const [callAccepted, setCallAccepted] = useState<boolean>(false);
+//   const [callEnded, setCallEnded] = useState<boolean>(false);
+//   const [stream, setStream] = useState<MediaStream>();
+//   const [name, setName] = useState<string>('');
+//   const [call, setCall] = useState<Call>({} as Call);
+//   const [me, setMe] = useState<string>('');
 
-  const myVideo = useRef<HTMLVideoElement>(null);
-  const userVideo = useRef<HTMLVideoElement>(null);
-  const connectionRef = useRef<MediaConnection | null>(null);
-  const peerInstance = useRef<Peer | null>(null);
+//   const myVideo = useRef<HTMLVideoElement>(null);
+//   const userVideo = useRef<HTMLVideoElement>(null);
+//   const connectionRef = useRef<MediaConnection | null>(null);
+//   const peerInstance = useRef<Peer | null>(null);
 
-  useEffect(() => {
-    peerInstance.current = new Peer(); // Create a PeerJS instance
-    console.log('Peer instance:', peerInstance.current);
+//   useEffect(() => {
+//     peerInstance.current = new Peer(); // Create a PeerJS instance
+//     console.log('Peer instance:', peerInstance.current);
 
-    socket.connect();
+//     socket.connect();
 
-    socket.on('connect', () => {
-      console.log('Socket connected');
-      socket.emit('me', socket.id);
-    });
+//     socket.on('connect', () => {
+//       console.log('Socket connected');
+//       socket.emit('me', socket.id);
+//     });
 
-    socket.on('me', (id: string) => {
-      console.log('Received my ID:', id);
-      setMe(id);
-    });
+//     socket.on('me', (id: string) => {
+//       console.log('Received my ID:', id);
+//       setMe(id);
+//     });
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = currentStream;
-        }
-      })
-      .catch((error) => {
-        console.error('Error accessing media devices:', error);
-      });
+//     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+//       .then((currentStream) => {
+//         setStream(currentStream);
+//         if (myVideo.current) {
+//           myVideo.current.srcObject = currentStream;
+//         }
+//       })
+//       .catch((error) => {
+//         console.error('Error accessing media devices:', error);
+//       });
 
-    socket.on('calluser', ({ from, name: callerName, signal }: Call) => {
-      console.log('Receiving a call from:', from);
-      setCall({ isReceivingCall: true, from, name: callerName, signal });
-    });
+//     socket.on('calluser', ({ from, name: callerName, signal }: Call) => {
+//       console.log('Receiving a call from:', from);
+//       setCall({ isReceivingCall: true, from, name: callerName, signal });
+//     });
 
-    socket.on('callaccepted', (signal) => {
-      console.log('Call accepted with signal:', signal);
-      // Use the peer instance to signal the call
-      connectionRef.current?.signal(signal);
-      setCallAccepted(true);
-    });
+//     socket.on('callaccepted', (signal) => {
+//       console.log('Call accepted with signal:', signal);
+//       // Use the peer instance to signal the call
+//       connectionRef.current?.signal(signal);
+//       setCallAccepted(true);
+//     });
 
-    return () => {
-      peerInstance.current?.destroy();
-      socket.off('calluser');
-      socket.off('callaccepted');
-    };
-  }, []);
+//     return () => {
+//       peerInstance.current?.destroy();
+//       socket.off('calluser');
+//       socket.off('callaccepted');
+//     };
+//   }, []);
 
-  const answerCall = () => {
-    console.log('answering')
-    if (!peerInstance.current || !call.signal) return; // Check if signal exists
-    setCallAccepted(true);
+//   const answerCall = () => {
+//     console.log('answering')
+//     if (!peerInstance.current || !call.signal) return; // Check if signal exists
+//     setCallAccepted(true);
     
-    const callInstance = peerInstance.current.call(call.from, stream); // Call with the signal
+//     const callInstance = peerInstance.current.call(call.from, stream); // Call with the signal
   
-    callInstance.on('stream', (remoteStream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-      }
-    });
+//     callInstance.on('stream', (remoteStream) => {
+//       if (userVideo.current) {
+//         userVideo.current.srcObject = remoteStream;
+//       }
+//     });
   
-    callInstance.on('signal', (data) => {
-      socket.emit('answercall', { signal: data, to: call.from });
-    });
+//     callInstance.on('signal', (data) => {
+//       socket.emit('answercall', { signal: data, to: call.from });
+//     });
   
-    callInstance.on('error', (err) => {
-      console.error('Error in call:', err);
-    });
+//     callInstance.on('error', (err) => {
+//       console.error('Error in call:', err);
+//     });
   
-    connectionRef.current = callInstance; // Store the connection reference
-  };
+//     connectionRef.current = callInstance; // Store the connection reference
+//   };
   
-  const callUser = (id: string) => {
-    if (!peerInstance.current || !stream) return;
+//   const callUser = (id: string) => {
+//     if (!peerInstance.current || !stream) return;
 
-    console.log('Initiating call to user:', id);
+//     console.log('Initiating call to user:', id);
 
-    const call = peerInstance.current.call(id, stream);
+//     const call = peerInstance.current.call(id, stream);
 
-    call.on('stream', (remoteStream: MediaStream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-      }
-    });
+//     call.on('stream', (remoteStream: MediaStream) => {
+//       if (userVideo.current) {
+//         userVideo.current.srcObject = remoteStream;
+//       }
+//     });
 
-    call.on('error', (err) => {
-      console.error('PeerJS call error:', err);
-    });
+//     call.on('error', (err) => {
+//       console.error('PeerJS call error:', err);
+//     });
 
-    call.on('close', () => {
-      console.log('Call ended');
-    });
+//     call.on('close', () => {
+//       console.log('Call ended');
+//     });
 
-    connectionRef.current = call;
+//     connectionRef.current = call;
 
-    socket.emit('calluser', { userToCall: id, from: me });
-  };
+//     socket.emit('calluser', { userToCall: id, from: me });
+//   };
 
-  const leaveCall = () => {
-    setCallEnded(true);
-    connectionRef.current?.close();
-    peerInstance.current?.destroy();
-    window.location.reload();
-  };
+//   const leaveCall = () => {
+//     setCallEnded(true);
+//     connectionRef.current?.close();
+//     peerInstance.current?.destroy();
+//     window.location.reload();
+//   };
 
-  return (
-    <SocketContext.Provider
-      value={{
-        call,
-        callAccepted,
-        myVideo,
-        userVideo,
-        stream,
-        name,
-        setName,
-        callEnded,
-        me,
-        callUser,
-        leaveCall,
-        answerCall,
-      }}
-    >
-      {children}
-    </SocketContext.Provider>
-  );
-};
+//   return (
+//     <SocketContext.Provider
+//       value={{
+//         call,
+//         callAccepted,
+//         myVideo,
+//         userVideo,
+//         stream,
+//         name,
+//         setName,
+//         callEnded,
+//         me,
+//         callUser,
+//         leaveCall,
+//         answerCall,
+//       }}
+//     >
+//       {children}
+//     </SocketContext.Provider>
+//   );
+// };
 
-export { ContextProvider, SocketContext };
+// export { ContextProvider, SocketContext };
 
+
+ 
