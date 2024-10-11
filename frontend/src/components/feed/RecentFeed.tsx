@@ -19,7 +19,7 @@ const RecentFeed:React.FC=()=> {
   const [selectedFeedIndex, setSelectedFeedIndex] = useState<number>(0);
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const maxLength:number = 350; 
+  const maxLength:number = 650; 
 
   const handleToggle = () => { 
     setIsExpanded(prev => !prev);
