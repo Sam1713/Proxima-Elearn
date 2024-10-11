@@ -6,7 +6,7 @@ import { TutorTypes } from '../../types/TutorTypes';
 import { validationSchema } from '../../utils/tutorValidation/Validation';
 import { ToastContainer, toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
-import axios from 'axios';
+import api from '../API/Api';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'react-phone-number-input/style.css'
@@ -52,7 +52,7 @@ const TutorSignup: React.FC = () => {
           values.files.forEach(file => formData.append('files', file));
           console.log(values);
           try {
-            const response = await axios.post('/backend/tutor/tutorsignup', formData);
+            const response = await api.post('/backend/tutor/tutorsignup', formData);
             console.log(response);
             toast.success(response.data.message);
             resetForm(); // Reset the form fields
