@@ -256,9 +256,12 @@ export const updateDetails = async (req: Request, res: Response, next: NextFunct
 
     // }
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      student.profilePic = result.url; 
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        secure: true
+      });
+      student.profilePic = result.secure_url; 
     }
+    
     await student.save();
 
     res.status(200).json({ message: 'Student details updated successfully', student });

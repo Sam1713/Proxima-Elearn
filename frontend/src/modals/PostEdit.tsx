@@ -43,6 +43,8 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
       console.log('Fetched token:', token);
     
       setLoading(true);
+    
+      // Confirmation alert
       Swal.fire({
         title: "Are you sure?",
         text: "Do you want to submit the form?",
@@ -53,13 +55,14 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
         confirmButtonText: 'Yes, submit it!',
       }).then(async (result) => {
         if (result.isConfirmed) {
-           Swal.fire({
+          // Show loading alert
+          Swal.fire({
             title: 'Submitting...',
             text: 'Please wait while we submit your Details.',
             icon: 'info',
             showCancelButton: false,
             showConfirmButton: false,
-            allowOutsideClick: false, 
+            allowOutsideClick: false,
           });
     
           try {
@@ -73,6 +76,7 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
               }
             }
     
+            // API call
             const response = await api.put(
               `/backend/auth/updateStudentDetails/${id}`,
               formData,
@@ -85,22 +89,47 @@ const PostEdit: React.FC<PostModalProps> = ({ isOpen, onClose, id, showToast }) 
     
             console.log('res', response);
     
+            // Update Redux store
             dispatch(updateSuccess(response.data.student));
-            showToast('success', response.data.message);
-            
-            // Close the modal and reset loading state here
-            setLoading(false);
-            onClose();
+    
+            // Show success toast
+    
+            // Close the loading alert and show success message
+            Swal.close();
+    
+            // Optional: Success alert
+            Swal.fire({
+              title: 'Success!',
+              text: 'Your details have been successfully updated.',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              // Close modal after success alert
+              onClose();
+            });
+    
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An error occurred';
             showToast('error', errorMessage);
+    
+            // Close the loading alert and show error message
+            Swal.close();
+            Swal.fire({
+              title: 'Error!',
+              text: errorMessage,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          } finally {
+            // Reset the loading state no matter what
             setLoading(false);
           }
-           } else {
-            setLoading(false);
+        } else {
+          setLoading(false);
         }
       });
     }
+    
     
   });
 

@@ -64,14 +64,15 @@ export const feedPost = async (
             const fileUploads = files.map(async (file) => {
                 try { 
                     const uploader = await cloudinary.uploader.upload(file.path, {
-                        resource_type: 'auto', 
-                        secure: true 
+                        resource_type: 'auto',
+                        secure: true,
+                        type: 'authenticated' // Set file access as authenticated
                     });
                     const fileType = determineFileType(file.mimetype);
-                    return { url: uploader.secure_url, fileType }; 
+                    return { url: uploader.secure_url, fileType };
                 } catch (uploadError) {
                     console.error('Upload error:', uploadError);
-                    throw uploadError; 
+                    throw uploadError;
                 }
             });
             
