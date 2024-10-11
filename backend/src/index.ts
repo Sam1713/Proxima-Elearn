@@ -56,11 +56,13 @@ io.on('connection', (socket) => {
     console.log('User disconnected');
   });
 
-  socket.on('calluser', ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit('calluser', { signal: signalData, from, name });
+  socket.on('calluser', ({ userToCall, from, name }) => {
+    // Emit the call to the user being called
+    io.to(userToCall).emit('calluser', { from, name });
   });
 
   socket.on('answercall', (data) => {
+    // Emit the signaling data back to the caller
     io.to(data.to).emit('callaccepted', data.signal);
   });
 

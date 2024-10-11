@@ -7,8 +7,7 @@ import BookingModal from "../../modals/videocall/BookingModal";
 import api from '../API/Api';
 import { ImSpinner2 } from 'react-icons/im'; // Spinner icon
 import JoinCallButton from "./JoinCallButton";
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ClipboardIcon } from '@heroicons/react/24/outline'; // Clipboard icon
+
 import { useDispatch, useSelector } from "react-redux";
 import { setCallDetails, setLoading, setLoadingClose } from "../../redux/student/studentSlice";
 import { RootState } from "../../redux/store";
@@ -166,15 +165,15 @@ console.log('book',bookingDetails)
               <Typography variant="h4" className="font-semibold text-gray-100 mb-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Video Call Information</Typography>
               <div className="flex items-center space-x-4">
                 <Typography variant="h1" className="text-gray-300 font-poppins"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call ID: {bookingDetails?.callId}</Typography>
-                <CopyToClipboard  text={bookingDetails?.callId}>
+                {/* <CopyToClipboard  text={bookingDetails?.callId}>
                   <Button variant="gradient" className="bg-blue-500 text-white flex items-center space-x-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     <ClipboardIcon className="h-5 w-5" />
                     <span>Copy Call ID</span>
                   </Button>
-                </CopyToClipboard>
+                </CopyToClipboard> */}
               </div>
               <div className="mt-4">
-                <JoinCallButton />
+                <JoinCallButton callId={bookingDetails?.callId}/>
               </div>
             </div>
           ) : (

@@ -64,15 +64,17 @@ export const feedPost = async (
             const fileUploads = files.map(async (file) => {
                 try { 
                     const uploader = await cloudinary.uploader.upload(file.path, {
-                        resource_type: 'auto' // Handle both images and videos
+                        resource_type: 'auto', 
+                        secure: true 
                     });
                     const fileType = determineFileType(file.mimetype);
-                    return { url: uploader.url, fileType };
+                    return { url: uploader.secure_url, fileType }; 
                 } catch (uploadError) {
                     console.error('Upload error:', uploadError);
-                    throw uploadError; // Rethrow to handle it in the catch block
+                    throw uploadError; 
                 }
             });
+            
 
             fileArray = await Promise.all(fileUploads);
         }

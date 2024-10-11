@@ -36,7 +36,7 @@ import TutorCourseDetails from './components/admin/TutorCourseDetails';
 import BookingCall from './components/studentCourse/BookingCall';
 import GetCallRequest from './components/courses/GetCallRequest';
 import FullCallDetails from './components/courses/FullCallDetails';
-import Room from './components/room/Room';
+// import Room from './components/room/Room';
 import OrdersList from './components/admin/OrdersList';
 import TutorWallet from './components/courses/TutorWallet';
 import Dashboard from './components/admin/Dashboard';
@@ -44,6 +44,7 @@ import QuizGeneration from './components/courses/QuizGeneration';
 import QuizPage from './components/studentCourse/QuizPage';
 import StudentChat from './components/studentCourse/StudentChat';
 import TutorChat from './components/courses/TutorChat';
+import VideoCallRoom from './components/videocall/VideoCallRoom';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -82,7 +83,7 @@ function App() {
                 <Route path='/booking/:id'element={<BookingCall/>}/>
                 <Route path='/getQuiz/:id'element={<QuizPage/>}/>
                 <Route path='/studentChat'element={<StudentChat/>}/>
-                <Route path="/roomStudent/:id" element={<Room />} />
+                {/* <Route path="/roomStudent/:id" element={<Room />} /> */}
 
                 {/* <Route path="/room/:id" element={
                 <Room/>
@@ -120,7 +121,7 @@ function App() {
              <Route path='/tutorWallet'element={<TutorWallet/>}/>
              <Route path='/addQuiz/:id'element={<QuizGeneration/>}/>
              <Route path='/tutorChat'element={<TutorChat/>}/>
-             <Route path="/room/:id" element={<Room />} />
+             {/* <Route path="/room/:id" element={<Room />} /> */}
 
              {/* <Route path="/room/:id" element={
             
@@ -135,6 +136,7 @@ function App() {
                      {/* {isAuthorized && (
             <Route path="/room/:id" element={<Room />} />
           )}  */}
+          <Route path='/videoRoom/:roomId'element={<VideoCallRoom/>}/>
           <Route element={<AdminLoginLayout />}>
           <Route element={<AdminPublicRoute/>}>
             <Route path='/admin/adminLogin' element={<AdminLogin />} />

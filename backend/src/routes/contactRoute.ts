@@ -13,5 +13,5 @@ router.post('/approveRequest',authMiddleware('tutor'),upload.any(),tutorApproveR
 router.get('/getFullCallDetails/:id',authMiddleware('tutor'),getFullCallDetails)
 router.get('/getCallData/:id',authMiddleware('student'),getCallData)
 router.post('/sendId',authMiddleware('tutor'),sendIdToStudent)
-router.get('/leavecall',authMiddleware('tutor'),leaveCall)
+router.get('/leavecall',leaveCall)
 export default router   

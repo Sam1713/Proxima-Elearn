@@ -213,13 +213,14 @@ export const videoCallBooking=async(req:Request,res:Response,next:NextFunction):
                   const {callId}  = req.body;
                   console.log('ca',callId)
                   const bookingId = req.query.id as string;
-              
+                 console.log('book',bookingId) 
                   const booking = await BookingModel.findById(bookingId);
+                                    console.log('Booking:', booking);
+
                   if (!booking) {
                     return res.status(404).json({ message: 'Booking not found' });
                   }
               
-                  console.log('Booking:', booking);
               
                   booking.callId = callId;
                   await booking.save(); 

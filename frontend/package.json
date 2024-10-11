@@ -17,6 +17,7 @@
     "@material-tailwind/react": "^2.1.9",
     "@react-spring/web": "^9.7.4",
     "@reduxjs/toolkit": "^2.2.6",
+    "@zegocloud/zego-uikit-prebuilt": "^2.10.2",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.2",
     "buffer": "^6.0.3",
