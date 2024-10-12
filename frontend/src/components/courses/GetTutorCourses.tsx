@@ -89,70 +89,78 @@ const GetTutorCourses:React.FC=()=> {
 
   return (
     <div className="bg-custom-gradient min-h-screen w-full px-8">
-      <h1 className="text-3xl text-white underline font-thin text-center mb-8">
-        Your Courses
-      </h1>
+  <h1 className="text-3xl text-white underline font-thin text-center mb-8">
+    Your Courses
+  </h1>
 
-      <div className="relative grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6">
-        {uploadedCourses?.map((course) => (
-          <div
-            key={course?._id}
-            onClick={() => handleNavigate(course?._id)}
-            className="bg-gradient-to-r from-black via-gray-1000 to-white p-5 rounded-lg shadow-lg cursor-pointer transform transition-shadow duration-300 ease-in-out hover:shadow-2xl"
+  <div className="relative grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6">
+    {uploadedCourses?.length > 0 ? (
+      uploadedCourses.map((course) => (
+        <div
+          key={course?._id}
+          onClick={() => handleNavigate(course?._id)}
+          className="bg-gradient-to-r from-black via-gray-1000 to-white p-5 rounded-lg shadow-lg cursor-pointer transform transition-shadow duration-300 ease-in-out hover:shadow-2xl"
+        >
+          <img
+            src={course?.coverImageUrl}
+            alt="Tutor Course"
+            className="relative w-full rounded-xl h-48 object-cover transform transition-transform duration-300 ease-in-out hover:scale-105"
+          />
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents the button click from triggering the parent div's onClick
+              handleDeleteCourse(course?._id);
+            }}
+            className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
           >
-            <img
-              src={course?.coverImageUrl}
-              alt="Tutor Course"
-              className="relative w-full rounded-xl h-48 object-cover transform transition-transform duration-300 ease-in-out hover:scale-105"
-            />
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevents the button click from triggering the parent div's onClick
-                handleDeleteCourse(course?._id);
-              }}
-              className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
-            >
-              <MdDelete className="text-2xl" />
-            </button>
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-gray-100 h-[5vh] overflow-hidden">
-                {course?.title}
-              </h2>
-              <p className="text-sm text-gray-200 mt-2 h-[5vh] overflow-y-scroll">
-                {course?.description}
-              </p>
-            </div>
-            <hr className="my-4" />
-            <div className="text-gray-100 text-lg font-serif">
-              Category: <span className="font-semibold">{course?.category}</span>
-            </div>
+            <MdDelete className="text-2xl" />
+          </button>
+          <div className="mt-4">
+            <h2 className="text-xl font-bold text-gray-100 h-[5vh] overflow-hidden">
+              {course?.title}
+            </h2>
+            <p className="text-sm text-gray-200 mt-2 h-[5vh] overflow-y-scroll">
+              {course?.description}
+            </p>
           </div>
-        ))}
+          <hr className="my-4" />
+          <div className="text-gray-100 text-lg font-serif">
+            Category: <span className="font-semibold">{course?.category}</span>
+          </div>
+        </div>
+      ))
+    ) : (
+      <div className="col-span-full text-center text-white text-lg mt-8">
+        <p>No courses added yet.</p>
       </div>
+    )}
+  </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={handlePreviousPage}
-          disabled={page === 1}
-          className={`px-4 py-2 rounded-md mr-2 ${
-            page === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-          } text-white`}
-        >
-          Previous
-        </button>
-        <p className='text-white mt-2 '>Page {page} of {totalPages}</p>
-        <button
-          onClick={handleNextPage}
-          disabled={page === totalPages}
-          className={`px-4 py-2 rounded-md ${
-            page === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-          } text-white`}
-        >
-          Next
-        </button>
-      </div>
+  {uploadedCourses?.length > 0 && (
+    <div className="flex justify-center mt-8">
+      <button
+        onClick={handlePreviousPage}
+        disabled={page === 1}
+        className={`px-4 py-2 rounded-md mr-2 ${
+          page === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+        } text-white`}
+      >
+        Previous
+      </button>
+      <p className="text-white mt-2">Page {page} of {totalPages}</p>
+      <button
+        onClick={handleNextPage}
+        disabled={page === totalPages}
+        className={`px-4 py-2 rounded-md ${
+          page === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+        } text-white`}
+      >
+        Next
+      </button>
     </div>
+  )}
+</div>
+
   );
 }
 

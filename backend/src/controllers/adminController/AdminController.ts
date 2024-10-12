@@ -81,15 +81,21 @@ console.log('sdfdsf')
 
 export const GetAllTutors = async (req: Request, res: Response): Promise<unknown> => {
   try {
-    const tutors = await TutorModel.find().lean();
-    
+    const page = parseInt(req.query.page as string) || 1; 
+  const limit = parseInt(req.query.limit as string) || 10; 
+  const skip = (page - 1) * limit;
+  const totalDoc = await TutorModel.countDocuments(); 
+  const totalTutors=Math.ceil(totalDoc/limit)
+
+  const tutors = await TutorModel.find().skip(skip).limit(limit).lean();
+    console.log('list',tutors)
     if (!tutors.length) {
       return res.status(404).json({ message: 'Tutors not found' });
     }
 
     const sanitizedTutors = tutors.map(({ password, bio, countrycode, files, ...rest }) => rest);
 
-    return res.status(200).json(sanitizedTutors);
+    return res.status(200).json({sanitizedTutors,totalTutors});
   } catch (error) {
     console.error('Error fetching tutors:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -98,6 +104,8 @@ export const GetAllTutors = async (req: Request, res: Response): Promise<unknown
 
 export const GetTutorDetail=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
     const tutorId=req.params.id
+    
+
   try{
    const tutor=await TutorModel.findById(tutorId).lean()
    console.log('tutor',tutor)
@@ -198,22 +206,29 @@ export const AdminRejectTutor = async (req: Request, res: Response, next: NextFu
 };
 
 
-export const AdminUserListing=async(req:Request,res:Response,next:NextFunction):Promise<unknown>=>{
-  console.log('hello')
-  // const page=parseInt(req.query.page as string)||1
-  // const limit=parseInt(req.query.limit as string)||10
-  // const skip=(page-1)*limit
-  // const totalDoc=await Student.countDocuments()
+export const AdminUserListing = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+  console.log('Fetching users...');
 
+  const page = parseInt(req.query.page as string) || 1; 
+  const limit = parseInt(req.query.limit as string) || 10; 
+  const skip = (page - 1) * limit; 
 
-  try{
-    const users = await Student.find().lean()
-         console.log('usrs',users)
-     return res.json({users})
-  }catch(error){
-    console.log(error)
+  try {
+    const totalDoc = await Student.countDocuments(); 
+    const users = await Student.find().skip(skip).limit(limit).lean(); 
+
+    console.log('Fetched users:', users);
+   const totalUsers=Math.ceil(totalDoc/limit)
+    return res.json({
+  
+      totalUsers,
+      users,
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
-}
+};
 
 export const AdminBlockOrUnblock=async(req:Request,res:Response):Promise<void>=>{
   const userId=req.params.id

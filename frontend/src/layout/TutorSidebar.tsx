@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { MdDashboard, MdFeed } from 'react-icons/md';
 import { FaUsers } from 'react-icons/fa';
 import { GiTeacher } from 'react-icons/gi';
-import { BiSolidVideos, BiSolidPurchaseTagAlt } from 'react-icons/bi';
+import { BiSolidVideos } from 'react-icons/bi';
 import { AiOutlineDown, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-
 import { Link } from 'react-router-dom';
 
 // Define the types for SidebarItem props
 interface SidebarItemProps {
-  icon: React.ComponentType <{ className?: string }>;
+  icon: React.ComponentType<{ className?: string }>;
   text: string;
   onClick: () => void;
   isActive: boolean;
@@ -32,98 +31,75 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, text, onClick, is
 );
 
 function TutorSidebar() {
-  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState<boolean>(true); // Toggle sidebar state
 
-  const toggleCourses = () => setIsCoursesOpen(prev => !prev);
   const handleClick = (item: string) => {
     setActiveItem(prev => (prev === item ? null : item));
   };
 
   return (
-    <div className='md:w-[20%] z-10 md:fixed overflow-x-scroll md:overflow-x-hidden pt-16  flex md:flex-col md:mx-3 flex-row justify-between items-center'>
+    <div className='md:w-[20%] z-10 md:fixed overflow-x-scroll md:overflow-x-hidden pt-16 flex md:flex-col md:mx-3 flex-row justify-between items-center'>
       <button
         onClick={() => setShowSidebar(prev => !prev)}
         className='text-white text-2xl md:hidden absolute top-4 left-4'
       >
         {showSidebar ? <AiOutlineClose className='text-black' /> : <AiOutlineMenu className='text-black font-bold' />}
       </button>
-      <div className={`md:flex ${showSidebar ? 'flex ' : 'hidden'} p-4 mt-6  md:w-[100%] w-full bg-gradient-to-r from-black via-gray-1000 to-white md:h-[80vh] overflow-scroll md:overflow-hidden  bg-opacity-60 rounded-xl`}>
-      <div className='md:m-auto  flex md:flex-col md:gap-0 gap-4 flex-row md:w-full w-auto'>
-        <Link to='/tutorprofile'>
-          <SidebarItem
-            icon={MdDashboard}
-            text='My Account'
-            onClick={() => handleClick('dashboard')}
-            isActive={activeItem === 'dashboard'}
-            arrow={false}
-          />
-          </Link>  
+      <div className={`md:flex ${showSidebar ? 'flex ' : 'hidden'} p-4 mt-6 md:w-[100%] w-full bg-gradient-to-r from-black via-gray-1000 to-white md:h-[75vh] overflow-scroll md:overflow-hidden bg-opacity-60 rounded-xl`}>
+        <div className='md:m-auto flex md:flex-col md:gap-0 gap-4 flex-row md:w-full w-auto'>
+          <Link to='/tutorprofile'>
+            <SidebarItem
+              icon={MdDashboard}
+              text='My Account'
+              onClick={() => handleClick('dashboard')}
+              isActive={activeItem === 'dashboard'}
+              arrow={false}
+            />
+          </Link>
           <Link to='/purchasedStudents'>
-           <SidebarItem
-            icon={FaUsers}
-            text='My Students'
-            onClick={() => handleClick('users')}
-            isActive={activeItem === 'users'}
-            arrow={false}
-          />
+            <SidebarItem
+              icon={FaUsers}
+              text='My Students'
+              onClick={() => handleClick('users')}
+              isActive={activeItem === 'users'}
+              arrow={false}
+            />
           </Link>
           <Link to='/tutorWallet'>
-          <SidebarItem
-            icon={GiTeacher}
-            text='My Wallet'
-            onClick={() => handleClick('tutors')}
-            isActive={activeItem === 'tutors'}
-            arrow={false}
-          />
+            <SidebarItem
+              icon={GiTeacher}
+              text='My Wallet'
+              onClick={() => handleClick('tutors')}
+              isActive={activeItem === 'tutors'}
+              arrow={false}
+            />
           </Link>
-          <SidebarItem
-            icon={BiSolidVideos}
-            text='My Courses'
-            onClick={toggleCourses}
-            isActive={activeItem === 'courses'}
-            arrow={true}
-          />
-         
-
-          {isCoursesOpen && (
-            <div className='pl-8 mt-2'>
-                        <Link to="/getTutorCourses">
-
-              <SidebarItem
-                icon={() => <span className='text-xl' />} // Placeholder for Course Details icon
-                text='Course Details'
-                onClick={() => {}}
-                isActive={false}
-                arrow={false}
-              />
-               </Link>
-              <SidebarItem
-                icon={() => <span className='text-xl' />} // Placeholder for Course Edit icon
-                text='Course Edit'
-                onClick={() => {}}
-                isActive={false}
-                arrow={false}
-              />
-            </div>
-          )}
-           <Link to={'/tutorChat'}>
-          <SidebarItem
-            icon={MdFeed}
-            text='Chats'
-            onClick={() => handleClick('Chats')}
-            isActive={activeItem === 'feeds'}
-            arrow={false}
-          />
+          <Link to="/getTutorCourses"> {/* Direct link to the courses page */}
+            <SidebarItem
+              icon={BiSolidVideos}
+              text='My Courses'
+              onClick={() => handleClick('courses')} // Optional, if you want to track active item
+              isActive={activeItem === 'courses'}
+              arrow={false} // No arrow since it's not a dropdown
+            />
           </Link>
-          <SidebarItem
+          <Link to={'/tutorChat'}>
+            <SidebarItem
+              icon={MdFeed}
+              text='Chats'
+              onClick={() => handleClick('Chats')}
+              isActive={activeItem === 'feeds'}
+              arrow={false}
+            />
+          </Link>
+          {/* <SidebarItem
             icon={BiSolidPurchaseTagAlt}
             text='Orders'
             onClick={() => handleClick('orders')}
             isActive={activeItem === 'orders'}
             arrow={false}
-          />
+          /> */}
         </div>
       </div>
     </div>

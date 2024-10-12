@@ -43,20 +43,28 @@ const UserListing: React.FC = () => {
   const [filter, setFilter] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages,setTotalPages]=useState<number>(1)
+  const limit=4
   const usersPerPage = 4;
 
   useEffect(() => {
-    fetchUsers();
-  }, [dispatch]);
+    fetchUsers(currentPage,limit);
+  }, [currentPage,limit]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (currentPage:number,limit:number) => {
     try {
       const response = await api.get('/backend/admin/userlisting', {
         headers: {
           'X-Token-Type': 'admin',
         },
+        params:{
+          page:currentPage,
+          limit:limit
+        }
       });
+      console.log('er',response.data)
       dispatch(adminUsersFetch(response.data.users));
+      setTotalPages(response.data.totalUsers)
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -117,24 +125,26 @@ const UserListing: React.FC = () => {
     user.email.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const sortedUsers = filteredUsers.sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.username.localeCompare(b.username);
-    }
-    return b.username.localeCompare(a.username);
-  });
+  // const sortedUsers = filteredUsers.sort((a, b) => {
+  //   if (sortOrder === 'asc') {
+  //     return a.username.localeCompare(b.username);
+  //   }
+  //   return b.username.localeCompare(a.username);
+  // });
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
-
+  const handleNext=()=>{
+    setCurrentPage(currentPage+1)
+  }
+  const handlePrev=()=>{
+    setCurrentPage(currentPage-1)
+  }
   const handleSort = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading users: {error}</div>;
@@ -162,7 +172,7 @@ const UserListing: React.FC = () => {
             </tr>
           </thead>
           <tbody className='bg-custom-gradient bg-opacity-20'>
-            {currentUsers.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <tr key={user._id} className='border-t border-gray-200 hover:bg-gray-900'>
                 <td className='px-6 py-4 text-sm font-medium text-gray-100'>{indexOfFirstUser + index + 1}</td>
                 <td className='px-6 py-4 text-sm font-medium text-gray-100'>{user.username}</td>
@@ -190,7 +200,7 @@ const UserListing: React.FC = () => {
       </div>
       <div className='mt-4 flex justify-center gap-4 items-center'>
         <button
-          onClick={() => paginate(currentPage - 1)}
+          onClick={handlePrev}
           disabled={currentPage === 1}
           className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
         >
@@ -200,7 +210,7 @@ const UserListing: React.FC = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() => paginate(currentPage + 1)}
+          onClick={handleNext}
           disabled={currentPage === totalPages}
           className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
         >

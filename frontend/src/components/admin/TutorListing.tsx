@@ -18,30 +18,35 @@ const TutorListing = () => {
   const navigate = useNavigate();
   const tutorDetails = useSelector((state: RootState) => state.admin.tutorDetails||[]);
   
-  // State for search and pagination
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 4;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages,setTotalPages]=useState<number>(1)
+  const limit=4
 
   useEffect(() => {
-    const fetchTutors = async () => {
+    const fetchTutors = async (currentPage:number,limit:number) => {
       try {
         // const token = localStorage.getItem('admin_access_token');
         const response = await api.get('/backend/admin/tutorlist', {
           headers: {
           "X-Token-Type":'admin'
+          },
+          params:{
+            page:currentPage,
+            limit:limit
           }
 
         });
         console.log('API response data:', response.data);
-        dispatch(adminStoreTutorDetails(response.data));
+        dispatch(adminStoreTutorDetails(response.data.sanitizedTutors));
+        setTotalPages(response.data.totalTutors)
       } catch (error) {
         console.error('Error fetching tutors:', error);
       }
     };
 
-    fetchTutors();
-  }, [dispatch]);
+    fetchTutors(currentPage,limit);
+  }, [dispatch,currentPage,limit]);
 
   const handleValidateClick = async (id: string) => {
     const token = localStorage.getItem('admin_access_token');
@@ -66,16 +71,26 @@ const TutorListing = () => {
   const handleCoursesClick = (id: string) => {
     navigate(`/admin/tutorCourses/${id}`);
   };
+  const indexOfLastUser = currentPage * limit;
 
-  // Filtering based on search term
+  const indexOfFirstUser = indexOfLastUser - limit;
+
   const filteredTutors = Array.isArray(tutorDetails) ? tutorDetails.filter(tutor => 
     tutor.tutorname.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tutor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tutor.phonenumber.includes(searchTerm)
   ):[];
 
+  
+  const handleNext=()=>{
+    setCurrentPage(currentPage+1)
+  }
+  const handlePrev=()=>{
+    setCurrentPage(currentPage-1)
+  }
+
   // Calculating paginated data
-  const paginatedTutors = filteredTutors.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  // const paginatedTutors = filteredTutors.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
     <div className='md:w-auto w-[100%] md:mx-10 md:mt-[1%] flex flex-col mt-[10%] bg-black rounded-xl p-5 shadow-lg'>
@@ -104,9 +119,9 @@ const TutorListing = () => {
             </tr>
           </thead>
           <tbody className='bg-custom-gradient bg-opacity-20'>
-            {paginatedTutors.map((tutor, index) => (
+            {filteredTutors.map((tutor, index) => (
               <tr key={tutor._id} className='border-t border-gray-200 hover:bg-gray-900'>
-                <td className='px-6 py-4 text-sm font-medium text-gray-100'>{currentPage * pageSize + index + 1}</td>
+                <td className='px-6 py-4 text-sm font-medium text-gray-100'>{indexOfFirstUser  + index + 1}</td>
                 <td className='px-6 py-4 text-sm font-medium text-gray-100'>{tutor.tutorname}</td>
                 <td className='px-6 py-4 text-sm font-medium text-gray-100'>{tutor.email}</td>
                 <td className='px-6 py-4 text-sm font-medium text-gray-100'>{tutor.phonenumber}</td>
@@ -133,18 +148,18 @@ const TutorListing = () => {
       </div>
       <div className='mt-4 flex justify-center gap-4 items-center'>
         <button
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
-          disabled={currentPage === 0}
+          onClick={handlePrev}
+          disabled={currentPage === 1}
           className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
         >
           Previous
         </button>
         <span className='text-gray-100'>
-          Page {currentPage + 1} of {Math.ceil(filteredTutors.length / pageSize)}
+          Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() => setCurrentPage(prev => (prev + 1 < Math.ceil(filteredTutors.length / pageSize) ? prev + 1 : prev))}
-          disabled={currentPage + 1 >= Math.ceil(filteredTutors.length / pageSize)}
+          onClick={handleNext}
+          disabled={currentPage==totalPages}
           className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700'
         >
           Next

@@ -96,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                 {[{ key: 'My Account', icon: <PresentationChartBarIcon className="h-5 w-5" />, text: 'My Account', link: '/studentProfile' },
                   { key: 'ecommerce', icon: <ShoppingBagIcon className="h-5 w-5" />, text: 'My Courses', link: '/orderedCourses' },
                   { key: 'inbox', icon: <InboxIcon className="h-5 w-5" />, text: 'Inbox', link: '/chat' },
-                  { key: 'profile', icon: <UserCircleIcon className="h-5 w-5" />, text: 'Payment info', link: '/paymentDetails' },
+                  { key: 'profile', icon: <UserCircleIcon className="h-5 w-5" />, text: 'Payment info', link: '/getPaymentDetails' },
                   { key: 'settings', icon: <Cog6ToothIcon className="h-5 w-5" />, text: 'Settings', link: '/settings' },
                   { key: 'logout', icon: <PowerIcon className="h-5 w-5" />, text: 'Log Out', link: '/logout' }
                 ].map(({ key, icon, text, link }) => (

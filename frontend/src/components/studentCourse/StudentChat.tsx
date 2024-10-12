@@ -162,6 +162,7 @@ const StudentChat: React.FC = () => {
 
   const handlePass = (tutorId: string) => {
     setSelectedTutorId(tutorId);
+    fetchOldChats(tutorId,skip)
     setSkip(0); 
     setChatMessages([]);  
 
@@ -178,47 +179,58 @@ const StudentChat: React.FC = () => {
         receiverId={receiverId} 
         selectedTutorId={null}        />
       <div className='flex-grow mx-2 mt-2 h-[89vh] flex flex-col shadow-2xl rounded-lg'>
-        <div className='flex items-center justify-between p-5 bg-white bg-opacity-20  text-white rounded-t-lg shadow-md'>
-          <h1 className='text-lg font-bold'>Chat with Tutor</h1>
-        </div>
-        <div
-  className="chat-box flex-grow p-4 overflow-y-auto flex flex-col custom-scrollbar bg-white bg-opacity-10"
-  onScroll={handleScroll}
->
-  {chatMessages.map((msg, index) => (
-    <div
-      key={index}
-      className={`flex mb-4 ${msg.senderType==='student'? 'justify-end' : 'justify-start'}`}
-    >
-      <div
-        className={`max-w-[70%] p-3 rounded-lg shadow-md ${
-          msg.senderType === 'student' ? 'bg-blue-500 text-white justify-start' : 'bg-gray-300 text-black justify-start'
-        }`}
-      >
-        <p className="text-sm">{msg?.message}</p>
-        <span className="text-xs text-gray-400 block mt-1">
-          {new Date(msg.createdAt).toLocaleTimeString()}
-        </span>
-      </div>
+  <div className='flex items-center justify-between p-5 bg-white bg-opacity-20 text-white rounded-t-lg shadow-md'>
+    <h1 className='text-lg font-bold'>Chat with Tutor</h1>
+  </div>
+  <div
+    className="chat-box flex-grow p-4 overflow-y-auto flex flex-col custom-scrollbar bg-white bg-opacity-10"
+    onScroll={handleScroll}
+  >
+    {selectedTutorId ? ( // Check if a tutor is selected
+      chatMessages.length > 0 ? ( // Check if there are chat messages
+        chatMessages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex mb-4 ${msg.senderType === 'student' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[70%] p-3 rounded-lg shadow-md ${
+                msg.senderType === 'student' ? 'bg-blue-500 text-white justify-start' : 'bg-gray-300 text-black justify-start'
+              }`}
+            >
+              <p className="text-sm">{msg?.message}</p>
+              <span className="text-xs text-gray-400 block mt-1">
+                {new Date(msg.createdAt).toLocaleTimeString()}
+              </span>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className='text-center text-gray-600'>No messages yet.</p> // Message if there are no chat messages
+      )
+    ) : (
+      <p className='text-center text-gray-600 text-3xl font-protest'>Welcome to chat! Please select a tutor to start chatting.</p> // Message if no tutor is selected
+    )}
+    {loading && <p className='text-center'>Loading...</p>}
+  </div>
+  {selectedTutorId && ( // Show input field only if a tutor is selected
+    <div className='py-1 rounded-xl rounded-b-lg flex'>
+      <input
+        type='text'
+        placeholder='Type message'
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className='flex-grow p-3 bg-white border border-gray-900 rounded-l-lg transition duration-300'
+      />
+      <Button
+              onClick={sendMessage}
+              className='bg-blue-500 text-white px-5 py-2 rounded-r-lg hover:bg-blue-600 transition duration-300 shadow-lg'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}      >
+        <IoSend />
+      </Button>
     </div>
-  ))}
-          {loading && <p className='text-center'>Loading...</p>}
-        </div>
-        <div className='py-1 rounded-xl rounded-b-lg flex'>
-          <input
-            type='text'
-            placeholder='Type message'
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className='flex-grow p-3 bg-white border border-gray-900 rounded-l-lg transition duration-300'
-          />
-          <Button
-            onClick={sendMessage}
-            className='bg-blue-500 text-white px-5 py-2 rounded-r-lg hover:bg-blue-600 transition duration-300 shadow-lg'  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          >
-            <IoSend />
-          </Button>
-        </div>
-      </div>
+  )}
+</div>
+
     </div>
   )
 };

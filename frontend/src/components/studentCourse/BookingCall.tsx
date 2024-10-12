@@ -164,8 +164,9 @@ console.log('book',bookingDetails)
             <div className="bg-custom-gradient p-6 rounded-lg shadow-md">
               <Typography variant="h4" className="font-semibold text-gray-100 mb-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Video Call Information</Typography>
               <div className="flex items-center space-x-4">
-                <Typography variant="h1" className="text-gray-300 font-poppins"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call ID: {bookingDetails?.callId}</Typography>
-                {/* <CopyToClipboard  text={bookingDetails?.callId}>
+              
+                {/* <Typography variant="h1" className="text-gray-300 font-poppins"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Call ID: {bookingDetails?.callId}</Typography>
+                <CopyToClipboard  text={bookingDetails?.callId}>
                   <Button variant="gradient" className="bg-blue-500 text-white flex items-center space-x-2"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     <ClipboardIcon className="h-5 w-5" />
                     <span>Copy Call ID</span>

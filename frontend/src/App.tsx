@@ -45,6 +45,7 @@ import QuizPage from './components/studentCourse/QuizPage';
 import StudentChat from './components/studentCourse/StudentChat';
 import TutorChat from './components/courses/TutorChat';
 import VideoCallRoom from './components/videocall/VideoCallRoom';
+import Error404 from './components/error/Error';
 
 const Landing = React.lazy(() => import('./landing/Landing'));
 const Register = React.lazy(() => import('./components/studentAuth/Register'));
@@ -154,6 +155,7 @@ function App() {
               <Route path='/admin/dashboard'element={<Dashboard/>}/>
             </Route>
           </Route>
+          <Route path="*" element={<Error404 />} />
         </Routes>
         
       </Suspense> 
